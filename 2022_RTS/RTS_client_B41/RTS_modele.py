@@ -45,7 +45,7 @@ class Batiment():
             self.parent.annoncer_mort_batiment(self)
             return 1
 
-class Usineballiste(Batiment):
+class CentreCommun(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
         self.image = couleur[0] + "_" + montype
@@ -1019,7 +1019,7 @@ class Partie():
         self.classesbatiments = {"maison": Maison,
                                  "caserne": Caserne,
                                  "abri": Abri,
-                                 "usineballiste": Usineballiste}
+                                 "usineballiste": CentreCommun}
         self.classespersos = {"ouvrier": Ouvrier,
                               "soldat": Soldat,
                               "archer": Archer,
