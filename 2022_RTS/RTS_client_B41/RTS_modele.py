@@ -1190,11 +1190,12 @@ class Partie():
 
     def creer_population(self, mondict):
         couleurs = [["O", "orange"], ["R", "red"], ["B", "blue"], ["J", "yellow"], ["V", "lightgreen"]]
-        quadrants = [[[0, 0], [int(self.aireX / 2), int(self.aireY / 2)]],
-                     [[int(self.aireX / 2), 0], [self.aireX, int(self.aireY / 2)]],
-                     [[0, int(self.aireY / 2)], [int(self.aireX / 2), self.aireY]],
-                     [[int(self.aireX / 2), int(self.aireY / 2)], [self.aireX, self.aireY]],
-                     [[int(self.aireX / 2), int(self.aireY / 2)], [self.aireX, self.aireY]]]
+        #quadrants = [[[0, 0], [int(self.aireX / 2), int(self.aireY / 2)]],
+                     #[[int(self.aireX / 2), 0], [self.aireX, int(self.aireY / 2)]],
+                     #[[0, int(self.aireY / 2)], [int(self.aireX / 2), self.aireY]],
+                     #[[int(self.aireX / 2), int(self.aireY / 2)], [self.aireX, self.aireY]],
+                     #[[int(self.aireX / 2), int(self.aireY / 2)], [self.aireX, self.aireY]]]
+        quadrants = [[666,666],[3334,666],[666,3334],[3334,3334]]
         nquad = 5
         bord = 50
         for i in mondict:
@@ -1203,12 +1204,14 @@ class Partie():
             # placer les joueurs dans des quandrants differents
             choixquad = random.choice(range(nquad))
             nquad -= 1
-            quad = quadrants.pop(choixquad)
+            #quad = quadrants.pop(choixquad)
 
             n = 1
+            j = 0
+            b = 1
             while n:
-                x = random.randrange(quad[0][0] + bord, quad[1][0] - bord)
-                y = random.randrange(quad[0][1] + bord, quad[1][1] - bord)
+                x = quadrants[j][b-1]
+                y = quadrants[j][b]
                 case = self.trouver_case(x, y)
                 if case.montype == "plaine":
                     self.joueurs[i] = Joueur(self, id, i, coul, x, y)
