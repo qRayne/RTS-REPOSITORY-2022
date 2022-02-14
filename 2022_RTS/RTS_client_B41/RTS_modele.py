@@ -80,6 +80,25 @@ class Caserne():
         self.maxperso = 20
         self.perso = 0
 
+class NPC():
+    def __init__(self, parent, id, spawnX, spawnY, playerID):
+        self.id = id
+        self.x = spawnX
+        self.y = spawnY
+        self.etat = ""
+        self.playerID = playerID
+        self.currentQuest = 1
+        self.questInProgress = False
+
+class Quete():
+    def __init__(self, id, name, playerID, questText, isCompleted, objType):
+        self.id = id
+        self.name = name
+        self.playerID = playerID
+        self.questText = questText
+        self.isCompleted = isCompleted
+        self.objType = objType
+
 
 class Daim():
     def __init__(self, parent, id, x, y, notyperegion=-1, idregion=None):
