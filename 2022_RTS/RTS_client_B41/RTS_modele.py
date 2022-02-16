@@ -1193,14 +1193,15 @@ class Partie():
         quadrants = [[xQuadrants, yQuadrants], [int(self.aireX - xQuadrants), yQuadrants],
                      [xQuadrants, int(self.aireY - yQuadrants)],
                      [int(self.aireX - xQuadrants), int(self.aireY - yQuadrants)]]
-        j = 0
+        tableauOrdreMap = [0, 1, 2, 3]
         b = 0
         for i in mondict:
+            j = random.choice(tableauOrdreMap)
+            tableauOrdreMap.remove(j)
             id = get_prochain_id()
             coul = couleurs.pop()
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
-            j += 1
             self.joueurs[i] = Joueur(self, id, i, coul, x, y)
 
     def deplacer(self):
