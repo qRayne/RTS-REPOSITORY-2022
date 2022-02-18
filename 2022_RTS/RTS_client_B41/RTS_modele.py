@@ -59,42 +59,72 @@ class Maison(Batiment):
         Batiment.__init__(self, parent, id, x, y)
         self.image = couleur[0] + "_" + montype
         self.montype = montype
-        self.perso = 0
-        self.minerais = {"cuivre" : 0,
-                         "etain" : 0,
-                         "fer" : 0,
-                         "argent" : 0,
-                         "metalnoir" : 0}
-        self.bois = {"bois" : 0,
-                     "boisfin" : 0,
-                     "boisdebase" : 0,
-                     "boisancien" : 0}
-        self.nourriture = {"framboises" : 0,
-                           "bleuets" : 0,
-                           "viande" : 0,
-                           "miel" : 0,
-                           "carottes" : 0,
-                           "navets" : 0,
-                           "herbes" : 0,
-                           "orge" : 0,
-                           "champignons" : 0,
-                           "oignons" : 0,
-                           "poisson" : 0,
-                           "farineorge" : 0}
-        self.pierre = {"roche" : 0,
-                       "obsidienne" : 0,
-                       "silex" : 0}
-        self.autres = {"ramuredurci" : 0,
-                       "cuirdedaim" : 0,
-                       "cuirdetroll" : 0,
-                       "fragmentsdos" : 0,
-                       "entrailles" : 0,
-                       "fourrureloup" : 0,
-                       "lin" : 0,
-                       "charbon" : 0,
-                       "grainescarrotte" : 0,
-                       "grainesnavet" : 0,
-                       "grainesoignon" : 0}
+        self.tier = 1
+        self.minerais =     {"cuivre" : 0,
+                             "etain" : 0,
+                             "fer" : 0,
+                             "argent" : 0,
+                             "metalnoir" : 0
+                             }
+        self.bois =         {"bois" : 0,
+                             "boisfin" : 0,
+                             "boisdebase" : 0,
+                             "boisancien" : 0
+                             }
+        self.nourriture =   {"framboises" : 0,
+                             "bleuets" : 0,
+                             "viande" : 0,
+                             "miel" : 0,
+                             "carottes" : 0,
+                             "navets" : 0,
+                             "herbes" : 0,
+                             "orge" : 0,
+                             "champignons" : 0,
+                             "oignons" : 0,
+                             "poisson" : 0,
+                             "farineorge" : 0
+                             }
+        self.pierre =       {"roche" : 0,
+                             "obsidienne" : 0,
+                             "silex" : 0
+                             }
+        self.autres =       {"ramuredurci" : 0,
+                             "cuirdedaim" : 0,
+                             "cuirdetroll" : 0,
+                             "fragmentsdos" : 0,
+                             "entrailles" : 0,
+                             "fourrureloup" : 0,
+                             "lin" : 0,
+                             "charbon" : 0,
+                             "grainescarrotte" : 0,
+                             "grainesnavet" : 0,
+                             "grainesoignon" : 0
+                             }
+        self.metaux =       {"lingotcuivre": 0,
+                             "lingotetain": 0,
+                             "lingotfer": 0,
+                             "lingotbronze": 0,
+                             "lingotargent": 0,
+                             "lingotnoir": 0}
+        self.outils =       {"hachettedesilex": 0,
+                             "canneapeche": 0,
+                             }
+        self.repas =        {"viandegrillee": 0,
+                             "poissongrillee": 0,
+                             "viandesechee": 0,
+                             "marmelade": 0,
+                             "repasbifteck": 0,
+                             "ragout": 0,
+                             "soupecarotte": 0,
+                             "tourtiere": 0,
+                             "wrapthon": 0,
+                             "soupeoignon": 0,
+                             "saucisse": 0
+                             }
+        self.hydromels =    {"hydromelresispoison": 0,
+                             "hydromelresisfroid": 0,
+                             "hydromelvie": 0
+                             }
         self.recettespossible = []
 
 
@@ -1130,7 +1160,7 @@ class Partie():
                                                  "lingotnoir": 6}
                             },
                 "armes":   {"baton":            {"bois": 10},
-                            "epieudefer":       {"lingotbronze": 10,
+                            "epieudebronze":    {"lingotbronze": 10,
                                                  "bois": 5},
                             "massuedefer":      {"lingotfer": 10,
                                                  "boisdebase": 5},
