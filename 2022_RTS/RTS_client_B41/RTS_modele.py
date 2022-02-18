@@ -59,8 +59,43 @@ class Maison(Batiment):
         Batiment.__init__(self, parent, id, x, y)
         self.image = couleur[0] + "_" + montype
         self.montype = montype
-        self.maxperso = 10
         self.perso = 0
+        self.minerais = {"cuivre" : 0,
+                         "etain" : 0,
+                         "fer" : 0,
+                         "argent" : 0,
+                         "metalnoir" : 0}
+        self.bois = {"bois" : 0,
+                     "boisfin" : 0,
+                     "boisdebase" : 0,
+                     "boisancien" : 0}
+        self.nourriture = {"framboises" : 0,
+                           "bleuets" : 0,
+                           "viande" : 0,
+                           "miel" : 0,
+                           "carottes" : 0,
+                           "navets" : 0,
+                           "herbes" : 0,
+                           "orge" : 0,
+                           "champignons" : 0,
+                           "oignons" : 0,
+                           "poisson" : 0,
+                           "farineorge" : 0}
+        self.pierre = {"roche" : 0,
+                       "obsidienne" : 0,
+                       "silex" : 0}
+        self.autres = {"ramuredurci" : 0,
+                       "cuirdedaim" : 0,
+                       "cuirdetroll" : 0,
+                       "fragmentsdos" : 0,
+                       "entrailles" : 0,
+                       "fourrureloup" : 0,
+                       "lin" : 0,
+                       "charbon" : 0,
+                       "grainescarrotte" : 0,
+                       "grainesnavet" : 0,
+                       "grainesoignon" : 0}
+        self.recettespossible = []
 
 
 class Abri():
@@ -81,14 +116,18 @@ class Caserne():
         self.perso = 0
 
 class NPC():
-    def __init__(self, parent, id, spawnX, spawnY, playerID):
+    def __init__(self, parent, id, spawnX, spawnY, playerID, currentQuest):
         self.id = id
         self.x = spawnX
         self.y = spawnY
+        self.nomimg = "npcTemp"
+        self.montype = "npc"
         self.etat = ""
         self.playerID = playerID
-        self.currentQuest = 1
+        self.currentQuest = currentQuest
         self.questInProgress = False
+
+
 
 class Quete():
     def __init__(self, id, name, playerID, questText, isCompleted, objType):
@@ -1019,6 +1058,41 @@ class Partie():
 
                }
 
+    recettes = {"metaux": {"lingotcuivre":    {"cuivre": 1,
+                                               "charbon": 2},
+                            "lingotetain":    {"etain": 1,
+                                               "charbon": 2},
+                            "lingotfer":      {"fer": 1,
+                                               "charbon": 2},
+                            "lingotbronze":   {"lingotcuivre": 2,
+                                               "lingotetain": 1},
+                            "lingotargent":   {"argent": 1,
+                                               "charbon": 2},
+                            "lingotnoir":     {"metalnoir": 1,
+                                               "charbon": 2}
+                           },
+                "armures": {"armuredecuir":   {"cuir": 6},
+                            "armuredetroll":  {"cuirdetroll": 15,
+                                               "fragmentdos": 6},
+                            "armuredebronze": {"lingotbronze": 15,
+                                               "cuir": 3},
+                            "armuredacier":   {"lingotfer": 15,
+                                               "charbon": 15},
+                            "armuredargent":  {"lingotargent": 15,
+                                               "fourruredeloup": 3},
+                            "armuredelin":    {"lin": 30,
+                                               "lingotnoir": 6}
+                            },
+                "armes":   {"baton":          {"bois": 10},
+                            "epieudefer":     {"lingotbronze": 10,
+                                               "bois": 5},
+                            "massuedefer":    {"lingotfer": 10,
+                                               "boisdebase": 5},
+                            "epeedargent":    {"lingotargent": 10,
+                                               "boisfin": 5},
+                            "hachedaciernoir":{"lingot"}
+                            }
+                }
     def __init__(self, parent, mondict):
         self.parent = parent
         self.actionsafaire = {}
@@ -1055,7 +1129,8 @@ class Partie():
                          "aureus": {},
                          "eau": {},
                          "marais": {},
-                         "baie": {}}
+                         "baie": {},
+                         }
 
         self.regions = {}
         self.regionstypes = [["arbre", 50, 20, 5, "forest green"],
@@ -1103,6 +1178,7 @@ class Partie():
                 self.biotopes["daim"][id] = mondaim
                 self.listebiotopes.append(mondaim)
                 n -= 1
+
         self.creer_biotope("arbre", "arbre", Arbre)
         self.creer_biotope("roche", "roche", Roche)
         self.creer_biotope("eau", "eau", Eau)
