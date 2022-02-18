@@ -98,6 +98,52 @@ class Maison(Batiment):
         self.recettespossible = []
 
 
+# Création de la classe Forge qui est une sous classe de Batiment
+class Forge(Batiment):
+    def __init__(self, parent, id, x, y, montype):
+        Batiment.__init__(self, parent, id, x, y)
+        self.image = {}
+        self.montype = montype
+        self.hp = 75
+        self.defense = 5
+        self.prixConstruction = {"cuivre": 6,
+                                 "charbon": 4,
+                                 "bois": 30,
+                                 "pierre": 2}
+
+        self.armes = {"baton": 0,
+                      "epieu": 0,
+                      "masse": 0,
+                      "epee": 0,
+                      "hache": 0}
+
+        self.arumures = {"arumureCuir": 0,
+                         "arumureTroll": 0,
+                         "armureBronze": 0,
+                         "armureAcier": 0,
+                         "arumureArgent": 0,
+                         "armureLin": 0}
+
+        self.outils = {"hacheSilex": 0,
+                       "piocheRamure": 0,
+                       "hacheBronze": 0,
+                       "piocheBronze": 0,
+                       "hacheFer": 0,
+                       "piocheFer": 0}
+
+    # Création des 3 méthodes pour la construction de chaque type d'item
+    def construireArmes(self):
+        pass
+
+    def construireArmures(self):
+        pass
+
+
+    def construireOutils(self):
+        pass
+
+
+
 class Abri():
     def __init__(self, parent, id, couleur, x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
