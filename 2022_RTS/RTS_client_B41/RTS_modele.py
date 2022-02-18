@@ -10,6 +10,7 @@ import math
 import time
 
 
+
 class SiteConstruction():
     def __init__(self, parent, id, x, y, sorte):
         self.parent = parent
@@ -23,7 +24,6 @@ class SiteConstruction():
     def decremente_delai(self):
         self.delai -= 1
 
-
 class Batiment():
     def __init__(self, parent, id, x, y):
         self.parent = parent
@@ -35,7 +35,7 @@ class Batiment():
         self.maxperso = 0
         self.perso = 0
         self.cartebatiment = []
-        self.mana = 200
+        self.mana=200
 
     def recevoir_coup(self, force):
         self.mana -= force
@@ -45,8 +45,7 @@ class Batiment():
             self.parent.annoncer_mort_batiment(self)
             return 1
 
-
-class CentreCommun(Batiment):
+class Usineballiste(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
         self.image = couleur[0] + "_" + montype
@@ -60,8 +59,43 @@ class Maison(Batiment):
         Batiment.__init__(self, parent, id, x, y)
         self.image = couleur[0] + "_" + montype
         self.montype = montype
-        self.maxperso = 10
         self.perso = 0
+        self.minerais = {"cuivre" : 0,
+                         "etain" : 0,
+                         "fer" : 0,
+                         "argent" : 0,
+                         "metalnoir" : 0}
+        self.bois = {"bois" : 0,
+                     "boisfin" : 0,
+                     "boisdebase" : 0,
+                     "boisancien" : 0}
+        self.nourriture = {"framboises" : 0,
+                           "bleuets" : 0,
+                           "viande" : 0,
+                           "miel" : 0,
+                           "carottes" : 0,
+                           "navets" : 0,
+                           "herbes" : 0,
+                           "orge" : 0,
+                           "champignons" : 0,
+                           "oignons" : 0,
+                           "poisson" : 0,
+                           "farineorge" : 0}
+        self.pierre = {"roche" : 0,
+                       "obsidienne" : 0,
+                       "silex" : 0}
+        self.autres = {"ramuredurci" : 0,
+                       "cuirdedaim" : 0,
+                       "cuirdetroll" : 0,
+                       "fragmentsdos" : 0,
+                       "entrailles" : 0,
+                       "fourrureloup" : 0,
+                       "lin" : 0,
+                       "charbon" : 0,
+                       "grainescarrotte" : 0,
+                       "grainesnavet" : 0,
+                       "grainesoignon" : 0}
+        self.recettespossible = []
 
 
 # Création de la classe Forge qui est une sous classe de Batiment
@@ -127,16 +161,18 @@ class Caserne():
         self.maxperso = 20
         self.perso = 0
 
-
 class NPC():
-    def __init__(self, parent, id, spawnX, spawnY, playerID):
+    def __init__(self, parent, id, spawnX, spawnY, playerID, currentQuest):
         self.id = id
         self.x = spawnX
         self.y = spawnY
+        self.nomimg = "npcTemp"
+        self.montype = "npc"
         self.etat = ""
         self.playerID = playerID
-        self.currentQuest = 1
+        self.currentQuest = currentQuest
         self.questInProgress = False
+
 
 
 class Quete():
@@ -192,7 +228,7 @@ class Daim():
             dist = Helper.calcDistance(self.x, self.y, x, y)
             if dist <= self.vitesse:
                 self.cible = None
-                self.position_visee = None
+                self.position_visee=None
         else:
             if self.etat == "vivant":
                 self.trouver_cible()
@@ -273,7 +309,7 @@ class Eau(Biotope):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
         n = random.randrange(50)
         if n == 6:
-            self.spritelen = 6  # len(self.parent.parent.vue.gifs["poissons"])
+            self.spritelen = 6 #len(self.parent.parent.vue.gifs["poissons"])
             self.sprite = "poissons"
             self.spriteno = random.randrange(self.spritelen)
             self.valeur = 100
@@ -328,14 +364,13 @@ class Arbre(Biotope):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
         self.valeur = 30
 
-
 class Fleche():
     def __init__(self, parent, id, proie):
         self.parent = parent
         self.id = id
         self.vitesse = 18
         self.taille = 20
-        self.force = 10
+        self.force=10
         self.proie = proie
         self.proiex = self.proie.x
         self.proiey = self.proie.y
@@ -358,7 +393,7 @@ class Fleche():
         self.x, self.y, = Helper.getAngledPoint(self.ang, self.vitesse, self.x, self.y)
         dist = Helper.calcDistance(self.x, self.y, self.proie.x, self.proie.y)
         if dist <= self.taille:
-            rep = self.cibleennemi.recevoircoup(self.force)
+            rep=self.cibleennemi.recevoircoup(self.force)
             return self
 
 
@@ -422,11 +457,12 @@ class Perso():
         self.champvision = 100
         self.vitesse = 5
         self.angle = None
-        self.etats_et_actions = {"bouger": self.bouger,
-                                 "ciblerennemi": None,
-                                 "attaquerennemi": None,
-                                 "retourbatimentmere": None,
-                                 }
+        self.etats_et_actions={"bouger": self.bouger,
+                               "ciblerennemi": None,
+                               "attaquerennemi": None,
+                               "retourbatimentmere": None,
+                               }
+
 
     def attaquer(self, ennemi):
         self.cibleennemi = ennemi
@@ -459,7 +495,7 @@ class Perso():
         if self.actioncourante:
             reponse = self.etats_et_actions[self.actioncourante]()
 
-    def deplacer(self, pos):
+    def deplacer(self,pos):
         self.position_visee = pos
         self.actioncourante = "bouger"
 
@@ -479,16 +515,18 @@ class Perso():
             # ici on test pour vori si nous rendu a la cible (en deca de la longueur de notre pas)
             dist = Helper.calcDistance(self.x, self.y, x, y)
             if dist <= self.vitesse:
-                if self.actioncourante == "bouger":
-                    self.actioncourante = None
+                if self.actioncourante=="bouger":
+                    self.actioncourante=None
                 return "rendu"
             else:
                 return dist
 
+
+
     def cibler(self, obj):
         self.cible = obj
         if obj:
-            self.position_visee = [self.cible.x, self.cible.y]
+            self.position_visee =[self.cible.x,self.cible.y]
             if self.x < self.position_visee[0]:
                 self.dir = "D"
             else:
@@ -496,9 +534,9 @@ class Perso():
             self.image = self.image[:-1] + self.dir
         else:
 
-            self.position_visee = None
+            self.position_visee =None
 
-    def test_etat_du_sol(self, x1, y1):
+    def test_etat_du_sol(self,x1, y1):
         ######## SINON TROUVER VOIE DE CONTOURNEMENT
         # ici oncalcule sur quelle case on circule
         casex = x1 / self.parent.parent.taillecase
@@ -508,17 +546,17 @@ class Perso():
         if casey != int(casey):
             casey = int(casey) + 1
         #####AJOUTER TEST DE LIMITE
-        case = self.parent.parent.trouver_case(x1, y1)
+        case=self.parent.parent.trouver_case(x1,y1)
         #
         # test si different de 0 (0=plaine), voir Partie pour attribution des valeurs
         if case.montype != "plaine":
             # test pour être sur que de n'est 9 (9=batiment)
             if case.montype != "batiment":
-                print("marche dans ", case.montype)
+                print("marche dans ",case.montype )
             else:
                 print("marche dans batiment")
 
-    def test_etat_du_sol1(self, x1, y1):
+    def test_etat_du_sol1(self,x1, y1):
         ######## SINON TROUVER VOIE DE CONTOURNEMENT
         # ici oncalcule sur quelle case on circule
         casex = x1 / self.parent.parent.taillecase
@@ -535,7 +573,6 @@ class Perso():
                 print("marche dans ", )
             else:
                 print("marche dans batiment")
-
 
 class Soldat(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
@@ -569,8 +606,8 @@ class Ballista(Perso):
 
         self.dir = "DH"
         self.image = couleur[0] + "_" + montype + self.dir
-        self.cible = None
-        self.angle = None
+        self.cible=None
+        self.angle=None
         self.distancefeumax = 30
         self.distancefeu = 30
         self.fleches = []
@@ -596,7 +633,7 @@ class Ballista(Perso):
         self.cibleennemi = ennemi
         x = self.cibleennemi.x
         y = self.cibleennemi.y
-        self.position_visee = [x, y]
+        self.position_visee=[x, y]
         dist = Helper.calcDistance(self.x, self.y, x, y)
         if dist <= self.distancefeu:
             self.actioncourante = "attaquerennemi"
@@ -604,12 +641,12 @@ class Ballista(Perso):
             self.actioncourante = "ciblerennemi"
 
     def attaquerennemi(self):
-        if self.delaifeu == 0:
+        if self.delaifeu==0:
             id = get_prochain_id()
-            fleche = Fleche(self, id, self.ciblennemi)
-            self.delaifeu = self.delaifeumax
+            fleche=Fleche(self,id,self.ciblennemi)
+            self.delaifeu=self.delaifeumax
         for i in self.fleches:
-            rep = i.bouger()
+            rep=i.bouger()
         if rep:
             rep = self.cibleennemi.recevoir_coup(self.force)
             self.fleches.remove(rep)
@@ -618,7 +655,7 @@ class Ballista(Perso):
 class Ouvrier(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
-        self.activite = None  # sedeplacer, cueillir, chasser, pecher, construire, reparer, attaquer, fuir, promener,explorer,chercher
+        self.activite=None # sedeplacer, cueillir, chasser, pecher, construire, reparer, attaquer, fuir, promener,explorer,chercher
         self.typeressource = None
         self.quota = 20
         self.ramassage = 0
@@ -628,23 +665,23 @@ class Ouvrier(Perso):
         self.champchasse = 120
         self.javelots = []
         self.vitesse = random.randrange(5) + 5
-        self.etats_et_actions = {"bouger": self.bouger,
-                                 "ciblersiteconstruction": self.cibler_site_construction,
-                                 "ciblerproie": self.cibler_proie,
-                                 "ciblerennemi": None,
-                                 "attaquerennemi": None,
-                                 "construirebatiment": self.construire_batiment,
-                                 "ramasserressource": self.ramasser,
-                                 "ciblerressource": self.cibler_ressource,
-                                 "retourbatimentmere": self.retour_batiment_mere,
-                                 "validerjavelot": self.valider_javelot,
-                                 }
+        self.etats_et_actions={"bouger": self.bouger,
+                               "ciblersiteconstruction": self.cibler_site_construction,
+                               "ciblerproie": self.cibler_proie,
+                               "ciblerennemi": None,
+                               "attaquerennemi": None,
+                               "construirebatiment": self.construire_batiment,
+                               "ramasserressource": self.ramasser,
+                               "ciblerressource": self.cibler_ressource,
+                               "retourbatimentmere": self.retour_batiment_mere,
+                               "validerjavelot": self.valider_javelot,
+                               }
 
-    def chasser_ramasser(self, objetcible, sontype, actiontype):
-        self.cible = objetcible
-        self.typeressource = sontype
+    def chasser_ramasser(self,objetcible,sontype,actiontype):
+        self.cible=objetcible
+        self.typeressource=sontype
         self.position_visee = [self.cible.x, self.cible.y]
-        self.actioncourante = actiontype
+        self.actioncourante=actiontype
 
     def retour_batiment_mere(self):
         reponse = self.bouger()
@@ -655,50 +692,52 @@ class Ouvrier(Perso):
                 else:
                     self.parent.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
-                if self.cible.valeur < 1:
+                if self.cible.valeur<1:
                     rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
                     self.cibler(rep)
                 if self.cible:
                     self.cibler(self.cible)
-                    if self.cible.montype == "daim":
-                        self.actioncourante = "ciblerproie"
+                    if self.cible.montype=="daim":
+                        self.actioncourante= "ciblerproie"
                     else:
-                        self.actioncourante = "ciblerressource"
+                        self.actioncourante="ciblerressource"
                 else:
                     self.actioncourante = None
         else:
             pass
 
     def cibler_ressource(self):
-        reponse = self.bouger()
+        reponse=self.bouger()
         if reponse == "rendu":
-            self.actioncourante = "ramasserressource"
+            self.actioncourante="ramasserressource"
 
     def cibler_site_construction(self):
-        reponse = self.bouger()
+        reponse=self.bouger()
         if reponse == "rendu":
-            self.actioncourante = "construirebatiment"
+
+            self.actioncourante="construirebatiment"
+
 
     def cibler_proie(self):
         self.position_visee = [self.cible.x, self.cible.y]
-        reponse = self.bouger()
+        reponse=self.bouger()
         if reponse == "rendu":
             if self.typeressource == "daim" or self.typeressource == "eau":
-                self.actioncourante = "ramasserressource"
-        elif reponse <= self.champchasse and self.cible.etat == "vivant":
+                self.actioncourante="ramasserressource"
+        elif reponse <= self.champchasse and self.cible.etat=="vivant":
             self.actioncourante = "validerjavelot"
 
     def valider_javelot(self):
         self.lancer_javelot(self.cible)
         for i in self.javelots:
-            i.bouger()
+                i.bouger()
 
     def ramasser(self):
         self.ramassage += 1
         self.cible.valeur -= 1
-        if self.cible.valeur == 0 or self.ramassage == self.quota:
+        if self.cible.valeur == 0  or self.ramassage == self.quota:
             self.actioncourante = "retourbatimentmere"
-            self.position_visee = [self.batimentmere.x, self.batimentmere.y]
+            self.position_visee=[self.batimentmere.x, self.batimentmere.y]
             if self.cible.valeur == 0:
                 self.parent.avertir_ressource_mort(self.typeressource, self.cible)
                 # rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
@@ -711,25 +750,25 @@ class Ouvrier(Perso):
 
     def construire_batiment(self):
         self.cible.decremente_delai()
-        if self.cible.delai < 1:
+        if self.cible.delai<1:
             batiment = self.parent.parent.classesbatiments[self.cible.sorte](self, self.cible.id, self.parent.couleur,
-                                                                             self.cible.x, self.cible.y,
-                                                                             self.cible.sorte)
+                                                                       self.cible.x, self.cible.y, self.cible.sorte)
             self.parent.batiments[self.cible.sorte][self.cible.id] = batiment
 
             sitecons = self.parent.batiments['siteconstruction'].pop(batiment.id)
             print(sitecons)
 
             self.parent.installer_batiment(batiment)
-            if self.cible.sorte == "maison":
-                self.batimentmere = batiment
-            self.cible = None
-            self.actioncourante = None
+            if self.cible.sorte=="maison":
+                self.batimentmere=batiment
+            self.cible=None
+            self.actioncourante=None
 
-    def construire_site_construction(self, site_construction):
+
+    def construire_site_construction(self,site_construction):
         self.cibler(site_construction)
-        self.actioncourante = "ciblersiteconstruction"
-        # pass #monte le batiment par etapes on pourrait montrer l'anavancement de la construciton
+        self.actioncourante="ciblersiteconstruction"
+        #pass #monte le batiment par etapes on pourrait montrer l'anavancement de la construciton
 
     def jouer_prochain_coup(self):
         if self.actioncourante:
@@ -742,7 +781,7 @@ class Ouvrier(Perso):
 
     def chercher_nouvelle_ressource(self, typ, idreg):
         print("Je cherche nouvelle ressource")
-        if typ != "baie" and typ != "daim":
+        if typ != "baie" and  typ != "daim":
             reg = self.parent.parent.regions[typ]
             if idreg in reg:
                 regspec = self.parent.parent.regions[typ][idreg]
@@ -758,15 +797,18 @@ class Ouvrier(Perso):
                             return newress
                 return None
         else:
-            nb = len(self.parent.parent.biotopes[typ])
+            nb=len(self.parent.parent.biotopes[typ])
             for i in range(nb):
-                rep = random.choice(list(self.parent.parent.biotopes[typ].keys()))
-                obj = self.parent.parent.biotopes[typ][rep]
+                rep=random.choice(list(self.parent.parent.biotopes[typ].keys()))
+                obj=self.parent.parent.biotopes[typ][rep]
                 if obj != self.cible:
                     distance = Helper.calcDistance(self.x, self.y, obj.x, obj.y)
-                    if distance <= self.champvision:
+                    if distance<=self.champvision:
                         return obj
             return None
+
+
+
 
     # def deplacer(self,pos):
     #     self.position_visee = pos
@@ -794,6 +836,7 @@ class Ouvrier(Perso):
     #         else:
     #             return dist
 
+
     # def test_etat_du_sol(self,x1, y1):
     #     ######## SINON TROUVER VOIE DE CONTOURNEMENT
     #     # ici oncalcule sur quelle case on circule
@@ -818,7 +861,7 @@ class Ouvrier(Perso):
                 self.actioncourante = "retourbatimentmere"
             else:
                 self.actioncourante = "retourbatimentmere"
-                self.position_visee = [self.batimentmere.x, self.batimentmere.y]
+                self.position_visee=[self.batimentmere.x,self.batimentmere.y]
 
     ## PAS UTILISER POUR LE MOMENT          
     def scanner_alentour(self):
@@ -922,18 +965,16 @@ class Joueur():
                         "abandonner": self.abandonner}
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
-
     def get_stats(self):
-        total = 0
+        total=0
         for i in self.persos:
-            total += len(self.persos[i])
+            total+= len(self.persos[i])
         for i in self.batiments:
-            total += len(self.batiments[i])
+            total+= len(self.batiments[i])
         return total
 
     def annoncer_mort(self, perso):
         self.persos[perso.montype].pop(perso.id)
-
     def annoncer_mort_batiment(self, perso):
         self.batiments[perso.montype].pop(perso.id)
 
@@ -972,7 +1013,7 @@ class Joueur():
                 if j == "ouvrier":
                     if i in self.persos[j]:
                         self.persos[j][i].chasser_ramasser(self.parent.biotopes[typeress][idress],
-                                                           typeress, "ciblerproie")
+                                                           typeress,"ciblerproie")
 
     def ramasser_ressource(self, param):
         typeress, idress, troupe = param
@@ -981,7 +1022,7 @@ class Joueur():
                 if j == "ouvrier":
                     if i in self.persos[j]:
                         self.persos[j][i].chasser_ramasser(self.parent.biotopes[typeress][idress],
-                                                           typeress, "ciblerressource")
+                                                           typeress,"ciblerressource")
 
     def deplacer(self, param):
         pos, troupe = param
@@ -1006,11 +1047,11 @@ class Joueur():
         self.batiments["siteconstruction"][id] = siteconstruction
         for i in perso:
             self.persos["ouvrier"][i].construire_site_construction(siteconstruction)
-            # self.persos["ouvrier"][i].construire_batiment(siteconstruction)
+            #self.persos["ouvrier"][i].construire_batiment(siteconstruction)
 
     def installer_batiment(self, batiment):
         # self.batiments['siteconstruction'].pop(batiment.id)
-        self.parent.installer_batiment(self.nom, batiment)
+        self.parent.installer_batiment(self.nom,batiment)
 
     # transmet à tous ses persos de jouer
     def jouer_prochain_coup(self):
@@ -1044,29 +1085,64 @@ class Partie():
                           "arbre": 20,
                           "roche": 20,
                           "aureus": 2,
-                          "delai": 50},
+                          "delai":50},
                "abri": {"nourriture": 10,
                         "arbre": 10,
                         "roche": 5,
                         "aureus": 1,
-                        "delai": 30},
+                          "delai":30},
                "caserne": {"nourriture": 10,
                            "arbre": 10,
                            "roche": 5,
                            "aureus": 1,
-                           "delai": 60},
+                          "delai":60},
                "usineballiste": {"nourriture": 10,
                                  "arbre": 10,
                                  "roche": 5,
                                  "aureus": 1,
-                                 "delai": 80}
+                          "delai":80}
 
                }
 
+    recettes = {"metaux": {"lingotcuivre":    {"cuivre": 1,
+                                               "charbon": 2},
+                            "lingotetain":    {"etain": 1,
+                                               "charbon": 2},
+                            "lingotfer":      {"fer": 1,
+                                               "charbon": 2},
+                            "lingotbronze":   {"lingotcuivre": 2,
+                                               "lingotetain": 1},
+                            "lingotargent":   {"argent": 1,
+                                               "charbon": 2},
+                            "lingotnoir":     {"metalnoir": 1,
+                                               "charbon": 2}
+                           },
+                "armures": {"armuredecuir":   {"cuir": 6},
+                            "armuredetroll":  {"cuirdetroll": 15,
+                                               "fragmentdos": 6},
+                            "armuredebronze": {"lingotbronze": 15,
+                                               "cuir": 3},
+                            "armuredacier":   {"lingotfer": 15,
+                                               "charbon": 15},
+                            "armuredargent":  {"lingotargent": 15,
+                                               "fourruredeloup": 3},
+                            "armuredelin":    {"lin": 30,
+                                               "lingotnoir": 6}
+                            },
+                "armes":   {"baton":          {"bois": 10},
+                            "epieudefer":     {"lingotbronze": 10,
+                                               "bois": 5},
+                            "massuedefer":    {"lingotfer": 10,
+                                               "boisdebase": 5},
+                            "epeedargent":    {"lingotargent": 10,
+                                               "boisfin": 5},
+                            "hachedaciernoir":{"lingot"}
+                            }
+                }
     def __init__(self, parent, mondict):
         self.parent = parent
         self.actionsafaire = {}
-        self.debut = int(time.time())
+        self.debut=int(time.time())
         self.aireX = 4000
         self.aireY = 4000
         # Decoupage de la surface
@@ -1082,7 +1158,7 @@ class Partie():
         self.classesbatiments = {"maison": Maison,
                                  "caserne": Caserne,
                                  "abri": Abri,
-                                 "usineballiste": CentreCommun}
+                                 "usineballiste": Usineballiste}
         self.classespersos = {"ouvrier": Ouvrier,
                               "soldat": Soldat,
                               "archer": Archer,
@@ -1099,7 +1175,8 @@ class Partie():
                          "aureus": {},
                          "eau": {},
                          "marais": {},
-                         "baie": {}}
+                         "baie": {},
+                         }
 
         self.regions = {}
         self.regionstypes = [["arbre", 50, 20, 5, "forest green"],
@@ -1112,15 +1189,15 @@ class Partie():
         self.creer_population(mondict)
 
     def calc_stats(self):
-        total = 0
+        total=0
         for i in self.joueurs:
-            total += self.joueurs[i].get_stats()
+            total+=self.joueurs[i].get_stats()
         for i in self.biotopes:
-            total += len(self.biotopes[i])
+            total+=len(self.biotopes[i])
         self.montrer_msg_general(str(total))
 
     def trouver_valeurs(self):
-        vals = Partie.valeurs
+        vals=Partie.valeurs
         return vals
 
     def montrer_msg_general(self, txt):
@@ -1147,6 +1224,7 @@ class Partie():
                 self.biotopes["daim"][id] = mondaim
                 self.listebiotopes.append(mondaim)
                 n -= 1
+
         self.creer_biotope("arbre", "arbre", Arbre)
         self.creer_biotope("roche", "roche", Roche)
         self.creer_biotope("eau", "eau", Eau)
@@ -1159,7 +1237,7 @@ class Partie():
         for cleregion in self.regions[region].keys():
             listecases = self.regions[region][cleregion].dicocases
             # for listecase in self.regions[region]:
-            # nressource = random.randrange(int(len(listecases) / 3)) + int((len(listecases) / 5))
+            #nressource = random.randrange(int(len(listecases) / 3)) + int((len(listecases) / 5))
             nressource = int((random.randrange(len(listecases)) / 3) + 1)
             while nressource:
                 cases = list(listecases.keys())
@@ -1234,21 +1312,29 @@ class Partie():
 
     def creer_population(self, mondict):
         couleurs = [["O", "orange"], ["R", "red"], ["B", "blue"], ["J", "yellow"], ["V", "lightgreen"]]
-        xQuadrants = int(self.aireX) / 6
-        yQuadrants = int(self.aireY) / 6
-        quadrants = [[xQuadrants, yQuadrants], [int(self.aireX - xQuadrants), yQuadrants],
-                     [xQuadrants, int(self.aireY - yQuadrants)],
-                     [int(self.aireX - xQuadrants), int(self.aireY - yQuadrants)]]
-        tableauOrdreMap = [0, 1, 2, 3]
-        b = 0
+        quadrants = [[[0, 0], [int(self.aireX / 2), int(self.aireY / 2)]],
+                     [[int(self.aireX / 2), 0], [self.aireX, int(self.aireY / 2)]],
+                     [[0, int(self.aireY / 2)], [int(self.aireX / 2), self.aireY]],
+                     [[int(self.aireX / 2), int(self.aireY / 2)], [self.aireX, self.aireY]],
+                     [[int(self.aireX / 2), int(self.aireY / 2)], [self.aireX, self.aireY]]]
+        nquad = 5
+        bord = 50
         for i in mondict:
-            j = random.choice(tableauOrdreMap)
-            tableauOrdreMap.remove(j)
             id = get_prochain_id()
             coul = couleurs.pop()
-            x = quadrants[j][b]
-            y = quadrants[j][b + 1]
-            self.joueurs[i] = Joueur(self, id, i, coul, x, y)
+            # placer les joueurs dans des quandrants differents
+            choixquad = random.choice(range(nquad))
+            nquad -= 1
+            quad = quadrants.pop(choixquad)
+
+            n = 1
+            while n:
+                x = random.randrange(quad[0][0] + bord, quad[1][0] - bord)
+                y = random.randrange(quad[0][1] + bord, quad[1][1] - bord)
+                case = self.trouver_case(x, y)
+                if case.montype == "plaine":
+                    self.joueurs[i] = Joueur(self, id, i, coul, x, y)
+                    n = 0
 
     def deplacer(self):
         for i in self.joueurs:
@@ -1282,9 +1368,9 @@ class Partie():
                 self.msggeneral = ""
                 self.msggeneralcompteur = 0
         else:
-            t = int(time.time())
-            msg = "cadre: " + str(cadrecourant) + " - secs: " + str(t - self.debut)
-            self.msggeneral = msg
+            t=int(time.time())
+            msg="cadre: "+str(cadrecourant)+" - secs: "+str(t-self.debut)
+            self.msggeneral=msg
 
         self.faire_action_partie()
 
@@ -1437,7 +1523,7 @@ class Partie():
     def ajouter_actions_a_faire(self, actionsrecues):
         for i in actionsrecues:
             cadrecle = i[0]
-            if (self.parent.cadrejeu - 1) > int(cadrecle):
+            if (self.parent.cadrejeu-1)> int(cadrecle):
                 print("PEUX PASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
             action = ast.literal_eval(i[1])
 
