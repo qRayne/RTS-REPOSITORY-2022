@@ -130,9 +130,9 @@ class Maison(Batiment):
 
 # Création de la classe Forge qui est une sous classe de Batiment
 class Forge(Batiment):
-    def __init__(self, parent, id, x, y, montype):
+    def __init__(self, parent, id,couleur,x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
-        self.image = {}
+        self.image = couleur[0] + "_" + montype
         self.montype = montype
         self.hp = 75
         self.defense = 5
@@ -793,8 +793,9 @@ class Ouvrier(Perso):
     def construire_batiment(self):
         self.cible.decremente_delai()
         if self.cible.delai<1:
-            batiment = self.parent.parent.classesbatiments[self.cible.sorte](self, self.cible.id, self.parent.couleur,
+            batiment = self.parent.parent.classesbatiments[self.cible.sorte](self,self.cible.id, self.parent.couleur,
                                                                        self.cible.x, self.cible.y, self.cible.sorte)
+
             self.parent.batiments[self.cible.sorte][self.cible.id] = batiment
 
             sitecons = self.parent.batiments['siteconstruction'].pop(batiment.id)
