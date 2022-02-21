@@ -46,6 +46,7 @@ class Vue():
         self.images=chargerimages()
         self.gifs=chargergifs()
 
+        self.cadremaisonguiactif = False
 
 ####### INTERFACES GRAPHIQUES
     def changer_cadre(self,nomcadre: str):
@@ -225,6 +226,9 @@ class Vue():
         self.btnaide.pack(side=RIGHT)
         self.btnchat.pack(side=RIGHT)
 
+        self.btnmaisongui = Button(self.cadrejeuinfo, text = "Craft", command = lambda: self.creer_maison_gui())
+        self.btnmaisongui.pack(side=RIGHT)
+
         self.cadrejeuinfo.grid(row=0,column=0,sticky=E+W,columnspan=2)
 
     def creer_cadre_jeu_action(self):
@@ -329,6 +333,18 @@ class Vue():
         self.joueurs.pack(expand=1,fill=X)
         self.entreechat.pack(expand=1,fill=X)
         self.cadreparler.pack(expand=1,fill=X)
+
+    ### cadre interface de maison
+    def creer_maison_gui(self):
+        self.cadremaisongui = Frame(self.canevas, bd = 2, bg = "blue", width = 500, height = 450)
+
+        if self.cadremaisonguiactif:
+            self.cadremaisongui.pack_forget()
+            self.cadremaisonguiactif = False
+        else:
+            self.cadremaisongui.pack()
+            self.cadremaisonguiactif = True
+
 
 ##### FONCTIONS DU SPLASH #########################################################################
     def creer_partie(self):
