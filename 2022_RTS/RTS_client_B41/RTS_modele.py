@@ -134,6 +134,18 @@ class Forge(Batiment):
     # Création des 3 méthodes pour la construction de chaque type d'item
     def construireArmes(self):
         pass
+        # nested if pour voir quel arme le joueur veut constuire
+        # if self.armes.keys() == "baton":
+        #     pass
+        # elif self.armes.keys() == "epieu":
+        #     pass
+        # elif self.armes.keys() == "masse":
+        #     pass
+        # elif self.armes.keys() == "epee":
+        #     pass
+        # else:
+        #     pass
+
 
     def construireArmures(self):
         pass
@@ -953,7 +965,8 @@ class Joueur():
                           "abri": {},
                           "caserne": {},
                           "usineballiste": {},
-                          "siteconstruction": {}}
+                          "siteconstruction": {},
+                          "forge": {}}
 
         self.actions = {"creerperso": self.creer_perso,
                         "deplacer": self.deplacer,
@@ -1100,8 +1113,12 @@ class Partie():
                                  "arbre": 10,
                                  "roche": 5,
                                  "aureus": 1,
-                          "delai":80}
-
+                          "delai":80},
+               "forge" : {"nourriture":10,
+                          "arbre":30,
+                          "roche":10,
+                          "aureus":1,
+                          "delai":30}
                }
 
     recettes = {"metaux": {"lingotcuivre":    {"cuivre": 1,
@@ -1158,7 +1175,8 @@ class Partie():
         self.classesbatiments = {"maison": Maison,
                                  "caserne": Caserne,
                                  "abri": Abri,
-                                 "usineballiste": Usineballiste}
+                                 "usineballiste": Usineballiste,
+                                 "forge":Forge}
         self.classespersos = {"ouvrier": Ouvrier,
                               "soldat": Soldat,
                               "archer": Archer,

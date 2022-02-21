@@ -6,7 +6,7 @@
 from tkinter import PhotoImage
 # toutes les images devraient �tre ins�r�es ici
 
-import os,os.path
+import os, os.path
 
 
 def chargerimages2():
@@ -69,6 +69,7 @@ def chargerimages2():
         'B_ouvrierG': PhotoImage(file='images/bleu/B_ouvrierG.png'),
         'B_soldatD': PhotoImage(file='images/bleu/B_soldatD.png'),
         'B_soldatG': PhotoImage(file='images/bleu/B_soldatG.png'),
+        'B_forge': PhotoImage(file='images/bleu/B_forge.png'),
 
         'O_abri': PhotoImage(file='images/orange/O_abri.png'),
         'O_usineballiste': PhotoImage(file='images/orange/O_usineballiste.png'),
@@ -88,6 +89,7 @@ def chargerimages2():
         'O_ouvrierG': PhotoImage(file='images/orange/O_ouvrierG.png'),
         'O_soldatD': PhotoImage(file='images/orange/O_soldatD.png'),
         'O_soldatG': PhotoImage(file='images/orange/O_soldatG.png'),
+        'O_forge': PhotoImage(file='images/orange/O_forge.png'),
 
         'gazonfond': PhotoImage(file='images/divers/gazonfond.png'),
         'quaiD': PhotoImage(file='images/divers/quaiD.png'),
@@ -127,6 +129,7 @@ def chargerimages2():
         'J_ouvrierG': PhotoImage(file='images/jaune/J_ouvrierG.png'),
         'J_soldatD': PhotoImage(file='images/jaune/J_soldatD.png'),
         'J_soldatG': PhotoImage(file='images/jaune/J_soldatG.png'),
+        'J_forge': PhotoImage(file='images/jaune/J_forge.png'),
         'marais1': PhotoImage(file='images/marais/marais1.png'),
         'marais2': PhotoImage(file='images/marais/marais2.png'),
         'marais3': PhotoImage(file='images/marais/marais3.png'),
@@ -157,6 +160,7 @@ def chargerimages2():
         'R_ouvrierG': PhotoImage(file='images/rouge/R_ouvrierG.png'),
         'R_soldatD': PhotoImage(file='images/rouge/R_soldatD.png'),
         'R_soldatG': PhotoImage(file='images/rouge/R_soldatG.png'),
+        'R_forge': PhotoImage(file='images/rouge/R_forge.png'),
         'V_abri': PhotoImage(file='images/vert/V_abri.png'),
         'V_usineballiste': PhotoImage(file='images/vert/V_usineballiste.png'),
         'V_ballistaDH': PhotoImage(file='images/vert/V_ballistaDH.png'),
@@ -174,24 +178,28 @@ def chargerimages2():
         'V_ouvrierD': PhotoImage(file='images/vert/V_ouvrierD.png'),
         'V_ouvrierG': PhotoImage(file='images/vert/V_ouvrierG.png'),
         'V_soldatD': PhotoImage(file='images/vert/V_soldatD.png'),
-        'V_soldatG': PhotoImage(file='images/vert/V_soldatG.png')}
+        'V_soldatG': PhotoImage(file='images/vert/V_soldatG.png'),
+        'V_forge': PhotoImage(file='images/vert/V_forge.png')}
     return images
 
-images={}
+
+images = {}
+
 
 def chargerimages(chemin=None):
-    if chemin==None:
-        chemin=os.getcwd()
-        chemin=chemin+"\\images"
+    if chemin == None:
+        chemin = os.getcwd()
+        chemin = chemin + "\\images"
     for i in os.listdir(chemin):
-        che=chemin+"\\"+i
+        che = chemin + "\\" + i
         if os.path.isdir(che):
             chargerimages(che)
         else:
-            nom, ext=os.path.splitext(os.path.basename(i))
-            if ".png"==ext:
-                    images[nom]=PhotoImage(file=che) #.replace("\\","/")
+            nom, ext = os.path.splitext(os.path.basename(i))
+            if ".png" == ext:
+                images[nom] = PhotoImage(file=che)  # .replace("\\","/")
     return images
+
 
 def chargergifs():
     gifs = {}
@@ -212,7 +220,7 @@ def chargergifs():
 
 
 if __name__ == '__main__':
-    images=chargerimages()
+    images = chargerimages()
 
     for i in images.keys():
-            print(i,images[i])
+        print(i, images[i])
