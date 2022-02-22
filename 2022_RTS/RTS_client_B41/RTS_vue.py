@@ -330,6 +330,13 @@ class Vue():
         self.entreechat.pack(expand=1,fill=X)
         self.cadreparler.pack(expand=1,fill=X)
 
+
+    ## cadre qui affiche le menu de crafting
+    def creercrafting(self):
+        self.cadrecraft = Frame(self.canevas, height=300, width=300)
+
+
+
 ##### FONCTIONS DU SPLASH #########################################################################
     def creer_partie(self):
         nom=self.nomsplash.get()
@@ -737,6 +744,8 @@ class Action():
         self.widgetsactifs=[]
         self.chaton=0
         self.aideon=0
+        self.craftwindow=0
+        self.craftwindowtoggle=0
 
     def attaquer(self):
         if self.persochoisi:
@@ -815,6 +824,18 @@ class Action():
             self.parent.canevas.delete(self.aideon)
             self.aideon=0
 
+    def crafter(self):
+        if self.craftwindowtoggle == 0:
+            x1, x2 = self.parent.scrollH.get()
+            x3 = self.parent.modele.aireX * x2
+            y1, y2 = self.parent.scrollV.get()
+            y3 = self.parent.modele.aireY * y1
+            self.craftwindow = self.parent.canevas.create_window(x3, y3, window=self.parent.cadrecraft, anchor= N + E)
+            self.craftwindowtoggle = 1
+
+        else:
+            self.parent.canevas.delete(self.craftwindow)
+            self.craftwindowtoggle = 0
 
     ### FIN des methodes pour lancer la partie
 
