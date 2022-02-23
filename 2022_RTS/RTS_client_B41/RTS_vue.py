@@ -222,8 +222,10 @@ class Vue():
 
         self.btnchat=Button(self.cadrejeuinfo,text="Chat",command=self.action.chatter)
         self.btnaide=Button(self.cadrejeuinfo,text="Aide",command=self.action.aider)
+        self.btncraft=Button(self.cadrejeuinfo,text="Craft",command=self.action.crafter)
         self.btnaide.pack(side=RIGHT)
         self.btnchat.pack(side=RIGHT)
+        self.btncraft.pack(side=RIGHT)
 
         self.cadrejeuinfo.grid(row=0,column=0,sticky=E+W,columnspan=2)
 
@@ -395,6 +397,7 @@ class Vue():
         self.creer_aide()
         self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","abri","usineballiste","forge"])
         self.creer_chatter()
+        self.creercrafting()
         # on affiche les maisons, point de depart des divers joueurs
         self.afficher_depart()
         self.root.update()
