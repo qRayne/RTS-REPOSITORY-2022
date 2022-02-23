@@ -336,6 +336,10 @@ class Vue():
     ## cadre qui affiche le menu de crafting
     def creercrafting(self):
         self.cadrecraft = Frame(self.canevas, height=300, width=300)
+        self.btninventory = Button(self.cadrecraft, text="Inventaire")
+        self.btncraft = Button(self.cadrecraft, text="Crafting")
+        self.btninventory.grid()
+        self.btncraft.grid()
 
 
 
