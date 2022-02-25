@@ -274,6 +274,9 @@ class Vue():
         self.canevas.tag_bind("baie", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
+        self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
+
+
 
 
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
@@ -399,7 +402,7 @@ class Vue():
         coul=self.modele.joueurs[self.parent.monnom].couleur
         self.cadrejeuinfo.config(bg=coul[1])
         self.creer_aide()
-        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","abri","usineballiste","forge"])
+        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","abri","usineballiste","forge", "fournaise"])
         self.creer_chatter()
         self.creercrafting()
         # on affiche les maisons, point de depart des divers joueurs
@@ -732,6 +735,7 @@ class Vue():
                 if "usineballiste" in mestags:
                     pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
                     action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
+
                 self.parent.actionsrequises.append(action)
         ###### les ATTAQUES SUR BATIMENT INACTIFS
         # elif self.action.persochoisi:
