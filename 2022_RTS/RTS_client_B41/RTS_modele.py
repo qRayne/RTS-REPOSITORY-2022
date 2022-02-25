@@ -125,7 +125,7 @@ class Maison(Batiment):
                              "hydromelresisfroid": 0,
                              "hydromelvie": 0
                              }
-        self.recettespossible = []
+        self.recettespossible = ["lingotcuivre", "lingotetain"]
 
 
 # Création de la classe Forge qui est une sous classe de Batiment

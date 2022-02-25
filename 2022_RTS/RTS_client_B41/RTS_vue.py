@@ -340,10 +340,25 @@ class Vue():
     def creercrafting(self):
         self.cadrecraft = Frame(self.canevas, height=300, width=300)
         self.btninventory = Button(self.cadrecraft, text="Inventaire")
-        self.btncraft = Button(self.cadrecraft, text="Crafting")
+        self.btncraft = Button(self.cadrecraft, text="Crafting", command=self.subcrafting)
         self.btninventory.grid()
         self.btncraft.grid()
 
+    def subcrafting(self):
+        self.cadresubcraft = Frame(self.cadrecraft)
+        self.craftinglabels = []
+        for j in self.modele.joueurs.keys():
+            if j==self.parent.monnom:
+                clemaison = self.modele.joueurs[j].batiments["maison"].keys()
+                cle = list(clemaison)[0]
+                maison= self.modele.joueurs[j].batiments["maison"][cle]
+
+                for k in maison.recettespossible:
+                    tempLabel = Label(self.subcrafting(), text=k)
+                    self.craftinglabels.push(tempLabel)
+
+        for label in self.craftinglabels:
+            label.pack()
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
@@ -847,6 +862,8 @@ class Action():
         else:
             self.parent.canevas.delete(self.craftwindow)
             self.craftwindowtoggle = 0
+
+
 
     ### FIN des methodes pour lancer la partie
 
