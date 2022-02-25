@@ -70,6 +70,7 @@ def chargerimages2():
         'B_soldatD': PhotoImage(file='images/bleu/B_soldatD.png'),
         'B_soldatG': PhotoImage(file='images/bleu/B_soldatG.png'),
         'B_forge': PhotoImage(file='images/bleu/B_forge.png'),
+        'B_fournaise': PhotoImage(file='images/bleu/B_fournaise.png'),
 
         'O_abri': PhotoImage(file='images/orange/O_abri.png'),
         'O_usineballiste': PhotoImage(file='images/orange/O_usineballiste.png'),
@@ -90,6 +91,7 @@ def chargerimages2():
         'O_soldatD': PhotoImage(file='images/orange/O_soldatD.png'),
         'O_soldatG': PhotoImage(file='images/orange/O_soldatG.png'),
         'O_forge': PhotoImage(file='images/orange/O_forge.png'),
+        'O_fournaise': PhotoImage(file='images/orange/O_fournaise.png'),
 
         'gazonfond': PhotoImage(file='images/divers/gazonfond.png'),
         'quaiD': PhotoImage(file='images/divers/quaiD.png'),
@@ -130,6 +132,7 @@ def chargerimages2():
         'J_soldatD': PhotoImage(file='images/jaune/J_soldatD.png'),
         'J_soldatG': PhotoImage(file='images/jaune/J_soldatG.png'),
         'J_forge': PhotoImage(file='images/jaune/J_forge.png'),
+        'J_fournaise': PhotoImage(file='images/jaune/J_fournaise.png'),
         'marais1': PhotoImage(file='images/marais/marais1.png'),
         'marais2': PhotoImage(file='images/marais/marais2.png'),
         'marais3': PhotoImage(file='images/marais/marais3.png'),
@@ -161,6 +164,7 @@ def chargerimages2():
         'R_soldatD': PhotoImage(file='images/rouge/R_soldatD.png'),
         'R_soldatG': PhotoImage(file='images/rouge/R_soldatG.png'),
         'R_forge': PhotoImage(file='images/rouge/R_forge.png'),
+        'R_fournaise': PhotoImage(file='images/rouge/R_fournaise.png'),
         'V_abri': PhotoImage(file='images/vert/V_abri.png'),
         'V_usineballiste': PhotoImage(file='images/vert/V_usineballiste.png'),
         'V_ballistaDH': PhotoImage(file='images/vert/V_ballistaDH.png'),
@@ -179,7 +183,8 @@ def chargerimages2():
         'V_ouvrierG': PhotoImage(file='images/vert/V_ouvrierG.png'),
         'V_soldatD': PhotoImage(file='images/vert/V_soldatD.png'),
         'V_soldatG': PhotoImage(file='images/vert/V_soldatG.png'),
-        'V_forge': PhotoImage(file='images/vert/V_forge.png')}
+        'V_forge': PhotoImage(file='images/vert/V_forge.png'),
+        'V_fournaise': PhotoImage(file='images/vert/V_fournaise')}
     return images
 
 

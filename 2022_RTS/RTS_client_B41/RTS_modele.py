@@ -130,9 +130,9 @@ class Maison(Batiment):
 
 # Création de la classe Forge qui est une sous classe de Batiment
 class Forge(Batiment):
-    def __init__(self, parent, id, x, y, montype):
+    def __init__(self, parent, id,couleur,x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
-        self.image = {}
+        self.image = couleur[0] + "_" + montype
         self.montype = montype
         self.hp = 75
         self.defense = 5
@@ -184,6 +184,21 @@ class Forge(Batiment):
     def construireOutils(self):
         pass
 
+
+class Fournaise(Batiment):
+    def __init__(self, parent, id, couleur, x, y, montype):
+        Batiment.__init__(self, parent, id, x, y)
+        self.image = couleur[0] + "_" + montype
+        self.montype = montype
+        self.maxperso = 10
+        self.perso = 0
+        self.arret = False
+        self.prixConstruction = {"lingot": 6}
+
+        self.inventaire = {"bois": 0}
+
+    def convertireBoisCharbon(self):
+        pass
 
 
 class Abri():
@@ -405,6 +420,9 @@ class Arbre(Biotope):
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
         self.valeur = 30
+
+
+
 
 class Fleche():
     def __init__(self, parent, id, proie):
@@ -793,8 +811,9 @@ class Ouvrier(Perso):
     def construire_batiment(self):
         self.cible.decremente_delai()
         if self.cible.delai<1:
-            batiment = self.parent.parent.classesbatiments[self.cible.sorte](self, self.cible.id, self.parent.couleur,
+            batiment = self.parent.parent.classesbatiments[self.cible.sorte](self,self.cible.id, self.parent.couleur,
                                                                        self.cible.x, self.cible.y, self.cible.sorte)
+
             self.parent.batiments[self.cible.sorte][self.cible.id] = batiment
 
             sitecons = self.parent.batiments['siteconstruction'].pop(batiment.id)
@@ -905,7 +924,7 @@ class Ouvrier(Perso):
                 self.actioncourante = "retourbatimentmere"
                 self.position_visee=[self.batimentmere.x,self.batimentmere.y]
 
-    ## PAS UTILISER POUR LE MOMENT          
+    ## PAS UTILISER POUR LE MOMENT
     def scanner_alentour(self):
         dicojoueurs = self.parent.parent.joueurs
         for i in dicojoueurs.values():
@@ -996,7 +1015,8 @@ class Joueur():
                           "caserne": {},
                           "usineballiste": {},
                           "siteconstruction": {},
-                          "forge": {}}
+                          "forge": {},
+                          "fournaise": {}}
 
         self.actions = {"creerperso": self.creer_perso,
                         "deplacer": self.deplacer,
@@ -1148,7 +1168,13 @@ class Partie():
                           "arbre":30,
                           "roche":10,
                           "aureus":1,
-                          "delai":30}
+                          "delai":30},
+
+               "fournaise": {"nourriture": 10,
+                             "arbre": 10,
+                             "roche": 5,
+                             "aureus": 1,
+                             "delai": 80}
                }
 
     recettes = {"metaux": {"lingotcuivre":     {"cuivre": 1,
@@ -1265,7 +1291,8 @@ class Partie():
                                  "caserne": Caserne,
                                  "abri": Abri,
                                  "usineballiste": Usineballiste,
-                                 "forge":Forge}
+                                 "forge":Forge,
+                                 "fournaise": Fournaise}
         self.classespersos = {"ouvrier": Ouvrier,
                               "soldat": Soldat,
                               "archer": Archer,

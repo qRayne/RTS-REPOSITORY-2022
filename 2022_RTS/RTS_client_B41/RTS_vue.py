@@ -46,7 +46,6 @@ class Vue():
         self.images=chargerimages()
         self.gifs=chargergifs()
 
-        self.cadremaisonguiactif = False
 
 ####### INTERFACES GRAPHIQUES
     def changer_cadre(self,nomcadre: str):
@@ -223,11 +222,10 @@ class Vue():
 
         self.btnchat=Button(self.cadrejeuinfo,text="Chat",command=self.action.chatter)
         self.btnaide=Button(self.cadrejeuinfo,text="Aide",command=self.action.aider)
+        self.btncraft=Button(self.cadrejeuinfo,text="Craft",command=self.action.crafter)
         self.btnaide.pack(side=RIGHT)
         self.btnchat.pack(side=RIGHT)
-
-        self.btnmaisongui = Button(self.cadrejeuinfo, text = "Craft", command = lambda: self.creer_maison_gui())
-        self.btnmaisongui.pack(side=RIGHT)
+        self.btncraft.pack(side=RIGHT)
 
         self.cadrejeuinfo.grid(row=0,column=0,sticky=E+W,columnspan=2)
 
@@ -276,6 +274,9 @@ class Vue():
         self.canevas.tag_bind("baie", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
+        self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
+
+
 
 
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
@@ -334,16 +335,15 @@ class Vue():
         self.entreechat.pack(expand=1,fill=X)
         self.cadreparler.pack(expand=1,fill=X)
 
-    ### cadre interface de maison
-    def creer_maison_gui(self):
-        self.cadremaisongui = Frame(self.canevas, bd = 2, bg = "blue", width = 500, height = 450)
 
-        if self.cadremaisonguiactif:
-            self.cadremaisongui.pack_forget()
-            self.cadremaisonguiactif = False
-        else:
-            self.cadremaisongui.pack()
-            self.cadremaisonguiactif = True
+    ## cadre qui affiche le menu de crafting
+    def creercrafting(self):
+        self.cadrecraft = Frame(self.canevas, height=300, width=300)
+        self.btninventory = Button(self.cadrecraft, text="Inventaire")
+        self.btncraft = Button(self.cadrecraft, text="Crafting")
+        self.btninventory.grid()
+        self.btncraft.grid()
+
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
@@ -402,8 +402,9 @@ class Vue():
         coul=self.modele.joueurs[self.parent.monnom].couleur
         self.cadrejeuinfo.config(bg=coul[1])
         self.creer_aide()
-        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","abri","usineballiste","forge"])
+        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","abri","usineballiste","forge", "fournaise"])
         self.creer_chatter()
+        self.creercrafting()
         # on affiche les maisons, point de depart des divers joueurs
         self.afficher_depart()
         self.root.update()
@@ -734,6 +735,7 @@ class Vue():
                 if "usineballiste" in mestags:
                     pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
                     action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
+
                 self.parent.actionsrequises.append(action)
         ###### les ATTAQUES SUR BATIMENT INACTIFS
         # elif self.action.persochoisi:
@@ -753,6 +755,8 @@ class Action():
         self.widgetsactifs=[]
         self.chaton=0
         self.aideon=0
+        self.craftwindow=0
+        self.craftwindowtoggle=0
 
     def attaquer(self):
         if self.persochoisi:
@@ -831,6 +835,18 @@ class Action():
             self.parent.canevas.delete(self.aideon)
             self.aideon=0
 
+    def crafter(self):
+        if self.craftwindowtoggle == 0:
+            x1, x2 = self.parent.scrollH.get()
+            x3 = self.parent.modele.aireX * x2
+            y1, y2 = self.parent.scrollV.get()
+            y3 = self.parent.modele.aireY * y1
+            self.craftwindow = self.parent.canevas.create_window(x3, y3, window=self.parent.cadrecraft, anchor= N + E)
+            self.craftwindowtoggle = 1
+
+        else:
+            self.parent.canevas.delete(self.craftwindow)
+            self.craftwindowtoggle = 0
 
     ### FIN des methodes pour lancer la partie
 
