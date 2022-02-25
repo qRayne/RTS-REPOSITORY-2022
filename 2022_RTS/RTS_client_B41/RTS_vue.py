@@ -347,7 +347,7 @@ class Vue():
         self.btncraft.grid()
 
     def subcrafting(self):
-        self.cadresubcraft = Frame(self.cadrecraft)
+        self.cadresubcraft = Frame(self.cadrecraft, height=250, width=250, bg="blue")
         self.craftinglabels = []
         for j in self.modele.joueurs.keys():
             if j==self.parent.monnom:
@@ -356,8 +356,8 @@ class Vue():
                 maison= self.modele.joueurs[j].batiments["maison"][cle]
 
                 for k in maison.recettespossible:
-                    tempLabel = Label(self.subcrafting(), text=k)
-                    self.craftinglabels.push(tempLabel)
+                    templabel = Label(self.cadresubcraft, text=k)
+                    self.craftinglabels.append(templabel)
 
         for label in self.craftinglabels:
             label.pack()
