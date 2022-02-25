@@ -199,6 +199,7 @@ class Vue():
         self.infohud={"Nourriture":None,
                       "Bois":None,
                       "Roche":None,
+                      "Cuivre": None,
                       "Aureus":None}
         # fonction interne uniquement pour reproduire chaque info de ressource
         def creer_champ_interne(listechamp):
@@ -271,6 +272,7 @@ class Vue():
         self.canevas.tag_bind("arbre", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("aureus", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("roche", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("cuivre", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("baie", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
@@ -437,7 +439,8 @@ class Vue():
                   "eau":"light blue",
                   "aureus":"tan",
                   "roche":"gray30",
-                  "marais":"orange"}
+                  "cuivre": "DarkOrange3",
+                  "marais":"seagreen"}
         for i,t in enumerate(self.modele.regions):
             if t!="plaine":
                 for j,c in enumerate(self.modele.regions[t]):
@@ -509,6 +512,7 @@ class Vue():
                 self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
                 self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["arbre"])
                 self.infohud["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
+                self.infohud["Cuivre"][0].set(self.modele.joueurs[j].ressources["cuivre"])
                 self.infohud["Aureus"][0].set(self.modele.joueurs[j].ressources["aureus"])
                 self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
@@ -702,7 +706,7 @@ class Vue():
         vals=self.parent.trouver_valeurs()
         ok=1
         for k,val in self.modele.joueurs[self.monnom].ressources.items():
-            if val<= vals[nomsorte][k]:
+            if val< vals[nomsorte][k]:
                 ok=0 # on indique qu'on a PAS les ressources
                 break
         if ok:

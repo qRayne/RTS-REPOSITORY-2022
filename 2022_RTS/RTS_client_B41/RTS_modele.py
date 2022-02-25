@@ -412,6 +412,15 @@ class Roche(Biotope):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
         self.valeur = 100
 
+class Cuivre(Biotope):
+    typeressource = ['cuivre1 grand',
+                     'cuivre1petit',
+                     'cuivre2grand',
+                     'cuivre2petit']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 100
 
 class Arbre(Biotope):
     typeressource = ['arbre0grand',
@@ -1005,7 +1014,8 @@ class Joueur():
         self.ressources = {"nourriture": 200,
                            "arbre": 200,
                            "roche": 200,
-                           "aureus": 200}
+                           "aureus": 200,
+                           "cuivre": 0}
         self.persos = {"ouvrier": {},
                        "soldat": {},
                        "archer": {},
@@ -1151,32 +1161,38 @@ class Partie():
     valeurs = {"maison": {"nourriture": 10,
                           "arbre": 20,
                           "roche": 20,
+                          "cuivre": 0,
                           "aureus": 2,
                           "delai":50},
                "abri": {"nourriture": 10,
                         "arbre": 10,
                         "roche": 5,
+                        "cuivre": 0,
                         "aureus": 1,
                           "delai":30},
                "caserne": {"nourriture": 10,
                            "arbre": 10,
                            "roche": 5,
+                           "cuivre": 0,
                            "aureus": 1,
                           "delai":60},
                "usineballiste": {"nourriture": 10,
                                  "arbre": 10,
                                  "roche": 5,
+                                 "cuivre": 0,
                                  "aureus": 1,
                           "delai":80},
                "forge" : {"nourriture":10,
                           "arbre":30,
                           "roche":10,
                           "aureus":1,
+                          "cuivre": 0,
                           "delai":30},
 
                "fournaise": {"nourriture": 10,
                              "arbre": 10,
                              "roche": 5,
+                             "cuivre": 0,
                              "aureus": 1,
                              "delai": 80}
                }
@@ -1310,6 +1326,7 @@ class Partie():
         self.biotopes = {"daim": {},
                          "arbre": {},
                          "roche": {},
+                         "cuivre": {},
                          "aureus": {},
                          "eau": {},
                          "marais": {},
@@ -1321,6 +1338,7 @@ class Partie():
                              ["eau", 10, 20, 12, "light blue"],
                              ["marais", 3, 8, 8, "DarkSeaGreen3"],
                              ["roche", 8, 3, 6, "gray60"],
+                             ["cuivre", 8, 3, 6, "DarkOrange3"],
                              ["aureus", 12, 3, 4, "gold2"], ]
         self.creer_regions()
         self.creer_biotopes()
@@ -1365,6 +1383,7 @@ class Partie():
 
         self.creer_biotope("arbre", "arbre", Arbre)
         self.creer_biotope("roche", "roche", Roche)
+        self.creer_biotope("cuivre", "cuivre", Cuivre)
         self.creer_biotope("eau", "eau", Eau)
         self.creer_biotope("marais", "marais", Marais)
         self.creer_biotope("aureus", "aureus", Aureus)
