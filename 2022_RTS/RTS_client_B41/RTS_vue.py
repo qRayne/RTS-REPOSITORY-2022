@@ -431,7 +431,7 @@ class Vue():
                                                   #tags=("mobile","",i.id,)
 
         self.modele.listebiotopes=[]
-        minitaillecase=int(self.tailleminicarte/self.modele.taillecarte)
+        minitaillecase=self.tailleminicarte/self.modele.taillecarte
         couleurs={0:"",
                   "arbre":"light green",
                   "eau":"light blue",

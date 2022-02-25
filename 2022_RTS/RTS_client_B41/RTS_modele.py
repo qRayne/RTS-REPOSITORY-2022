@@ -258,7 +258,8 @@ class Daim():
         self.angle = None
         self.dir = "GB"
         self.img = self.nomimg + self.dir
-        self.vitesse = random.randrange(3) + 3
+        self.vitesse = 2
+        self.brouter = 50
 
     def mourir(self):
         self.etat = "mort"
@@ -288,13 +289,16 @@ class Daim():
                 self.position_visee=None
         else:
             if self.etat == "vivant":
-                self.trouver_cible()
+                self.brouter -= 1
+                if self.brouter <= 0:
+                    self.trouver_cible()
+                    self.brouter = random.randrange(25) + 20
 
     def trouver_cible(self):
         n = 1
         while n:
-            x = (random.randrange(100) - 50) + self.x
-            y = (random.randrange(100) - 50) + self.y
+            x = (random.randrange(200) - 100) + self.x
+            y = (random.randrange(200) - 100) + self.y
             case = self.parent.trouver_case(x, y)
             # if case[0]>self.parent.taillecarte or case[0]<0:
             #    continue
