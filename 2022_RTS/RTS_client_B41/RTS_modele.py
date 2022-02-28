@@ -62,13 +62,14 @@ class Maison(Batiment):
         self.tier = 1
         self.minerais =     {"cuivre" : 0,
                              "etain" : 0,
-                             "fer" : 0
-                             }
-        self.bois =         {"bois" : 0,
+                             "fer" : 0,
+                             "argent" : 0,
+                             "metalnoir" : 0,
+                             "bois" : 0,
                              "boisfin" : 0,
-                             "boisdebase" : 0
-                             }
-        self.nourriture =   {"framboises" : 0,
+                             "boisdebase" : 0,
+                             "boisancien" : 0,
+                             "framboises" : 0,
                              "bleuets" : 0,
                              "viande" : 0,
                              "miel" : 0,
@@ -77,27 +78,27 @@ class Maison(Batiment):
                              "herbes" : 0,
                              "champignons" : 0,
                              "poisson" : 0,
-                             }
-        self.pierre =       {"roche" : 0,
-                             "silex" : 0
-                             }
-        self.autres =       {"ramuredurci" : 0,
+                             "farineorge" : 0,
+                             "roche" : 0,
+                             "obsidienne" : 0,
+                             "silex" : 0,
+                             "ramuredurci" : 0,
                              "cuirdedaim" : 0,
                              "fragmentsdos" : 0,
                              "entrailles" : 0,
                              "charbon" : 0,
                              "grainescarrotte" : 0,
                              "grainesnavet" : 0,
-                             }
-        self.metaux =       {"lingotcuivre": 0,
+                             "grainesoignon" : 0,
+                             "lingotcuivre": 0,
                              "lingotetain": 0,
                              "lingotfer": 0,
-                             "lingotbronze": 0
-                             }
-        self.outils =       {"hachettedesilex": 0,
+                             "lingotbronze": 0,
+                             "lingotargent": 0,
+                             "lingotnoir": 0,
+                             "hachettedesilex": 0,
                              "canneapeche": 0,
-                             }
-        self.repas =        {"viandegrillee": 0,
+                             "viandegrillee": 0,
                              "poissongrillee": 0,
                              "viandesechee": 0,
                              "marmelade": 0,

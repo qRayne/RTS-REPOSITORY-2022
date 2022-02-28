@@ -356,14 +356,17 @@ class Vue():
     ## cadre qui affiche le menu de crafting
     def creercrafting(self):
         self.cadrecraft = Frame(self.canevas, height=300, width=300)
+        self.cadrecraft.grid_propagate(0)
         self.btninventory = Button(self.cadrecraft, text="Inventaire")
         self.btncraft = Button(self.cadrecraft, text="Crafting", command=self.subcrafting)
-        self.btninventory.grid()
-        self.btncraft.grid()
+        self.btninventory.grid(column=0, row=0, padx=2)
+        self.btncraft.grid(column=1, row=0, padx=2)
 
     def subcrafting(self):
         self.cadresubcraft = Frame(self.cadrecraft, height=250, width=250, bg="blue")
+        self.cadresubcraft.grid_propagate(0)
         self.craftinglabels = []
+        self.craftinreqlabels = []
         for j in self.modele.joueurs.keys():
             if j==self.parent.monnom:
                 clemaison = self.modele.joueurs[j].batiments["maison"].keys()
@@ -371,11 +374,22 @@ class Vue():
                 maison= self.modele.joueurs[j].batiments["maison"][cle]
 
                 for k in maison.recettespossible:
-                    templabel = Label(self.cadresubcraft, text=k)
-                    self.craftinglabels.append(templabel)
+                    recettenomlabel = Label(self.cadresubcraft, text=k)
+                    keyslist = list(self.modele.partie.recettes[k])
+                    reqtext = ""
+                    for key in keyslist:
+                        reqtext += key + ": " + maison.inventaire[key] + "/" + self.modele.partie.recettes[k][key] + ", "
+                        recetterequislabel = Label(self.cadresubcraft, text=reqtext)
+                        self.craftinglabels.append(recetterequislabel)
 
+                    self.craftinglabels.append(recettenomlabel)
+
+
+        self.cadresubcraft.grid(column=2, row=3)
         for label in self.craftinglabels:
-            label.pack()
+            label.grid()
+        for label in self.craftinreqlabels:
+            label.grid()
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
