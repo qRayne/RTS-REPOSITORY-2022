@@ -60,7 +60,7 @@ class Maison(Batiment):
         self.image = couleur[0] + "_" + montype
         self.montype = montype
         self.tier = 1
-        self.inventaire =   {"cuivre" : 0,
+        self.minerais =     {"cuivre" : 0,
                              "etain" : 0,
                              "fer" : 0,
                              "argent" : 0,
@@ -76,9 +76,7 @@ class Maison(Batiment):
                              "carottes" : 0,
                              "navets" : 0,
                              "herbes" : 0,
-                             "orge" : 0,
                              "champignons" : 0,
-                             "oignons" : 0,
                              "poisson" : 0,
                              "farineorge" : 0,
                              "roche" : 0,
@@ -86,11 +84,8 @@ class Maison(Batiment):
                              "silex" : 0,
                              "ramuredurci" : 0,
                              "cuirdedaim" : 0,
-                             "cuirdetroll" : 0,
                              "fragmentsdos" : 0,
                              "entrailles" : 0,
-                             "fourrureloup" : 0,
-                             "lin" : 0,
                              "charbon" : 0,
                              "grainescarrotte" : 0,
                              "grainesnavet" : 0,
@@ -109,15 +104,8 @@ class Maison(Batiment):
                              "marmelade": 0,
                              "repasbifteck": 0,
                              "ragout": 0,
-                             "soupecarotte": 0,
-                             "tourtiere": 0,
-                             "wrapthon": 0,
-                             "soupeoignon": 0,
-                             "saucisse": 0,
-                             "hydromelresispoison": 0,
-                             "hydromelresisfroid": 0,
-                             "hydromelvie": 0
-                            }
+                             "soupecarotte": 0
+                             }
         self.recettespossible = ["lingotcuivre", "lingotetain"]
 
 
@@ -132,7 +120,7 @@ class Forge(Batiment):
         self.prixConstruction = {"cuivre": 6,
                                  "charbon": 4,
                                  "bois": 30,
-                                 "pierre": 2}
+                                 "pierre": 10}
 
         self.armes = {"baton": 0,
                       "epieu": 0,
@@ -140,11 +128,11 @@ class Forge(Batiment):
                       "epee": 0,
                       "hache": 0}
 
-        self.arumures = {"arumureCuir": 0,
-                         "arumureTroll": 0,
+        self.armures = {"armureCuir": 0,
+                         "armureTroll": 0,
                          "armureBronze": 0,
                          "armureAcier": 0,
-                         "arumureArgent": 0,
+                         "armureArgent": 0,
                          "armureLin": 0}
 
         self.outils = {"hacheSilex": 0,
@@ -153,29 +141,6 @@ class Forge(Batiment):
                        "piocheBronze": 0,
                        "hacheFer": 0,
                        "piocheFer": 0}
-
-    # Création des 3 méthodes pour la construction de chaque type d'item
-    def construireArmes(self):
-        pass
-        # nested if pour voir quel arme le joueur veut constuire
-        # if self.armes.keys() == "baton":
-        #     pass
-        # elif self.armes.keys() == "epieu":
-        #     pass
-        # elif self.armes.keys() == "masse":
-        #     pass
-        # elif self.armes.keys() == "epee":
-        #     pass
-        # else:
-        #     pass
-
-
-    def construireArmures(self):
-        pass
-
-
-    def construireOutils(self):
-        pass
 
 
 class Fournaise(Batiment):
@@ -327,15 +292,29 @@ class Biotope():
         self.idcaseregion = posid
 
 
-class Baie(Biotope):
-    typeressource = ['arbustebaiesgrand',
-                     'arbustebaiespetit',
-                     'arbustevert']
+class Framboises(Biotope):
+    typeressource = ['framboisesgros',
+                     'framboisespetit']
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 30
+        self.valeur = 1
 
+class Bleuets(Biotope):
+    typeressource = ['bleuetsgros',
+                     'bleuetspetit']
+
+    def __init__(self, parent, id, monimg, x, y, montype):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype)
+        self.valeur = 1
+
+class Champignons(Biotope):
+    typeressource = ['champignonsgros',
+                     'champignonspetit']
+
+    def __init__(self, parent, id, monimg, x, y, montype):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype)
+        self.valeur = 1
 
 class Marais(Biotope):
     typeressource = ['marais1',
@@ -376,20 +355,6 @@ class Eau(Biotope):
             if self.spriteno > self.spritelen - 1:
                 self.spriteno = 0
 
-
-class Aureus(Biotope):
-    typeressource = ['aureusbrillant',
-                     'aureusD_',
-                     'aureusG',
-                     'aureusrocgrand',
-                     'aureusrocmoyen',
-                     'aureusrocpetit']
-
-    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
-        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 100
-
-
 class Roche(Biotope):
     typeressource = ['roches1 grand',
                      'roches1petit',
@@ -415,7 +380,7 @@ class Cuivre(Biotope):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
         self.valeur = 100
 
-class Arbre(Biotope):
+class Bois(Biotope):
     typeressource = ['arbre0grand',
                      'arbre0petit',
                      'arbre1grand',
@@ -753,8 +718,8 @@ class Ouvrier(Perso):
         reponse = self.bouger()
         if reponse == "rendu":
             if self.cible:
-                if self.typeressource == "baie" or self.typeressource == "daim" or self.typeressource == "eau":
-                    self.parent.ressources["nourriture"] += self.ramassage
+                if self.typeressource == "daim" or self.typeressource == "eau":
+                    self.parent.ressources["viande"] += self.ramassage
                 else:
                     self.parent.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
@@ -846,12 +811,12 @@ class Ouvrier(Perso):
             id = get_prochain_id()
             self.javelots.append(Javelot(self, id, proie))
 
-    def chercher_nouvelle_ressource(self, typ, idreg):
+    def chercher_nouvelle_ressource(self, type, idreg):
         print("Je cherche nouvelle ressource")
-        if typ != "baie" and  typ != "daim":
-            reg = self.parent.parent.regions[typ]
+        if type != "framboises" and type != "bleuets" and type != "champignons" and type != "daim":
+            reg = self.parent.parent.regions[type]
             if idreg in reg:
-                regspec = self.parent.parent.regions[typ][idreg]
+                regspec = self.parent.parent.regions[type][idreg]
                 n = len(regspec.dicocases)
                 while n > 0:
                     clecase = list(regspec.dicocases.keys())
@@ -860,14 +825,14 @@ class Ouvrier(Perso):
                     if case.ressources:
                         clecase2 = list(case.ressources.keys())
                         newress = case.ressources[random.choice(clecase2)]
-                        if newress.montype == typ:
+                        if newress.montype == type:
                             return newress
                 return None
         else:
-            nb=len(self.parent.parent.biotopes[typ])
+            nb=len(self.parent.parent.biotopes[type])
             for i in range(nb):
-                rep=random.choice(list(self.parent.parent.biotopes[typ].keys()))
-                obj=self.parent.parent.biotopes[typ][rep]
+                rep=random.choice(list(self.parent.parent.biotopes[type].keys()))
+                obj=self.parent.parent.biotopes[type][rep]
                 if obj != self.cible:
                     distance = Helper.calcDistance(self.x, self.y, obj.x, obj.y)
                     if distance<=self.champvision:
@@ -984,15 +949,6 @@ class Joueur():
                      "druide": Druide,
                      "ballista": Ballista,
                      "ingenieur": Ingenieur}
-    ressources = {"Azteque": {"nourriture": 999,
-                              "arbre": 200,
-                              "roche": 200,
-                              "aureus": 200},
-                  "Congolaise": {"nourriture": 10,
-                                 "arbre": 200,
-                                 "roche": 200,
-                                 "aureus": 888888888},
-                  }
 
     def __init__(self, parent, id, nom, couleur, x, y):
         self.parent = parent
@@ -1004,11 +960,19 @@ class Joueur():
         self.monchat = []
         self.chatneuf = 0
         self.ressourcemorte = []
-        self.ressources = {"nourriture": 200,
-                           "arbre": 200,
+        self.ressources = {"viande": 200,
+                           "framboises": 50,
+                           "bleuets": 50,
+                           "champignons": 50,
+                           "bois": 200,
+                           "boisdebase": 200,
+                           "boisfin": 200,
                            "roche": 200,
-                           "aureus": 200,
-                           "cuivre": 0}
+                           "silex": 200,
+                           "cuivre": 50,
+                           "etain": 50,
+                           "fer": 50,
+                           "charbon":0}
         self.persos = {"ouvrier": {},
                        "soldat": {},
                        "archer": {},
@@ -1032,7 +996,12 @@ class Joueur():
                         "construirebatiment": self.construire_batiment,
                         "attaquer": self.attaquer,
                         "chatter": self.chatter,
-                        "abandonner": self.abandonner}
+                        "abandonner": self.abandonner,
+                        "convertirbois":self.convertir_bois,
+                        "creerarmes": self.creer_armes,
+                        "creerarmures": self.creer_armures,
+                        "creeroutils": self.creer_outils
+                        }
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
     def get_stats(self):
@@ -1148,173 +1117,235 @@ class Joueur():
         self.persos[sorteperso][id] = Joueur.classespersos[sorteperso](self, id, batiment, self.couleur, x, y,
                                                                        sorteperso)
 
+    def convertir_bois(self, param):
+        nbDebois = self.parent.joueurs.keys()
+        for i in nbDebois:
+            total = self.parent.joueurs[i].ressources["bois"]
+        if total > 0:
+            self.parent.joueurs[i].ressources["charbon"] += 1
+        self.parent.joueurs[i].ressources["bois"] -= 10
+
+    def creer_perso(self, param):
+        sorteperso, batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+
+        x = batiment.x + 100 + (random.randrange(50) - 15)
+        y = batiment.y + (random.randrange(50) - 15)
+
+        self.persos[sorteperso][id] = Joueur.classespersos[sorteperso](self, id, batiment, self.couleur, x, y,
+                                                                       sorteperso)
+
+    def creer_armes(self, param):
+        batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+        listeArmes = ["baton", "epieu", "masse", "epee", "hache"]
+        choixArme = random.choice(listeArmes)
+
+        print(choixArme)
+
+    def creer_armures(self, param):
+        batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+        listeArmures = ["armurecuir", "arumureTroll", "armureBronze", "arumureAcier", "arumureArgent", "arumureLin"]
+        choixArmure = random.choice(listeArmures)
+
+        print(choixArmure)
+
+    def creer_outils(self,param):
+        batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+        listeOutils = ["hacheSilex","piocheRamure","hacheBronze","piocheBronze","hacheFer","piocheFer"]
+        choixOutil = random.choice(listeOutils)
+
+        print(choixOutil)
+
 
 #######################  LE MODELE est la partie #######################
 class Partie():
-    valeurs = {"maison": {"nourriture": 10,
-                          "arbre": 20,
+    valeurs = {"maison": {"viande": 0,
+                          "bois": 20,
                           "roche": 20,
                           "cuivre": 0,
-                          "aureus": 2,
-                          "delai":50},
-               "abri": {"nourriture": 10,
-                        "arbre": 10,
+                          "framboises": 0,
+                          "bleuets": 0,
+                          "champignons": 0,
+                          "boisdebase": 0,
+                          "boisfin": 0,
+                          "etain": 0,
+                          "fer": 0,
+                          "silex": 0,
+                          "charbon":0,
+                          "delai":50,},
+               "abri": {"viande": 0,
+                        "bois": 10,
                         "roche": 5,
                         "cuivre": 0,
-                        "aureus": 1,
-                          "delai":30},
-               "caserne": {"nourriture": 10,
-                           "arbre": 10,
+                        "framboises": 0,
+                        "bleuets": 0,
+                        "champignons": 0,
+                        "boisdebase": 0,
+                        "boisfin": 0,
+                        "etain": 0,
+                        "fer": 0,
+                        "silex": 0,
+                        "charbon": 0,
+                        "delai":30},
+               "caserne": {"viande": 0,
+                           "bois": 10,
                            "roche": 5,
                            "cuivre": 0,
-                           "aureus": 1,
-                          "delai":60},
-               "usineballiste": {"nourriture": 10,
-                                 "arbre": 10,
+                           "framboises": 0,
+                           "bleuets": 0,
+                           "champignons": 0,
+                           "boisdebase": 0,
+                           "boisfin": 0,
+                           "etain": 0,
+                           "fer": 0,
+                           "silex": 0,
+                           "charbon": 0,
+                           "delai":60},
+               "usineballiste": {"viande": 0,
+                                 "bois": 10,
                                  "roche": 5,
                                  "cuivre": 0,
-                                 "aureus": 1,
-                          "delai":80},
-               "forge" : {"nourriture":10,
-                          "arbre":30,
-                          "roche":10,
-                          "aureus":1,
+                                 "framboises": 0,
+                                 "bleuets": 0,
+                                 "champignons": 0,
+                                 "boisdebase": 0,
+                                 "boisfin": 0,
+                                 "etain": 0,
+                                 "fer": 0,
+                                 "silex": 0,
+                                 "charbon": 0,
+                                 "delai":80},
+               "forge" : {"viande": 0,
+                          "bois": 30,
+                          "roche": 10,
+                          "framboises": 0,
+                          "bleuets": 0,
+                          "champignons": 0,
+                          "boisdebase": 0,
+                          "boisfin": 0,
+                          "etain": 0,
+                          "fer": 0,
+                          "silex": 0,
                           "cuivre": 0,
-                          "delai":30},
+                          "charbon": 0,
+                          "delai": 30},
 
-               "fournaise": {"nourriture": 10,
-                             "arbre": 10,
+               "fournaise": {"viande": 0,
+                             "bois": 10,
                              "roche": 5,
                              "cuivre": 0,
-                             "aureus": 1,
+                             "framboises": 0,
+                             "bleuets": 0,
+                             "champignons": 0,
+                             "boisdebase": 0,
+                             "boisfin": 0,
+                             "etain": 0,
+                             "fer": 0,
+                             "silex": 0,
+                             "charbon": 0,
                              "delai": 80}
                }
 
-    recettes = {"lingotcuivre":     {"cuivre": 1,
-                                    "charbon": 2},
-
-                "lingotetain":      {"etain": 1,
-                                    "charbon": 2},
-
-                "lingotfer":        {"fer": 1,
-                                    "charbon": 2},
-
-                "lingotbronze":     {"lingotcuivre": 2,
-                                    "lingotetain": 1},
-
-                "lingotargent":     {"argent": 1,
-                                    "charbon": 2},
-
-                "lingotnoir":       {"metalnoir": 1,
-                                    "charbon": 2},
-
-                "armuredecuir":     {"cuir": 6},
-
-                "armuredetroll":    {"cuirdetroll": 15,
-                                    "fragmentdos": 6},
-
-                "armuredebronze":   {"lingotbronze": 15,
-                                    "cuir": 3},
-
-                "armuredacier":     {"lingotfer": 15,
-                                     "charbon": 15},
-
-                "armuredargent":    {"lingotargent": 15,
-                                     "fourruredeloup": 3},
-
-                "armuredelin":      {"lin": 30,
-                                     "lingotnoir": 6},
-
-                "baton":            {"bois": 10},
-
-                "epieudebronze":    {"lingotbronze": 10,
-                                     "bois": 5},
-
-                "massuedefer":      {"lingotfer": 10,
-                                     "boisdebase": 5},
-
-                "epeedargent":      {"lingotargent": 10,
-                                     "boisfin": 5},
-
-                "hachedaciernoir":  {"lingotnoir": 10,
-                                     "boisancien": 5},
-
-                "hachettedesilex": {"silex": 5,
-                                    "bois": 5},
-
-                "arc":             {"bois": 10,
-                                    "cuir": 2},
-
-                "arccomposite":    {"boisfin": 10,
-                                    "boisdebase": 10},
-
-                "arcdechasseur":   {"boisfin": 10,
-                                    "lingotfer": 10,
-                                    "cuir": 2},
-
-                "canneapeche":     {"bois": 10},
-
-                "piochederamure":  {"ramuredurci": 1,
-                                    "bois": 5},
-
-                "hachettedebronze":{"lingotbronze": 10,
-                                    "boisdebase": 5},
-
-                "piochedebronze":  {"lingotbronze": 10,
-                                    "boisdebase": 5},
-
-                "hachettedacier":  {"lingotfer": 10,
-                                    "charbon": 10,
-                                    "boisfin": 5},
-
-                "piochedefer":     {"lingotfer": 10,
-                                    "boisfin": 5},
-
-                "viandegrillee":   {"viande": 1},
-
-                "poissongrillee":  {"poisson": 1},
-
-                "viandesechee":    {"viande": 1,
-                                    "miel": 1},
-
-                "marmelade":       {"framboise": 4,
-                                    "bleuet": 2},
-
-                "repasbifteck":    {"viande": 1,
-                                    "carotte": 1,
-                                    "herbes": 1},
-
-                "ragout":          {"viande": 1,
-                                    "navet": 1,
-                                    "carotte": 3},
-
-                "soupecarotte":    {"carotte": 1,
-                                    "champignon": 3},
-
-                "tourtiere":       {"viande": 2,
-                                    "herbes": 3,
-                                    "farineorge": 3},
-
-                "wrapthon":        {"poisson": 2,
-                                    "oignon": 1,
-                                    "farineorge": 2},
-
-                "soupeoignon":     {"farineorge": 1,
-                                    "oignon": 3},
-
-                "saucisse":        {"entraille": 1,
-                                    "viande": 2,
-                                    "herbes": 1},
-
-                "hydromelresispoison": {"miel": 10,
-                                        "charbon": 10,
-                                        "herbes": 5},
-                "hydromelresisfroid":  {"miel": 10,
-                                        "entraille": 5,
-                                        "herbes": 2},
-                "hydromelvie":         {"miel": 10,
-                                        "framboise": 5,
-                                        "bleuets": 2}
+    recettes = {"metaux": {"lingotcuivre":     {"cuivre": 1,
+                                                 "charbon": 2},
+                            "lingotetain":      {"etain": 1,
+                                                 "charbon": 2},
+                            "lingotfer":        {"fer": 1,
+                                                 "charbon": 2},
+                            "lingotbronze":     {"lingotcuivre": 2,
+                                                 "lingotetain": 1},
+                            "lingotargent":     {"argent": 1,
+                                                 "charbon": 2},
+                            "lingotnoir":       {"metalnoir": 1,
+                                                  "charbon": 2}
+                           },
+                "armures": {"armuredecuir":     {"cuir": 6},
+                            "armuredetroll":    {"cuirdetroll": 15,
+                                                 "fragmentdos": 6},
+                            "armuredebronze":   {"lingotbronze": 15,
+                                                 "cuir": 3},
+                            "armuredacier":     {"lingotfer": 15,
+                                                 "charbon": 15},
+                            "armuredargent":    {"lingotargent": 15,
+                                                 "fourruredeloup": 3},
+                            "armuredelin":      {"lin": 30,
+                                                 "lingotnoir": 6}
+                            },
+                "armes":   {"baton":            {"bois": 10},
+                            "epieudebronze":    {"lingotbronze": 10,
+                                                 "bois": 5},
+                            "massuedefer":      {"lingotfer": 10,
+                                                 "boisdebase": 5},
+                            "epeedargent":      {"lingotargent": 10,
+                                                 "boisfin": 5},
+                            "hachedaciernoir":  {"lingotnoir": 10,
+                                                 "boisancien": 5}
+                            },
+                "outils":   {"hachettedesilex": {"silex": 5,
+                                                 "bois": 5},
+                             "arc":             {"bois": 10,
+                                                 "cuir": 2},
+                             "arccomposite":    {"boisfin": 10,
+                                                 "boisdebase": 10},
+                             "arcdechasseur":   {"boisfin": 10,
+                                                 "lingotfer": 10,
+                                                 "cuir": 2},
+                             "canneapeche":     {"bois": 10},
+                             "piochederamure":  {"ramuredurci": 1,
+                                                 "bois": 5},
+                             "hachettedebronze":{"lingotbronze": 10,
+                                                 "boisdebase": 5},
+                             "piochedebronze":  {"lingotbronze": 10,
+                                                 "boisdebase": 5},
+                             "hachettedacier":  {"lingotfer": 10,
+                                                 "charbon": 10,
+                                                 "boisfin": 5},
+                             "piochedefer":     {"lingotfer": 10,
+                                                 "boisfin": 5}
+                             },
+                "repas":    {"viandegrillee":   {"viande": 1},
+                             "poissongrillee":  {"poisson": 1},
+                             "viandesechee":    {"viande": 1,
+                                                 "miel": 1},
+                             "marmelade":       {"framboise": 4,
+                                                 "bleuet": 2},
+                             "repasbifteck":    {"viande": 1,
+                                                 "carotte": 1,
+                                                 "herbes": 1},
+                             "ragout":          {"viande": 1,
+                                                 "navet": 1,
+                                                 "carotte": 3},
+                             "soupecarotte":    {"carotte": 1,
+                                                 "champignon": 3},
+                             "tourtiere":       {"viande": 2,
+                                                 "herbes": 3,
+                                                 "farineorge": 3},
+                             "wrapthon":        {"poisson": 2,
+                                                 "oignon": 1,
+                                                 "farineorge": 2},
+                             "soupeoignon":     {"farineorge": 1,
+                                                 "oignon": 3},
+                             "saucisse":        {"entraille": 1,
+                                                 "viande": 2,
+                                                 "herbes": 1}
+                             },
+                "hydromels":{"hydromelresispoison": {"miel": 10,
+                                                     "charbon": 10,
+                                                     "herbes": 5},
+                             "hydromelresisfroid":  {"miel": 10,
+                                                     "entraille": 5,
+                                                     "herbes": 2},
+                             "hydromelvie":         {"miel": 10,
+                                                     "framboise": 5,
+                                                     "bleuets": 2}
+                            }
                 }
     def __init__(self, parent, mondict):
         self.parent = parent
@@ -1349,22 +1380,22 @@ class Partie():
         self.msggeneralcompteur = 0
         self.listebiotopes = []
         self.biotopes = {"daim": {},
-                         "arbre": {},
+                         "bois": {},
                          "roche": {},
                          "cuivre": {},
-                         "aureus": {},
                          "eau": {},
                          "marais": {},
-                         "baie": {},
+                         "framboises": {},
+                         "bleuets": {},
+                         "champignons": {}
                          }
 
         self.regions = {}
-        self.regionstypes = [["arbre", 50, 20, 5, "forest green"],
+        self.regionstypes = [["bois", 50, 20, 5, "forest green"],
                              ["eau", 10, 20, 12, "light blue"],
                              ["marais", 3, 8, 8, "DarkSeaGreen3"],
                              ["roche", 8, 3, 6, "gray60"],
-                             ["cuivre", 8, 3, 6, "DarkOrange3"],
-                             ["aureus", 12, 3, 4, "gold2"], ]
+                             ["cuivre", 8, 3, 6, "DarkOrange3"]]
         self.creer_regions()
         self.creer_biotopes()
         self.creer_population(mondict)
@@ -1406,12 +1437,11 @@ class Partie():
                 self.listebiotopes.append(mondaim)
                 n -= 1
 
-        self.creer_biotope("arbre", "arbre", Arbre)
+        self.creer_biotope("bois", "bois", Bois)
         self.creer_biotope("roche", "roche", Roche)
         self.creer_biotope("cuivre", "cuivre", Cuivre)
         self.creer_biotope("eau", "eau", Eau)
         self.creer_biotope("marais", "marais", Marais)
-        self.creer_biotope("aureus", "aureus", Aureus)
 
     def creer_biotope(self, region, ressource, typeclasse):  # creation des forets
         typeressource = typeclasse.typeressource
@@ -1554,17 +1584,19 @@ class Partie():
             msg="cadre: "+str(cadrecourant)+" - secs: "+str(t-self.debut)
             self.msggeneral=msg
 
-        self.faire_action_partie()
+        self.renouveler_ressources_naturelles()
 
-    def faire_action_partie(self):
+    def renouveler_ressources_naturelles(self):
         if self.delaiprochaineaction == 0:
-            self.produire_action()
-            self.delaiprochaineaction = random.randrange(20, 30)
+            self.generer_ressource(Framboises, "framboises")
+            self.generer_ressource(Bleuets, "bleuets")
+            self.generer_ressource(Champignons, "champignons")
+            self.delaiprochaineaction = 200
         else:
             self.delaiprochaineaction -= 1
 
-    def produire_action(self):
-        typeressource = Baie.typeressource
+    def generer_ressource(self, ressource, nom_ressource):
+        typeressource = ressource.typeressource
         n = 1
         while n:
             x = random.randrange(self.aireX)
@@ -1573,10 +1605,10 @@ class Partie():
             if case.montype == "plaine":
                 id = get_prochain_id()
                 img = random.choice(typeressource)
-                baie = Baie(self, id, img, x, y, "baie")
-                self.biotopes["baie"][id] = baie
+                cette_ressource = ressource(self, id, img, x, y, nom_ressource)
+                self.biotopes[nom_ressource][id] = cette_ressource
                 n -= 1
-                self.parent.afficher_bio(baie)
+                self.parent.afficher_bio(cette_ressource)
 
     # VERIFIER CES FONCTIONS SUR LA CARTECASE
 

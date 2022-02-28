@@ -1,5 +1,5 @@
 ## -*- Encoding: UTF-8 -*-
-
+import random
 from tkinter import *
 from tkinter import ttk
 from tkinter.simpledialog import *
@@ -20,7 +20,9 @@ class Vue():
         # attributs
         self.cadrechaton=0
         self.textchat=""
-        self.infohud={}
+        self.infohudnourriture={}
+        self.infohudbois={}
+        self.infohudpierremetaux={}
         self.tailleminicarte=220
 
         self.cadreactif=None
@@ -28,7 +30,7 @@ class Vue():
         self.action=Action(self)
 
         # cadre principal de l'application
-        self.cadreapp=Frame(self.root,width=500,height=400,bg="red")
+        self.cadreapp=Frame(self.root,width=500,height=400,bg="snow")
         self.cadreapp.pack(expand=1,fill=BOTH)
 
         # # un dictionnaire pour conserver les divers cadres du jeu, creer plus bas
@@ -45,7 +47,6 @@ class Vue():
         # # images des assets, definies dans le modue loadeurimages
         self.images=chargerimages()
         self.gifs=chargergifs()
-
 
 ####### INTERFACES GRAPHIQUES
     def changer_cadre(self,nomcadre: str):
@@ -196,30 +197,47 @@ class Vue():
     def creer_HUD(self):
         self.cadrejeuinfo=Frame(self.cadrecanevas,bg="blue")
         #des etiquettes d'info
-        self.infohud={"Nourriture":None,
-                      "Bois":None,
-                      "Roche":None,
-                      "Cuivre": None,
-                      "Aureus":None}
+        self.infohudnourriture = {"Viande": None,
+                      "Framboises": None,
+                      "Bleuets": None,
+                      "Champignons": None}
+        self.infohudbois = {"Bois": None,
+                            "Bois de base": None,
+                            "Bois fin": None}
+        self.infohudpierremetaux = {"Cuivre": None,
+                                    "Etain": None,
+                                    "Fer": None,
+                                    "Roche": None,
+                                    "Silex": None,
+                                    "charbon":None}
         # fonction interne uniquement pour reproduire chaque info de ressource
-        def creer_champ_interne(listechamp):
-            titre=Champ(self.cadrejeuinfo, text=i,bg="red",fg="white")
-            varstr=StringVar()
+        def creer_champ_interne(listechamp, categorie_ressource):
+            titre = Champ(self.cadrejeuinfo, text="   " + i, bg="snow", fg="grey1")
+            varstr = StringVar()
             varstr.set(0)
-            donnee=Champ(self.cadrejeuinfo,bg="red",fg="white", textvariable=varstr)
+            donnee = Champ(self.cadrejeuinfo, bg="snow", fg="grey50", textvariable=varstr)
             titre.pack(side=LEFT)
             donnee.pack(side=LEFT)
-            self.infohud[i]=[varstr,donnee]
+            if categorie_ressource == "nourriture":
+                self.infohudnourriture[i] = [varstr, donnee]
+            elif categorie_ressource == "bois":
+                self.infohudbois[i] = [varstr, donnee]
+            elif categorie_ressource == "pierremetal":
+                self.infohudpierremetaux[i] = [varstr, donnee]
         ## on l'appelle pour chaque chose de self.infohud
-        for i in self.infohud.keys():
-            creer_champ_interne(i)
+        for i in self.infohudnourriture.keys():
+            creer_champ_interne(i, "nourriture")
+        for i in self.infohudpierremetaux.keys():
+            creer_champ_interne(i, "pierremetal")
+        for i in self.infohudbois.keys():
+            creer_champ_interne(i, "bois")
 
         varstr=StringVar()
         varstr.set("")
         ### champ supplémentaire pour afficher des messages...
-        champmsg=Label(self.cadrejeuinfo, text="",fg="red")
+        champmsg = Label(self.cadrejeuinfo, text="",fg="red")
         champmsg.pack(side=LEFT)
-        self.infohud["msggeneral"]=[champmsg]
+        self.infohudnourriture["msggeneral"]=[champmsg]
 
         self.btnchat=Button(self.cadrejeuinfo,text="Chat",command=self.action.chatter)
         self.btnaide=Button(self.cadrejeuinfo,text="Aide",command=self.action.aider)
@@ -269,17 +287,15 @@ class Vue():
         # acgtions liées aux objets dessinés par tag
         self.canevas.tag_bind("batiment", "<Button-1>", self.creer_entite)
         self.canevas.tag_bind("perso", "<Button-1>", self.ajouter_selection)
-        self.canevas.tag_bind("arbre", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("aureus", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("bois", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("roche", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("cuivre", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("baie", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("framboises", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("bleuets", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("champignons", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
-
-
-
 
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
 
@@ -474,7 +490,7 @@ class Vue():
         self.modele.listebiotopes=[]
         minitaillecase=self.tailleminicarte/self.modele.taillecarte
         couleurs={0:"",
-                  "arbre":"light green",
+                  "bois":"light green",
                   "eau":"light blue",
                   "aureus":"tan",
                   "roche":"gray30",
@@ -547,14 +563,21 @@ class Vue():
         # commencer par les choses des joueurs
         for j in self.modele.joueurs.keys():
             # ajuster les infos du HUD
-            if j==self.parent.monnom:
-                self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
-                self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["arbre"])
-                self.infohud["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
-                self.infohud["Cuivre"][0].set(self.modele.joueurs[j].ressources["cuivre"])
-                self.infohud["Aureus"][0].set(self.modele.joueurs[j].ressources["aureus"])
-                self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
-
+            if j == self.parent.monnom:
+                self.infohudnourriture["Viande"][0].set(self.modele.joueurs[j].ressources["viande"])
+                self.infohudnourriture["Framboises"][0].set(self.modele.joueurs[j].ressources["framboises"])
+                self.infohudnourriture["Bleuets"][0].set(self.modele.joueurs[j].ressources["bleuets"])
+                self.infohudnourriture["Champignons"][0].set(self.modele.joueurs[j].ressources["champignons"])
+                self.infohudnourriture["msggeneral"][0].config(text=self.modele.msggeneral)
+                self.infohudbois["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
+                self.infohudbois["Bois de base"][0].set(self.modele.joueurs[j].ressources["boisdebase"])
+                self.infohudbois["Bois fin"][0].set(self.modele.joueurs[j].ressources["boisfin"])
+                self.infohudpierremetaux["Cuivre"][0].set(self.modele.joueurs[j].ressources["cuivre"])
+                self.infohudpierremetaux["Etain"][0].set(self.modele.joueurs[j].ressources["etain"])
+                self.infohudpierremetaux["Fer"][0].set(self.modele.joueurs[j].ressources["fer"])
+                self.infohudpierremetaux["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
+                self.infohudpierremetaux["Silex"][0].set(self.modele.joueurs[j].ressources["silex"])
+                self.infohudpierremetaux["charbon"][0].set(self.modele.joueurs[j].ressources["charbon"])
 
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
@@ -745,7 +768,7 @@ class Vue():
         vals=self.parent.trouver_valeurs()
         ok=1
         for k,val in self.modele.joueurs[self.monnom].ressources.items():
-            if val< vals[nomsorte][k]:
+            if val != 0 and val<= vals[nomsorte][k]:
                 ok=0 # on indique qu'on a PAS les ressources
                 break
         if ok:
@@ -778,6 +801,14 @@ class Vue():
                 if "usineballiste" in mestags:
                     pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
                     action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
+                if "fournaise" in mestags:
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, "convertirbois", ["ouvrier", mestags[4], mestags[2], pos]]
+                if "forge" in mestags:
+                    actionsPossiblesForges = ["creerarmes", "creerarmures", "creeroutils"]
+                    choixAleatoire = random.choice(actionsPossiblesForges)
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, choixAleatoire, [mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
         ###### les ATTAQUES SUR BATIMENT INACTIFS
@@ -899,5 +930,5 @@ class Champ(Label):
     def __init__(self,master,*args, **kwargs):
         Label.__init__(self,master,*args, **kwargs)
         self.config(font=("arial",13,"bold"))
-        self.config(bg="goldenrod3")
+        #self.config(bg="goldenrod3")
 
