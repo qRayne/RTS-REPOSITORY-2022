@@ -1121,9 +1121,9 @@ class Joueur():
         nbDebois = self.parent.joueurs.keys()
         for i in nbDebois:
             total = self.parent.joueurs[i].ressources["bois"]
-        if total > 20:
+        if total > 0:
             self.parent.joueurs[i].ressources["charbon"] += 1
-        self.parent.joueurs[i].ressources["bois"] -= 20
+        self.parent.joueurs[i].ressources["bois"] -= 10
 
     def creer_perso(self, param):
         sorteperso, batimentsource, idbatiment, pos = param
