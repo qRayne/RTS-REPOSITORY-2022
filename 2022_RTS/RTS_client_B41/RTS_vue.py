@@ -382,7 +382,7 @@ class Vue():
                     keyslist = list(self.modele.recettes[k])
                     reqtext = ""
                     for key in keyslist:
-                        reqtext += key + ": " + str(maison.inventaire[key]) + "/" + str(self.modele.recettes[k][key]) + ", "
+                        reqtext += key + ": " + str(maison.minerais[key]) + "/" + str(self.modele.recettes[k][key]) + ", "
 
                     recetterequislabel = Label(self.cadresubcraft, text=reqtext, anchor="w", bg="grey")
                     self.craftingreqlabels.append(recetterequislabel)
