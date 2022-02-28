@@ -340,18 +340,21 @@ class Vue():
 
     ## cadre qui affiche le menu de crafting
     def creercrafting(self):
-        self.cadrecraft = Frame(self.canevas, height=300, width=300)
+        self.cadrecraft = Frame(self.canevas, height=400, width=430)
+        self.cadrecraft.rowconfigure(1, minsize=30)
+        self.cadrecraft.columnconfigure(0, minsize=300)
         self.cadrecraft.grid_propagate(0)
         self.btninventory = Button(self.cadrecraft, text="Inventaire")
         self.btncraft = Button(self.cadrecraft, text="Crafting", command=self.subcrafting)
-        self.btninventory.grid(column=0, row=0, padx=2)
-        self.btncraft.grid(column=1, row=0, padx=2)
+        self.btninventory.grid(column=2, row=0, padx=2)
+        self.btncraft.grid(column=3, row=0, padx=2)
 
     def subcrafting(self):
-        self.cadresubcraft = Frame(self.cadrecraft, height=250, width=250, bg="blue")
+        self.cadresubcraft = Frame(self.cadrecraft, height=300, width=300, bg="grey")
+        self.cadresubcraft.columnconfigure(1, minsize=30)
         self.cadresubcraft.grid_propagate(0)
         self.craftinglabels = []
-        self.craftinreqlabels = []
+        self.craftingreqlabels = []
         for j in self.modele.joueurs.keys():
             if j==self.parent.monnom:
                 clemaison = self.modele.joueurs[j].batiments["maison"].keys()
@@ -359,22 +362,29 @@ class Vue():
                 maison= self.modele.joueurs[j].batiments["maison"][cle]
 
                 for k in maison.recettespossible:
-                    recettenomlabel = Label(self.cadresubcraft, text=k)
-                    keyslist = list(self.modele.partie.recettes[k])
+                    recettenomlabel = Label(self.cadresubcraft, text=k, anchor="w", bg="grey")
+                    keyslist = list(self.modele.recettes[k])
                     reqtext = ""
                     for key in keyslist:
-                        reqtext += key + ": " + maison.inventaire[key] + "/" + self.modele.partie.recettes[k][key] + ", "
-                        recetterequislabel = Label(self.cadresubcraft, text=reqtext)
-                        self.craftinglabels.append(recetterequislabel)
+                        reqtext += key + ": " + str(maison.inventaire[key]) + "/" + str(self.modele.recettes[k][key]) + ", "
+
+                    recetterequislabel = Label(self.cadresubcraft, text=reqtext, anchor="w", bg="grey")
+                    self.craftingreqlabels.append(recetterequislabel)
 
                     self.craftinglabels.append(recettenomlabel)
 
 
-        self.cadresubcraft.grid(column=2, row=3)
+        self.cadresubcraft.grid(column=0, row=2)
+        rowcount = 0
         for label in self.craftinglabels:
-            label.grid()
-        for label in self.craftinreqlabels:
-            label.grid()
+            label.grid(column=0, row=rowcount)
+            rowcount += 1
+
+        rowcount = 0
+        for label in self.craftingreqlabels:
+            label.grid(column=2, row=rowcount)
+            rowcount +=1
+
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
