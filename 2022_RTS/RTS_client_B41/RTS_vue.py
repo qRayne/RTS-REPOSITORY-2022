@@ -1,5 +1,5 @@
 ## -*- Encoding: UTF-8 -*-
-
+import random
 from tkinter import *
 from tkinter import ttk
 from tkinter.simpledialog import *
@@ -791,10 +791,14 @@ class Vue():
                 if "usineballiste" in mestags:
                     pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
                     action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
-
                 if "fournaise" in mestags:
                     pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
                     action = [self.parent.monnom, "convertirbois", ["ouvrier", mestags[4], mestags[2], pos]]
+                if "forge" in mestags:
+                    actionsPossiblesForges = ["creerarmes", "creerarmures", "creeroutils"]
+                    choixAleatoire = random.choice(actionsPossiblesForges)
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, choixAleatoire, [mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
         ###### les ATTAQUES SUR BATIMENT INACTIFS

@@ -142,29 +142,6 @@ class Forge(Batiment):
                        "hacheFer": 0,
                        "piocheFer": 0}
 
-    # Création des 3 méthodes pour la construction de chaque type d'item
-    def construireArmes(self):
-        pass
-        # nested if pour voir quel arme le joueur veut constuire
-        # if self.armes.keys() == "baton":
-        #     pass
-        # elif self.armes.keys() == "epieu":
-        #     pass
-        # elif self.armes.keys() == "masse":
-        #     pass
-        # elif self.armes.keys() == "epee":
-        #     pass
-        # else:
-        #     pass
-
-
-    def construireArmures(self):
-        pass
-
-
-    def construireOutils(self):
-        pass
-
 
 class Fournaise(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
@@ -1020,7 +997,11 @@ class Joueur():
                         "attaquer": self.attaquer,
                         "chatter": self.chatter,
                         "abandonner": self.abandonner,
-                        "convertirbois":self.convertir_bois}
+                        "convertirbois":self.convertir_bois,
+                        "creerarmes": self.creer_armes,
+                        "creerarmures": self.creer_armures,
+                        "creeroutils": self.creer_outils
+                        }
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
     def get_stats(self):
@@ -1143,6 +1124,44 @@ class Joueur():
         if total > 20:
             self.parent.joueurs[i].ressources["charbon"] += 1
         self.parent.joueurs[i].ressources["bois"] -= 20
+
+    def creer_perso(self, param):
+        sorteperso, batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+
+        x = batiment.x + 100 + (random.randrange(50) - 15)
+        y = batiment.y + (random.randrange(50) - 15)
+
+        self.persos[sorteperso][id] = Joueur.classespersos[sorteperso](self, id, batiment, self.couleur, x, y,
+                                                                       sorteperso)
+
+    def creer_armes(self, param):
+        batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+        listeArmes = ["baton", "epieu", "masse", "epee", "hache"]
+        choixArme = random.choice(listeArmes)
+
+        print(choixArme)
+
+    def creer_armures(self, param):
+        batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+        listeArmures = ["armurecuir", "arumureTroll", "armureBronze", "arumureAcier", "arumureArgent", "arumureLin"]
+        choixArmure = random.choice(listeArmures)
+
+        print(choixArmure)
+
+    def creer_outils(self,param):
+        batimentsource, idbatiment, pos = param
+        id = get_prochain_id()
+        batiment = self.batiments[batimentsource][idbatiment]
+        listeOutils = ["hacheSilex","piocheRamure","hacheBronze","piocheBronze","hacheFer","piocheFer"]
+        choixOutil = random.choice(listeOutils)
+
+        print(choixOutil)
 
 
 #######################  LE MODELE est la partie #######################
