@@ -60,18 +60,16 @@ class Maison(Batiment):
         self.image = couleur[0] + "_" + montype
         self.montype = montype
         self.tier = 1
-        self.minerais =     {"cuivre" : 0,
+        self.inventaire =   {"cuivre" : 0,
                              "etain" : 0,
                              "fer" : 0,
                              "argent" : 0,
-                             "metalnoir" : 0
-                             }
-        self.bois =         {"bois" : 0,
+                             "metalnoir" : 0,
+                             "bois" : 0,
                              "boisfin" : 0,
                              "boisdebase" : 0,
-                             "boisancien" : 0
-                             }
-        self.nourriture =   {"framboises" : 0,
+                             "boisancien" : 0,
+                             "framboises" : 0,
                              "bleuets" : 0,
                              "viande" : 0,
                              "miel" : 0,
@@ -82,13 +80,11 @@ class Maison(Batiment):
                              "champignons" : 0,
                              "oignons" : 0,
                              "poisson" : 0,
-                             "farineorge" : 0
-                             }
-        self.pierre =       {"roche" : 0,
+                             "farineorge" : 0,
+                             "roche" : 0,
                              "obsidienne" : 0,
-                             "silex" : 0
-                             }
-        self.autres =       {"ramuredurci" : 0,
+                             "silex" : 0,
+                             "ramuredurci" : 0,
                              "cuirdedaim" : 0,
                              "cuirdetroll" : 0,
                              "fragmentsdos" : 0,
@@ -98,18 +94,16 @@ class Maison(Batiment):
                              "charbon" : 0,
                              "grainescarrotte" : 0,
                              "grainesnavet" : 0,
-                             "grainesoignon" : 0
-                             }
-        self.metaux =       {"lingotcuivre": 0,
+                             "grainesoignon" : 0,
+                             "lingotcuivre": 0,
                              "lingotetain": 0,
                              "lingotfer": 0,
                              "lingotbronze": 0,
                              "lingotargent": 0,
-                             "lingotnoir": 0}
-        self.outils =       {"hachettedesilex": 0,
+                             "lingotnoir": 0,
+                             "hachettedesilex": 0,
                              "canneapeche": 0,
-                             }
-        self.repas =        {"viandegrillee": 0,
+                             "viandegrillee": 0,
                              "poissongrillee": 0,
                              "viandesechee": 0,
                              "marmelade": 0,
@@ -119,12 +113,11 @@ class Maison(Batiment):
                              "tourtiere": 0,
                              "wrapthon": 0,
                              "soupeoignon": 0,
-                             "saucisse": 0
-                             }
-        self.hydromels =    {"hydromelresispoison": 0,
+                             "saucisse": 0,
+                             "hydromelresispoison": 0,
                              "hydromelresisfroid": 0,
                              "hydromelvie": 0
-                             }
+                            }
         self.recettespossible = ["lingotcuivre", "lingotetain"]
 
 
@@ -1197,99 +1190,131 @@ class Partie():
                              "delai": 80}
                }
 
-    recettes = {"metaux": {"lingotcuivre":     {"cuivre": 1,
-                                                 "charbon": 2},
-                            "lingotetain":      {"etain": 1,
-                                                 "charbon": 2},
-                            "lingotfer":        {"fer": 1,
-                                                 "charbon": 2},
-                            "lingotbronze":     {"lingotcuivre": 2,
-                                                 "lingotetain": 1},
-                            "lingotargent":     {"argent": 1,
-                                                 "charbon": 2},
-                            "lingotnoir":       {"metalnoir": 1,
-                                                  "charbon": 2}
-                           },
-                "armures": {"armuredecuir":     {"cuir": 6},
-                            "armuredetroll":    {"cuirdetroll": 15,
-                                                 "fragmentdos": 6},
-                            "armuredebronze":   {"lingotbronze": 15,
-                                                 "cuir": 3},
-                            "armuredacier":     {"lingotfer": 15,
-                                                 "charbon": 15},
-                            "armuredargent":    {"lingotargent": 15,
-                                                 "fourruredeloup": 3},
-                            "armuredelin":      {"lin": 30,
-                                                 "lingotnoir": 6}
-                            },
-                "armes":   {"baton":            {"bois": 10},
-                            "epieudebronze":    {"lingotbronze": 10,
-                                                 "bois": 5},
-                            "massuedefer":      {"lingotfer": 10,
-                                                 "boisdebase": 5},
-                            "epeedargent":      {"lingotargent": 10,
-                                                 "boisfin": 5},
-                            "hachedaciernoir":  {"lingotnoir": 10,
-                                                 "boisancien": 5}
-                            },
-                "outils":   {"hachettedesilex": {"silex": 5,
-                                                 "bois": 5},
-                             "arc":             {"bois": 10,
-                                                 "cuir": 2},
-                             "arccomposite":    {"boisfin": 10,
-                                                 "boisdebase": 10},
-                             "arcdechasseur":   {"boisfin": 10,
-                                                 "lingotfer": 10,
-                                                 "cuir": 2},
-                             "canneapeche":     {"bois": 10},
-                             "piochederamure":  {"ramuredurci": 1,
-                                                 "bois": 5},
-                             "hachettedebronze":{"lingotbronze": 10,
-                                                 "boisdebase": 5},
-                             "piochedebronze":  {"lingotbronze": 10,
-                                                 "boisdebase": 5},
-                             "hachettedacier":  {"lingotfer": 10,
-                                                 "charbon": 10,
-                                                 "boisfin": 5},
-                             "piochedefer":     {"lingotfer": 10,
-                                                 "boisfin": 5}
-                             },
-                "repas":    {"viandegrillee":   {"viande": 1},
-                             "poissongrillee":  {"poisson": 1},
-                             "viandesechee":    {"viande": 1,
-                                                 "miel": 1},
-                             "marmelade":       {"framboise": 4,
-                                                 "bleuet": 2},
-                             "repasbifteck":    {"viande": 1,
-                                                 "carotte": 1,
-                                                 "herbes": 1},
-                             "ragout":          {"viande": 1,
-                                                 "navet": 1,
-                                                 "carotte": 3},
-                             "soupecarotte":    {"carotte": 1,
-                                                 "champignon": 3},
-                             "tourtiere":       {"viande": 2,
-                                                 "herbes": 3,
-                                                 "farineorge": 3},
-                             "wrapthon":        {"poisson": 2,
-                                                 "oignon": 1,
-                                                 "farineorge": 2},
-                             "soupeoignon":     {"farineorge": 1,
-                                                 "oignon": 3},
-                             "saucisse":        {"entraille": 1,
-                                                 "viande": 2,
-                                                 "herbes": 1}
-                             },
-                "hydromels":{"hydromelresispoison": {"miel": 10,
-                                                     "charbon": 10,
-                                                     "herbes": 5},
-                             "hydromelresisfroid":  {"miel": 10,
-                                                     "entraille": 5,
-                                                     "herbes": 2},
-                             "hydromelvie":         {"miel": 10,
-                                                     "framboise": 5,
-                                                     "bleuets": 2}
-                            }
+    recettes = {"lingotcuivre":     {"cuivre": 1,
+                                    "charbon": 2},
+
+                "lingotetain":      {"etain": 1,
+                                    "charbon": 2},
+
+                "lingotfer":        {"fer": 1,
+                                    "charbon": 2},
+
+                "lingotbronze":     {"lingotcuivre": 2,
+                                    "lingotetain": 1},
+
+                "lingotargent":     {"argent": 1,
+                                    "charbon": 2},
+
+                "lingotnoir":       {"metalnoir": 1,
+                                    "charbon": 2},
+
+                "armuredecuir":     {"cuir": 6},
+
+                "armuredetroll":    {"cuirdetroll": 15,
+                                    "fragmentdos": 6},
+
+                "armuredebronze":   {"lingotbronze": 15,
+                                    "cuir": 3},
+
+                "armuredacier":     {"lingotfer": 15,
+                                     "charbon": 15},
+
+                "armuredargent":    {"lingotargent": 15,
+                                     "fourruredeloup": 3},
+
+                "armuredelin":      {"lin": 30,
+                                     "lingotnoir": 6},
+
+                "baton":            {"bois": 10},
+
+                "epieudebronze":    {"lingotbronze": 10,
+                                     "bois": 5},
+
+                "massuedefer":      {"lingotfer": 10,
+                                     "boisdebase": 5},
+
+                "epeedargent":      {"lingotargent": 10,
+                                     "boisfin": 5},
+
+                "hachedaciernoir":  {"lingotnoir": 10,
+                                     "boisancien": 5},
+
+                "hachettedesilex": {"silex": 5,
+                                    "bois": 5},
+
+                "arc":             {"bois": 10,
+                                    "cuir": 2},
+
+                "arccomposite":    {"boisfin": 10,
+                                    "boisdebase": 10},
+
+                "arcdechasseur":   {"boisfin": 10,
+                                    "lingotfer": 10,
+                                    "cuir": 2},
+
+                "canneapeche":     {"bois": 10},
+
+                "piochederamure":  {"ramuredurci": 1,
+                                    "bois": 5},
+
+                "hachettedebronze":{"lingotbronze": 10,
+                                    "boisdebase": 5},
+
+                "piochedebronze":  {"lingotbronze": 10,
+                                    "boisdebase": 5},
+
+                "hachettedacier":  {"lingotfer": 10,
+                                    "charbon": 10,
+                                    "boisfin": 5},
+
+                "piochedefer":     {"lingotfer": 10,
+                                    "boisfin": 5},
+
+                "viandegrillee":   {"viande": 1},
+
+                "poissongrillee":  {"poisson": 1},
+
+                "viandesechee":    {"viande": 1,
+                                    "miel": 1},
+
+                "marmelade":       {"framboise": 4,
+                                    "bleuet": 2},
+
+                "repasbifteck":    {"viande": 1,
+                                    "carotte": 1,
+                                    "herbes": 1},
+
+                "ragout":          {"viande": 1,
+                                    "navet": 1,
+                                    "carotte": 3},
+
+                "soupecarotte":    {"carotte": 1,
+                                    "champignon": 3},
+
+                "tourtiere":       {"viande": 2,
+                                    "herbes": 3,
+                                    "farineorge": 3},
+
+                "wrapthon":        {"poisson": 2,
+                                    "oignon": 1,
+                                    "farineorge": 2},
+
+                "soupeoignon":     {"farineorge": 1,
+                                    "oignon": 3},
+
+                "saucisse":        {"entraille": 1,
+                                    "viande": 2,
+                                    "herbes": 1},
+
+                "hydromelresispoison": {"miel": 10,
+                                        "charbon": 10,
+                                        "herbes": 5},
+                "hydromelresisfroid":  {"miel": 10,
+                                        "entraille": 5,
+                                        "herbes": 2},
+                "hydromelvie":         {"miel": 10,
+                                        "framboise": 5,
+                                        "bleuets": 2}
                 }
     def __init__(self, parent, mondict):
         self.parent = parent
