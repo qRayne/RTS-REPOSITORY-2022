@@ -994,7 +994,8 @@ class Joueur():
                            "silex": 200,
                            "cuivre": 50,
                            "etain": 50,
-                           "fer": 50}
+                           "fer": 50,
+                           "charbon":0}
         self.persos = {"ouvrier": {},
                        "soldat": {},
                        "archer": {},
@@ -1018,7 +1019,8 @@ class Joueur():
                         "construirebatiment": self.construire_batiment,
                         "attaquer": self.attaquer,
                         "chatter": self.chatter,
-                        "abandonner": self.abandonner}
+                        "abandonner": self.abandonner,
+                        "convertirbois":self.convertir_bois}
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
     def get_stats(self):
@@ -1134,6 +1136,14 @@ class Joueur():
         self.persos[sorteperso][id] = Joueur.classespersos[sorteperso](self, id, batiment, self.couleur, x, y,
                                                                        sorteperso)
 
+    def convertir_bois(self, param):
+        nbDebois = self.parent.joueurs.keys()
+        for i in nbDebois:
+            total = self.parent.joueurs[i].ressources["bois"]
+        if total > 20:
+            self.parent.joueurs[i].ressources["charbon"] += 1
+        self.parent.joueurs[i].ressources["bois"] -= 20
+
 
 #######################  LE MODELE est la partie #######################
 class Partie():
@@ -1149,7 +1159,8 @@ class Partie():
                           "etain": 0,
                           "fer": 0,
                           "silex": 0,
-                          "delai":50},
+                          "charbon":0,
+                          "delai":50,},
                "abri": {"viande": 0,
                         "bois": 10,
                         "roche": 5,
@@ -1162,6 +1173,7 @@ class Partie():
                         "etain": 0,
                         "fer": 0,
                         "silex": 0,
+                        "charbon": 0,
                         "delai":30},
                "caserne": {"viande": 0,
                            "bois": 10,
@@ -1175,6 +1187,7 @@ class Partie():
                            "etain": 0,
                            "fer": 0,
                            "silex": 0,
+                           "charbon": 0,
                            "delai":60},
                "usineballiste": {"viande": 0,
                                  "bois": 10,
@@ -1188,6 +1201,7 @@ class Partie():
                                  "etain": 0,
                                  "fer": 0,
                                  "silex": 0,
+                                 "charbon": 0,
                                  "delai":80},
                "forge" : {"viande": 0,
                           "bois": 30,
@@ -1201,6 +1215,7 @@ class Partie():
                           "fer": 0,
                           "silex": 0,
                           "cuivre": 0,
+                          "charbon": 0,
                           "delai": 30},
 
                "fournaise": {"viande": 0,
@@ -1215,6 +1230,7 @@ class Partie():
                              "etain": 0,
                              "fer": 0,
                              "silex": 0,
+                             "charbon": 0,
                              "delai": 80}
                }
 

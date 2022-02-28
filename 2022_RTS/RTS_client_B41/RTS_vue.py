@@ -208,7 +208,8 @@ class Vue():
                                     "Etain": None,
                                     "Fer": None,
                                     "Roche": None,
-                                    "Silex": None}
+                                    "Silex": None,
+                                    "charbon":None}
         # fonction interne uniquement pour reproduire chaque info de ressource
         def creer_champ_interne(listechamp, categorie_ressource):
             titre = Champ(self.cadrejeuinfo, text="   " + i, bg="snow", fg="grey1")
@@ -566,8 +567,7 @@ class Vue():
                 self.infohudpierremetaux["Fer"][0].set(self.modele.joueurs[j].ressources["fer"])
                 self.infohudpierremetaux["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
                 self.infohudpierremetaux["Silex"][0].set(self.modele.joueurs[j].ressources["silex"])
-
-
+                self.infohudpierremetaux["charbon"][0].set(self.modele.joueurs[j].ressources["charbon"])
 
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
@@ -758,7 +758,7 @@ class Vue():
         vals=self.parent.trouver_valeurs()
         ok=1
         for k,val in self.modele.joueurs[self.monnom].ressources.items():
-            if val< vals[nomsorte][k]:
+            if val != 0 and val<= vals[nomsorte][k]:
                 ok=0 # on indique qu'on a PAS les ressources
                 break
         if ok:
@@ -791,6 +791,10 @@ class Vue():
                 if "usineballiste" in mestags:
                     pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
                     action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
+
+                if "fournaise" in mestags:
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, "convertirbois", ["ouvrier", mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
         ###### les ATTAQUES SUR BATIMENT INACTIFS
