@@ -23,7 +23,10 @@ class Vue():
         self.infohudnourriture={}
         self.infohudbois={}
         self.infohudpierremetaux={}
-        self.tailleminicarte=220
+        self.tailleminicarte=200
+        self.btnchat = None
+        self.btnaide = None
+        self.btncraft = None
 
         self.cadreactif=None
         # # objet pour cumuler les manipulations du joueur pour generer une action de jeu
@@ -156,7 +159,7 @@ class Vue():
     ### cadre de jeu : inclus aire de jeu, le HUD, le cadre_jeu_action
     def creer_cadre_jeu(self):
         # le cadre principal du jeu, remplace le Lobby
-        self.cadrepartie=Frame(self.cadreapp,bg="green",width=400,height=400)
+        self.cadrepartie=Frame(self.cadreapp,bg="light gray",width=400,height=400)
         # cadre du jeu et ses scrollbars
         self.creer_aire_de_jeu()
         # cadre pour info sur les ressources du joueur en haut de l'aire de jeu
@@ -165,7 +168,7 @@ class Vue():
         self.creer_cadre_jeu_action()
         # configuration de la section qui s'etire lorsque la fenetre change de taille
         self.cadrepartie.rowconfigure(0, weight=1)
-        self.cadrepartie.columnconfigure( 0, weight=1)
+        self.cadrepartie.columnconfigure(0, weight=1)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrepartie
 
@@ -195,7 +198,7 @@ class Vue():
         self.connecter_event()
 
     def creer_HUD(self):
-        self.cadrejeuinfo=Frame(self.cadrecanevas,bg="blue")
+        self.cadrejeuinfo=Frame(self.cadrecanevas,bg="light gray")
         #des etiquettes d'info
         self.infohudnourriture = {"Viande": None,
                       "Framboises": None,
@@ -210,20 +213,22 @@ class Vue():
                                     "Roche": None,
                                     "Silex": None,
                                     "charbon":None}
+
         # fonction interne uniquement pour reproduire chaque info de ressource
         def creer_champ_interne(listechamp, categorie_ressource):
-            titre = Champ(self.cadrejeuinfo, text="   " + i, bg="snow", fg="grey1")
+            titre = Champ(self.cadrejeuinfo, text="   " + listechamp, bg="snow", fg="grey1")
             varstr = StringVar()
             varstr.set(0)
             donnee = Champ(self.cadrejeuinfo, bg="snow", fg="grey50", textvariable=varstr)
             titre.pack(side=LEFT)
             donnee.pack(side=LEFT)
             if categorie_ressource == "nourriture":
-                self.infohudnourriture[i] = [varstr, donnee]
+                self.infohudnourriture[listechamp] = [varstr, donnee]
             elif categorie_ressource == "bois":
-                self.infohudbois[i] = [varstr, donnee]
+                self.infohudbois[listechamp] = [varstr, donnee]
             elif categorie_ressource == "pierremetal":
-                self.infohudpierremetaux[i] = [varstr, donnee]
+                self.infohudpierremetaux[listechamp] = [varstr, donnee]
+
         ## on l'appelle pour chaque chose de self.infohud
         for i in self.infohudnourriture.keys():
             creer_champ_interne(i, "nourriture")
@@ -239,33 +244,33 @@ class Vue():
         champmsg.pack(side=LEFT)
         self.infohudnourriture["msggeneral"]=[champmsg]
 
-        self.btnchat=Button(self.cadrejeuinfo,text="Chat",command=self.action.chatter)
-        self.btnaide=Button(self.cadrejeuinfo,text="Aide",command=self.action.aider)
-        self.btncraft=Button(self.cadrejeuinfo,text="Craft",command=self.action.crafter)
+        self.btnchat = Button(self.cadrejeuinfo, text="Chat", command=self.action.chatter)
+        self.btnaide = Button(self.cadrejeuinfo, text="Aide", command=self.action.aider)
+        self.btncraft = Button(self.cadrejeuinfo, text="Craft", command=self.action.crafter)
         self.btnaide.pack(side=RIGHT)
         self.btnchat.pack(side=RIGHT)
         self.btncraft.pack(side=RIGHT)
 
-        self.cadrejeuinfo.grid(row=0,column=0,sticky=E+W,columnspan=2)
+        self.cadrejeuinfo.grid(row=0, column=0, sticky=E+W)
 
     def creer_cadre_jeu_action(self):
         # Ajout du cadre d'action a droite pour identifier les objets permettant les commandes du joueur
         self.cadreaction=Frame(self.cadrepartie)
-        self.cadreaction.grid(row=0,column=1,sticky=N+S)
+        self.cadreaction.grid(row=0, column=1, sticky=N+S)
         self.scrollVaction=Scrollbar(self.cadreaction,orient=VERTICAL)
         self.canevasaction=Canvas(self.cadreaction,width=200,height=300,bg="lightblue",
-                            yscrollcommand = self.scrollVaction.set)
+                            yscrollcommand=self.scrollVaction.set)
 
         self.scrollVaction.config( command = self.canevasaction.yview)
-        self.canevasaction.grid(row=0,column=0,sticky=N+S)
-        self.scrollVaction.grid(row=0,column=1,sticky=N+S)
+        self.canevasaction.grid(row=0,column=0, sticky=N+S)
+        self.scrollVaction.grid(row=0,column=1, sticky=N+S)
         # les widgets
-        self.canevasaction.create_text(100,30,text=self.parent.monnom,font=("arial",18,"bold"),anchor=S,tags=("nom"))
+        self.canevasaction.create_text(100, 30, text=self.parent.monnom, font=("arial", 18, "bold"), anchor=S, tags=("nom"))
 
         # minicarte
-        self.minicarte=Canvas(self.cadreaction,width=self.tailleminicarte,height=self.tailleminicarte,bg="tan1",highlightthickness=0)
-        self.minicarte.grid(row=2,column=0,columnspan=2)
-        self.minicarte.bind("<Button-1>",self.deplacer_carte)
+        self.minicarte=Canvas(self.cadreaction, width=self.tailleminicarte, height=self.tailleminicarte, bg="tan1", highlightthickness=0)
+        self.minicarte.grid(row=2, column=0)
+        self.minicarte.bind("<Button-1>", self.deplacer_carte)
 
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         self.canevasaction.rowconfigure(0, weight=1)
@@ -478,7 +483,7 @@ class Vue():
                                                   #tags=("mobile","",i.id,)
 
         self.modele.listebiotopes=[]
-        minitaillecase=self.tailleminicarte/self.modele.taillecarte
+        minitaillecase=int(self.tailleminicarte/self.modele.taillecarte)
         couleurs={0:"",
                   "bois":"light green",
                   "eau":"light blue",
