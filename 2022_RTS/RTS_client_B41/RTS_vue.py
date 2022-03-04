@@ -364,7 +364,7 @@ class Vue():
                 maison= self.modele.joueurs[j].batiments["maison"][cle]
 
 
-                chausUpgBtn = Button(self.cadresubcraft, text="Chaussures")
+                chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Chaussure", j))
                 text = "metal: " + str(maison.ressources["metal"]) + "/1"
                 chausReqLab = Label(self.cadresubcraft, text=text)
                 self.craftingbuttons.append(chausUpgBtn)
@@ -400,6 +400,9 @@ class Vue():
             label.grid(column=2, row=rowcount)
             rowcount +=1
 
+
+    def upgrade(self, upgradetype, player):
+        self.modele.joueurs[player].upgrade(upgradetype)
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
