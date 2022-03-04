@@ -1071,12 +1071,20 @@ class Joueur():
                                                                        sorteperso)
 
     def convertir_bois(self, param):
-        nbDebois = self.parent.joueurs.keys()
-        for i in nbDebois:
-            total = self.parent.joueurs[i].ressources["bois"]
-        if total > 0:
-            self.parent.joueurs[i].ressources["charbon"] += 1
-        self.parent.joueurs[i].ressources["bois"] -= 10
+        n = self.parent.joueurs.keys()
+        for i in n:
+            if i == self.nom:
+                clemaison = self.parent.joueurs[i].batiments["maison"].keys()
+                cle = list(clemaison)[0]
+                maison = self.parent.joueurs[i].batiments["maison"][cle]
+                total = maison.ressources["roche"]
+
+                if total > 0:
+                    maison.ressources["metal"] += 1
+                    maison.ressources["roche"] -= 10
+
+
+
 
     def creer_perso(self, param):
         sorteperso, batimentsource, idbatiment, pos = param
