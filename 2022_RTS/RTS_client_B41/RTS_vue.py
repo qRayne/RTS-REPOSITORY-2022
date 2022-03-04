@@ -20,9 +20,7 @@ class Vue():
         # attributs
         self.cadrechaton=0
         self.textchat=""
-        self.infohudnourriture={}
-        self.infohudbois={}
-        self.infohudpierremetaux={}
+        self.infohud={}
         self.tailleminicarte=200
         self.btnchat = None
         self.btnaide = None
@@ -200,49 +198,32 @@ class Vue():
     def creer_HUD(self):
         self.cadrejeuinfo=Frame(self.cadrecanevas,bg="light gray")
         #des etiquettes d'info
-        self.infohudnourriture = {"Viande": None,
-                      "Framboises": None,
-                      "Bleuets": None,
-                      "Champignons": None}
-        self.infohudbois = {"Bois": None,
-                            "Bois de base": None,
-                            "Bois fin": None}
-        self.infohudpierremetaux = {"Cuivre": None,
-                                    "Etain": None,
-                                    "Fer": None,
-                                    "Roche": None,
-                                    "Silex": None,
-                                    "charbon":None}
+        self.infohud = {"Nourriture": None,
+                      "Bois": None,
+                      "Pierre": None,
+                      "Métal": None}
 
         # fonction interne uniquement pour reproduire chaque info de ressource
-        def creer_champ_interne(listechamp, categorie_ressource):
+        def creer_champ_interne(listechamp):
             titre = Champ(self.cadrejeuinfo, text="   " + listechamp, bg="snow", fg="grey1")
             varstr = StringVar()
             varstr.set(0)
             donnee = Champ(self.cadrejeuinfo, bg="snow", fg="grey50", textvariable=varstr)
             titre.pack(side=LEFT)
             donnee.pack(side=LEFT)
-            if categorie_ressource == "nourriture":
-                self.infohudnourriture[listechamp] = [varstr, donnee]
-            elif categorie_ressource == "bois":
-                self.infohudbois[listechamp] = [varstr, donnee]
-            elif categorie_ressource == "pierremetal":
-                self.infohudpierremetaux[listechamp] = [varstr, donnee]
+            self.infohud[listechamp] = [varstr, donnee]
+
 
         ## on l'appelle pour chaque chose de self.infohud
-        for i in self.infohudnourriture.keys():
-            creer_champ_interne(i, "nourriture")
-        for i in self.infohudpierremetaux.keys():
-            creer_champ_interne(i, "pierremetal")
-        for i in self.infohudbois.keys():
-            creer_champ_interne(i, "bois")
+        for i in self.infohud.keys():
+            creer_champ_interne(i)
 
         varstr=StringVar()
         varstr.set("")
         ### champ supplémentaire pour afficher des messages...
         champmsg = Label(self.cadrejeuinfo, text="",fg="red")
         champmsg.pack(side=LEFT)
-        self.infohudnourriture["msggeneral"]=[champmsg]
+        self.infohud["msggeneral"]=[champmsg]
 
         self.btnchat = Button(self.cadrejeuinfo, text="Chat", command=self.action.chatter)
         self.btnaide = Button(self.cadrejeuinfo, text="Aide", command=self.action.aider)
@@ -568,21 +549,12 @@ class Vue():
         # commencer par les choses des joueurs
         for j in self.modele.joueurs.keys():
             # ajuster les infos du HUD
-            if j == self.parent.monnom:
-                self.infohudnourriture["Viande"][0].set(self.modele.joueurs[j].ressources["viande"])
-                self.infohudnourriture["Framboises"][0].set(self.modele.joueurs[j].ressources["framboises"])
-                self.infohudnourriture["Bleuets"][0].set(self.modele.joueurs[j].ressources["bleuets"])
-                self.infohudnourriture["Champignons"][0].set(self.modele.joueurs[j].ressources["champignons"])
-                self.infohudnourriture["msggeneral"][0].config(text=self.modele.msggeneral)
-                self.infohudbois["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
-                self.infohudbois["Bois de base"][0].set(self.modele.joueurs[j].ressources["boisdebase"])
-                self.infohudbois["Bois fin"][0].set(self.modele.joueurs[j].ressources["boisfin"])
-                self.infohudpierremetaux["Cuivre"][0].set(self.modele.joueurs[j].ressources["cuivre"])
-                self.infohudpierremetaux["Etain"][0].set(self.modele.joueurs[j].ressources["etain"])
-                self.infohudpierremetaux["Fer"][0].set(self.modele.joueurs[j].ressources["fer"])
-                self.infohudpierremetaux["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
-                self.infohudpierremetaux["Silex"][0].set(self.modele.joueurs[j].ressources["silex"])
-                self.infohudpierremetaux["charbon"][0].set(self.modele.joueurs[j].ressources["charbon"])
+            #if j == self.parent.monnom:
+                #self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
+                #self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
+                #self.infohud["Pierre"][0].set(self.modele.joueurs[j].ressources["roche"])
+                #self.infohud["Métal"][0].set(self.modele.joueurs[j].ressources["metal"])
+                #self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
