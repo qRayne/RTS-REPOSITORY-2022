@@ -273,7 +273,10 @@ class Vue():
         # acgtions liées aux objets dessinés par tag
         self.canevas.tag_bind("batiment", "<Button-1>", self.creer_entite)
         self.canevas.tag_bind("perso", "<Button-1>", self.ajouter_selection)
-        self.canevas.tag_bind("bois", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("hetre", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("bouleau", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("sapin", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("pin", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("roche", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("cuivre", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("framboises", "<Button-1>", self.ramasser_ressource)
@@ -476,7 +479,10 @@ class Vue():
         self.modele.listebiotopes=[]
         minitaillecase=int(self.tailleminicarte/self.modele.taillecarte)
         couleurs={0:"",
-                  "bois":"light green",
+                  "hetre":"light green",
+                  "bouleau": "DarkGoldenrod1",
+                  "pin": "dark green",
+                  "sapin": "dark olive green",
                   "eau":"light blue",
                   "aureus":"tan",
                   "roche":"gray30",

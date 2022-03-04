@@ -346,18 +346,33 @@ class Cuivre(Biotope):
         self.valeur = 100
 
 
-class Bois(Biotope):
-    typeressource = ['arbre0grand',
-                     'arbre0petit',
-                     'arbre1grand',
-                     'arbre2grand',
-                     'arbresapin0grand',
-                     'arbresapin0petit']
+class Pin(Biotope):
+    typeressource = ['pin']
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 30
+        self.valeur = 250
 
+class Sapin(Biotope):
+    typeressource = ['sapin']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 200
+
+class Hetre(Biotope):
+    typeressource = ['hetre']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 50
+
+class Bouleau(Biotope):
+    typeressource = ['bouleau']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 75
 
 class Fleche():
     def __init__(self, parent, id, proie):
@@ -680,8 +695,10 @@ class Ouvrier(Perso):
         reponse = self.bouger()
         if reponse == "rendu":
             if self.cible:
-                if self.typeressource == "daim" or self.typeressource == "eau":
-                    self.parent.ressources["viande"] += self.ramassage
+                if self.typeressource == "daim" or self.typeressource == "framboise" or self.typeressource == "bleuets" or self.typeressource == "champignons":
+                    self.parent.ressources["nourriture"] += self.ramassage
+                elif self.typeressource == "hetre" or self.typeressource == "bouleau" or self.typeressource == "sapin" or self.typeressource == "pin":
+                    self.parent.ressources["bois"] += self.ramassage
                 else:
                     self.parent.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
@@ -1333,7 +1350,10 @@ class Partie():
         self.msggeneralcompteur = 0
         self.listebiotopes = []
         self.biotopes = {"daim": {},
-                         "bois": {},
+                         "hetre": {},
+                         "bouleau": {},
+                         "pin": {},
+                         "sapin": {},
                          "roche": {},
                          "cuivre": {},
                          "eau": {},
@@ -1344,7 +1364,10 @@ class Partie():
                          }
 
         self.regions = {}
-        self.regionstypes = [["bois", 50, 20, 5, "forest green"],
+        self.regionstypes = [["hetre", 10, 10, 3, "forest green"],
+                             ["bouleau", 10, 10, 3, "forest green"],
+                             ["pin", 10, 20, 2, "forest green"],
+                             ["sapin", 10, 20, 2, "forest green"],
                              ["eau", 10, 20, 12, "light blue"],
                              ["marais", 3, 8, 8, "DarkSeaGreen3"],
                              ["roche", 8, 3, 6, "gray60"],
@@ -1390,11 +1413,11 @@ class Partie():
                 self.listebiotopes.append(mondaim)
                 n -= 1
 
-        self.creer_biotope("bois", "bois", Bois)
+        self.creer_biotope("hetre", "hetre", Hetre)
+        self.creer_biotope("pin", "pin", Pin)
+        self.creer_biotope("sapin", "sapin", Sapin)
+        self.creer_biotope("bouleau", "bouleau", Bouleau)
         self.creer_biotope("roche", "roche", Roche)
-        self.creer_biotope("cuivre", "cuivre", Cuivre)
-        self.creer_biotope("eau", "eau", Eau)
-        self.creer_biotope("marais", "marais", Marais)
 
     def creer_biotope(self, region, ressource, typeclasse):  # creation des forets
         typeressource = typeclasse.typeressource
@@ -1403,7 +1426,7 @@ class Partie():
             listecases = self.regions[region][cleregion].dicocases
             # for listecase in self.regions[region]:
             # nressource = random.randrange(int(len(listecases) / 3)) + int((len(listecases) / 5))
-            nressource = int((random.randrange(len(listecases)) / 3) + 1)
+            nressource = int((random.randrange(len(listecases)) / 5) + 1)
             while nressource:
                 cases = list(listecases.keys())
                 pos = listecases[random.choice(cases)]
