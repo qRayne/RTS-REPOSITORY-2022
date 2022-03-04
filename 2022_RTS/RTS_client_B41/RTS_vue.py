@@ -549,12 +549,12 @@ class Vue():
         # commencer par les choses des joueurs
         for j in self.modele.joueurs.keys():
             # ajuster les infos du HUD
-            #if j == self.parent.monnom:
-                #self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
-                #self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
-                #self.infohud["Pierre"][0].set(self.modele.joueurs[j].ressources["roche"])
-                #self.infohud["Métal"][0].set(self.modele.joueurs[j].ressources["metal"])
-                #self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
+            if j == self.parent.monnom:
+                self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
+                self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
+                self.infohud["Pierre"][0].set(self.modele.joueurs[j].ressources["roche"])
+                self.infohud["Métal"][0].set(self.modele.joueurs[j].ressources["metal"])
+                self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
