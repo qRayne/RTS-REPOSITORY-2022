@@ -1,5 +1,5 @@
 ## -*- Encoding: UTF-8 -*-
-
+import random
 from tkinter import *
 from tkinter import ttk
 from tkinter.simpledialog import *
@@ -20,15 +20,20 @@ class Vue():
         # attributs
         self.cadrechaton=0
         self.textchat=""
-        self.infohud={}
-        self.tailleminicarte=220
+        self.infohudnourriture={}
+        self.infohudbois={}
+        self.infohudpierremetaux={}
+        self.tailleminicarte=200
+        self.btnchat = None
+        self.btnaide = None
+        self.btncraft = None
 
         self.cadreactif=None
         # # objet pour cumuler les manipulations du joueur pour generer une action de jeu
         self.action=Action(self)
 
         # cadre principal de l'application
-        self.cadreapp=Frame(self.root,width=500,height=400,bg="red")
+        self.cadreapp=Frame(self.root,width=500,height=400,bg="snow")
         self.cadreapp.pack(expand=1,fill=BOTH)
 
         # # un dictionnaire pour conserver les divers cadres du jeu, creer plus bas
@@ -45,7 +50,6 @@ class Vue():
         # # images des assets, definies dans le modue loadeurimages
         self.images=chargerimages()
         self.gifs=chargergifs()
-
 
 ####### INTERFACES GRAPHIQUES
     def changer_cadre(self,nomcadre: str):
@@ -155,7 +159,7 @@ class Vue():
     ### cadre de jeu : inclus aire de jeu, le HUD, le cadre_jeu_action
     def creer_cadre_jeu(self):
         # le cadre principal du jeu, remplace le Lobby
-        self.cadrepartie=Frame(self.cadreapp,bg="green",width=400,height=400)
+        self.cadrepartie=Frame(self.cadreapp,bg="light gray",width=400,height=400)
         # cadre du jeu et ses scrollbars
         self.creer_aire_de_jeu()
         # cadre pour info sur les ressources du joueur en haut de l'aire de jeu
@@ -164,7 +168,7 @@ class Vue():
         self.creer_cadre_jeu_action()
         # configuration de la section qui s'etire lorsque la fenetre change de taille
         self.cadrepartie.rowconfigure(0, weight=1)
-        self.cadrepartie.columnconfigure( 0, weight=1)
+        self.cadrepartie.columnconfigure(0, weight=1)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrepartie
 
@@ -194,59 +198,79 @@ class Vue():
         self.connecter_event()
 
     def creer_HUD(self):
-        self.cadrejeuinfo=Frame(self.cadrecanevas,bg="blue")
+        self.cadrejeuinfo=Frame(self.cadrecanevas,bg="light gray")
         #des etiquettes d'info
-        self.infohud={"Nourriture":None,
-                      "Bois":None,
-                      "Roche":None,
-                      "Aureus":None}
+        self.infohudnourriture = {"Viande": None,
+                      "Framboises": None,
+                      "Bleuets": None,
+                      "Champignons": None}
+        self.infohudbois = {"Bois": None,
+                            "Bois de base": None,
+                            "Bois fin": None}
+        self.infohudpierremetaux = {"Cuivre": None,
+                                    "Etain": None,
+                                    "Fer": None,
+                                    "Roche": None,
+                                    "Silex": None,
+                                    "charbon":None}
+
         # fonction interne uniquement pour reproduire chaque info de ressource
-        def creer_champ_interne(listechamp):
-            titre=Champ(self.cadrejeuinfo, text=i,bg="red",fg="white")
-            varstr=StringVar()
+        def creer_champ_interne(listechamp, categorie_ressource):
+            titre = Champ(self.cadrejeuinfo, text="   " + listechamp, bg="snow", fg="grey1")
+            varstr = StringVar()
             varstr.set(0)
-            donnee=Champ(self.cadrejeuinfo,bg="red",fg="white", textvariable=varstr)
+            donnee = Champ(self.cadrejeuinfo, bg="snow", fg="grey50", textvariable=varstr)
             titre.pack(side=LEFT)
             donnee.pack(side=LEFT)
-            self.infohud[i]=[varstr,donnee]
+            if categorie_ressource == "nourriture":
+                self.infohudnourriture[listechamp] = [varstr, donnee]
+            elif categorie_ressource == "bois":
+                self.infohudbois[listechamp] = [varstr, donnee]
+            elif categorie_ressource == "pierremetal":
+                self.infohudpierremetaux[listechamp] = [varstr, donnee]
+
         ## on l'appelle pour chaque chose de self.infohud
-        for i in self.infohud.keys():
-            creer_champ_interne(i)
+        for i in self.infohudnourriture.keys():
+            creer_champ_interne(i, "nourriture")
+        for i in self.infohudpierremetaux.keys():
+            creer_champ_interne(i, "pierremetal")
+        for i in self.infohudbois.keys():
+            creer_champ_interne(i, "bois")
 
         varstr=StringVar()
         varstr.set("")
         ### champ supplémentaire pour afficher des messages...
-        champmsg=Label(self.cadrejeuinfo, text="",fg="red")
+        champmsg = Label(self.cadrejeuinfo, text="",fg="red")
         champmsg.pack(side=LEFT)
-        self.infohud["msggeneral"]=[champmsg]
+        self.infohudnourriture["msggeneral"]=[champmsg]
 
-        self.btnchat=Button(self.cadrejeuinfo,text="Chat",command=self.action.chatter)
-        self.btnaide=Button(self.cadrejeuinfo,text="Aide",command=self.action.aider)
-        self.btncraft=Button(self.cadrejeuinfo,text="Craft",command=self.action.crafter)
+        self.btnchat = Button(self.cadrejeuinfo, text="Chat", command=self.action.chatter)
+        self.btnaide = Button(self.cadrejeuinfo, text="Aide", command=self.action.aider)
+        self.btncraft = Button(self.cadrejeuinfo, text="Craft", command=self.action.crafter)
         self.btnaide.pack(side=RIGHT)
         self.btnchat.pack(side=RIGHT)
         self.btncraft.pack(side=RIGHT)
 
-        self.cadrejeuinfo.grid(row=0,column=0,sticky=E+W,columnspan=2)
+        self.cadrejeuinfo.grid(row=0, column=0, sticky=E+W)
 
     def creer_cadre_jeu_action(self):
         # Ajout du cadre d'action a droite pour identifier les objets permettant les commandes du joueur
         self.cadreaction=Frame(self.cadrepartie)
-        self.cadreaction.grid(row=0,column=1,sticky=N+S)
+        self.cadreaction.grid(row=0, column=1, sticky=N+S)
         self.scrollVaction=Scrollbar(self.cadreaction,orient=VERTICAL)
         self.canevasaction=Canvas(self.cadreaction,width=200,height=300,bg="lightblue",
-                            yscrollcommand = self.scrollVaction.set)
+                            yscrollcommand=self.scrollVaction.set)
 
         self.scrollVaction.config( command = self.canevasaction.yview)
-        self.canevasaction.grid(row=0,column=0,sticky=N+S)
-        self.scrollVaction.grid(row=0,column=1,sticky=N+S)
+        self.canevasaction.grid(row=0,column=0, sticky=N+S)
+        self.scrollVaction.grid(row=0,column=1, sticky=N+S)
         # les widgets
-        self.canevasaction.create_text(100,30,text=self.parent.monnom,font=("arial",18,"bold"),anchor=S,tags=("nom"))
+        self.canevasaction.create_text(100, 30, text=self.parent.monnom, font=("arial", 18, "bold"), anchor=S, tags=("nom"))
 
         # minicarte
-        self.minicarte=Canvas(self.cadreaction,width=self.tailleminicarte,height=self.tailleminicarte,bg="tan1",highlightthickness=0)
-        self.minicarte.grid(row=2,column=0,columnspan=2)
-        self.minicarte.bind("<Button-1>",self.deplacer_carte)
+        self.minicarte=Canvas(self.cadreaction, width=self.tailleminicarte, height=self.tailleminicarte, bg="tan1", highlightthickness=0)
+        self.minicarte.grid(row=2, column=0)
+        self.minicarte.bind("<Button-1>", self.deplacer_carte)
 
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         self.canevasaction.rowconfigure(0, weight=1)
@@ -268,16 +292,15 @@ class Vue():
         # acgtions liées aux objets dessinés par tag
         self.canevas.tag_bind("batiment", "<Button-1>", self.creer_entite)
         self.canevas.tag_bind("perso", "<Button-1>", self.ajouter_selection)
-        self.canevas.tag_bind("arbre", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("aureus", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("bois", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("roche", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("baie", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("cuivre", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("framboises", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("bleuets", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("champignons", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
-
-
-
 
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
 
@@ -338,11 +361,50 @@ class Vue():
 
     ## cadre qui affiche le menu de crafting
     def creercrafting(self):
-        self.cadrecraft = Frame(self.canevas, height=300, width=300)
+        self.cadrecraft = Frame(self.canevas, height=400, width=430)
+        self.cadrecraft.rowconfigure(1, minsize=30)
+        self.cadrecraft.columnconfigure(0, minsize=300)
+        self.cadrecraft.grid_propagate(0)
         self.btninventory = Button(self.cadrecraft, text="Inventaire")
-        self.btncraft = Button(self.cadrecraft, text="Crafting")
-        self.btninventory.grid()
-        self.btncraft.grid()
+        self.btncraft = Button(self.cadrecraft, text="Crafting", command=self.subcrafting)
+        self.btninventory.grid(column=2, row=0, padx=2)
+        self.btncraft.grid(column=3, row=0, padx=2)
+
+    def subcrafting(self):
+        self.cadresubcraft = Frame(self.cadrecraft, height=300, width=300, bg="grey")
+        self.cadresubcraft.columnconfigure(1, minsize=30)
+        self.cadresubcraft.grid_propagate(0)
+        self.craftinglabels = []
+        self.craftingreqlabels = []
+        for j in self.modele.joueurs.keys():
+            if j==self.parent.monnom:
+                clemaison = self.modele.joueurs[j].batiments["maison"].keys()
+                cle = list(clemaison)[0]
+                maison= self.modele.joueurs[j].batiments["maison"][cle]
+
+                for k in maison.recettespossible:
+                    recettenomlabel = Label(self.cadresubcraft, text=k, anchor="w", bg="grey")
+                    keyslist = list(self.modele.recettes[k])
+                    reqtext = ""
+                    for key in keyslist:
+                        reqtext += key + ": " + str(maison.minerais[key]) + "/" + str(self.modele.recettes[k][key]) + ", "
+
+                    recetterequislabel = Label(self.cadresubcraft, text=reqtext, anchor="w", bg="grey")
+                    self.craftingreqlabels.append(recetterequislabel)
+
+                    self.craftinglabels.append(recettenomlabel)
+
+
+        self.cadresubcraft.grid(column=0, row=2)
+        rowcount = 0
+        for label in self.craftinglabels:
+            label.grid(column=0, row=rowcount)
+            rowcount += 1
+
+        rowcount = 0
+        for label in self.craftingreqlabels:
+            label.grid(column=2, row=rowcount)
+            rowcount +=1
 
 
 
@@ -433,11 +495,12 @@ class Vue():
         self.modele.listebiotopes=[]
         minitaillecase=int(self.tailleminicarte/self.modele.taillecarte)
         couleurs={0:"",
-                  "arbre":"light green",
+                  "bois":"light green",
                   "eau":"light blue",
                   "aureus":"tan",
                   "roche":"gray30",
-                  "marais":"orange"}
+                  "cuivre": "DarkOrange3",
+                  "marais":"seagreen"}
         for i,t in enumerate(self.modele.regions):
             if t!="plaine":
                 for j,c in enumerate(self.modele.regions[t]):
@@ -505,13 +568,21 @@ class Vue():
         # commencer par les choses des joueurs
         for j in self.modele.joueurs.keys():
             # ajuster les infos du HUD
-            if j==self.parent.monnom:
-                self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
-                self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["arbre"])
-                self.infohud["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
-                self.infohud["Aureus"][0].set(self.modele.joueurs[j].ressources["aureus"])
-                self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
-
+            if j == self.parent.monnom:
+                self.infohudnourriture["Viande"][0].set(self.modele.joueurs[j].ressources["viande"])
+                self.infohudnourriture["Framboises"][0].set(self.modele.joueurs[j].ressources["framboises"])
+                self.infohudnourriture["Bleuets"][0].set(self.modele.joueurs[j].ressources["bleuets"])
+                self.infohudnourriture["Champignons"][0].set(self.modele.joueurs[j].ressources["champignons"])
+                self.infohudnourriture["msggeneral"][0].config(text=self.modele.msggeneral)
+                self.infohudbois["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
+                self.infohudbois["Bois de base"][0].set(self.modele.joueurs[j].ressources["boisdebase"])
+                self.infohudbois["Bois fin"][0].set(self.modele.joueurs[j].ressources["boisfin"])
+                self.infohudpierremetaux["Cuivre"][0].set(self.modele.joueurs[j].ressources["cuivre"])
+                self.infohudpierremetaux["Etain"][0].set(self.modele.joueurs[j].ressources["etain"])
+                self.infohudpierremetaux["Fer"][0].set(self.modele.joueurs[j].ressources["fer"])
+                self.infohudpierremetaux["Roche"][0].set(self.modele.joueurs[j].ressources["roche"])
+                self.infohudpierremetaux["Silex"][0].set(self.modele.joueurs[j].ressources["silex"])
+                self.infohudpierremetaux["charbon"][0].set(self.modele.joueurs[j].ressources["charbon"])
 
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
@@ -702,7 +773,7 @@ class Vue():
         vals=self.parent.trouver_valeurs()
         ok=1
         for k,val in self.modele.joueurs[self.monnom].ressources.items():
-            if val<= vals[nomsorte][k]:
+            if val != 0 and val<= vals[nomsorte][k]:
                 ok=0 # on indique qu'on a PAS les ressources
                 break
         if ok:
@@ -735,6 +806,14 @@ class Vue():
                 if "usineballiste" in mestags:
                     pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
                     action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
+                if "fournaise" in mestags:
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, "convertirbois", ["ouvrier", mestags[4], mestags[2], pos]]
+                if "forge" in mestags:
+                    actionsPossiblesForges = ["creerarmes", "creerarmures", "creeroutils"]
+                    choixAleatoire = random.choice(actionsPossiblesForges)
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, choixAleatoire, [mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
         ###### les ATTAQUES SUR BATIMENT INACTIFS
@@ -848,11 +927,13 @@ class Action():
             self.parent.canevas.delete(self.craftwindow)
             self.craftwindowtoggle = 0
 
+
+
     ### FIN des methodes pour lancer la partie
 
 class Champ(Label):
     def __init__(self,master,*args, **kwargs):
         Label.__init__(self,master,*args, **kwargs)
         self.config(font=("arial",13,"bold"))
-        self.config(bg="goldenrod3")
+        #self.config(bg="goldenrod3")
 
