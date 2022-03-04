@@ -282,7 +282,7 @@ class Vue():
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
-
+        self.canevas.tag_bind("batiment", "<Button-3>", self.creer_entiteGuerrier)
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
 
     def defiler_vertical(self, evt):
@@ -776,6 +776,19 @@ class Vue():
         if not mestags and self.action.persochoisi and self.action.prochaineaction:
             pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
             self.action.construire_batiment(pos)
+
+    def creer_entiteGuerrier(self, evt):
+        x, y = evt.x, evt.y
+        mestags = self.canevas.gettags(CURRENT)
+        if self.parent.monnom in mestags:
+            if "batiment" in mestags:
+                if "caserne" in mestags:
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, "creerperso", ["archer", mestags[4], mestags[2], pos]]
+
+
+
+                self.parent.actionsrequises.append(action)
 
     def creer_entite(self,evt):
         x,y=evt.x,evt.y

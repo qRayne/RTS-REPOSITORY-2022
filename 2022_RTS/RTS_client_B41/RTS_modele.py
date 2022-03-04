@@ -1090,7 +1090,6 @@ class Joueur():
 
 
 
-
     def creer_perso(self, param):
         sorteperso, batimentsource, idbatiment, pos = param
         id = get_prochain_id()
