@@ -66,7 +66,7 @@ class Maison(Batiment):
                          "nourriture": 100,
                          "roche": 100
                          }
-        self.recettespossible = ["lingotcuivre", "lingotetain"]
+
 
 
 # Création de la classe Forge qui est une sous classe de Batiment
@@ -577,18 +577,11 @@ class Archer(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
 
-
 class Chevalier(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
 
-
 class Druide(Perso):
-    def __init__(self, parent, id, maison, couleur, x, y, montype):
-        Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
-
-
-class Ingenieur(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
 
@@ -657,7 +650,7 @@ class Ouvrier(Perso):
         self.champvision = random.randrange(100) + 300
         self.champchasse = 120
         self.javelots = []
-        self.vitesse = random.randrange(5) + 5
+        self.vitesse = 5 + self.parent.chaussureniveau
         self.etats_et_actions = {"bouger": self.bouger,
                                  "ciblersiteconstruction": self.cibler_site_construction,
                                  "ciblerproie": self.cibler_proie,
@@ -669,6 +662,7 @@ class Ouvrier(Perso):
                                  "retourbatimentmere": self.retour_batiment_mere,
                                  "validerjavelot": self.valider_javelot,
                                  }
+
 
     def chasser_ramasser(self, objetcible, sontype, actiontype):
         self.cible = objetcible
@@ -900,11 +894,7 @@ class Caseregion():
 class Joueur():
     classespersos = {"ouvrier": Ouvrier,
                      "soldat": Soldat,
-                     "archer": Archer,
-                     "chevalier": Chevalier,
-                     "druide": Druide,
-                     "ballista": Ballista,
-                     "ingenieur": Ingenieur}
+                     "archer": Archer,}
 
     def __init__(self, parent, id, nom, couleur, x, y):
         self.parent = parent
@@ -960,6 +950,11 @@ class Joueur():
                         }
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
+
+        self.outilsniveau = 0
+        self.chaussureniveau = 0
+        self.armesniveau = 0
+        self.arumureniveau = 0
 
     def get_stats(self):
         total = 0
@@ -1121,6 +1116,14 @@ class Joueur():
 
         print(choixOutil)
 
+    def upgrade(self, upgradetype):
+        if upgradetype == "Chaussure":
+            clemaison = self.batiments["maison"].keys()
+            cle = list(clemaison)[0]
+            maison = self.batiments["maison"][cle]
+            maison.ressources["metal"] -= 1
+            self.chaussureniveau += 1
+
 
 #######################  LE MODELE est la partie #######################
 class Partie():
@@ -1210,95 +1213,6 @@ class Partie():
                              "charbon": 0,
                              "delai": 80}
                }
-
-    recettes = {"lingotcuivre": {"cuivre": 1,
-                                 "charbon": 2},
-                "lingotetain": {"etain": 1,
-                                "charbon": 2},
-                "lingotfer": {"fer": 1,
-                              "charbon": 2},
-                "lingotbronze": {"lingotcuivre": 2,
-                                 "lingotetain": 1},
-                "lingotargent": {"argent": 1,
-                                 "charbon": 2},
-                "lingotnoir": {"metalnoir": 1,
-                               "charbon": 2},
-                "armuredecuir": {"cuir": 6},
-                "armuredetroll": {"cuirdetroll": 15,
-                                  "fragmentdos": 6},
-                "armuredebronze": {"lingotbronze": 15,
-                                   "cuir": 3},
-                "armuredacier": {"lingotfer": 15,
-                                 "charbon": 15},
-                "armuredargent": {"lingotargent": 15,
-                                  "fourruredeloup": 3},
-                "armuredelin": {"lin": 30,
-                                "lingotnoir": 6},
-                "baton": {"bois": 10},
-                "epieudebronze": {"lingotbronze": 10,
-                                  "bois": 5},
-                "massuedefer": {"lingotfer": 10,
-                                "boisdebase": 5},
-                "epeedargent": {"lingotargent": 10,
-                                "boisfin": 5},
-                "hachedaciernoir": {"lingotnoir": 10,
-                                    "boisancien": 5},
-                "hachettedesilex": {"silex": 5,
-                                    "bois": 5},
-                "arc": {"bois": 10,
-                        "cuir": 2},
-                "arccomposite": {"boisfin": 10,
-                                 "boisdebase": 10},
-                "arcdechasseur": {"boisfin": 10,
-                                  "lingotfer": 10,
-                                  "cuir": 2},
-                "canneapeche": {"bois": 10},
-                "piochederamure": {"ramuredurci": 1,
-                                   "bois": 5},
-                "hachettedebronze": {"lingotbronze": 10,
-                                     "boisdebase": 5},
-                "piochedebronze": {"lingotbronze": 10,
-                                   "boisdebase": 5},
-                "hachettedacier": {"lingotfer": 10,
-                                   "charbon": 10,
-                                   "boisfin": 5},
-                "piochedefer": {"lingotfer": 10,
-                                "boisfin": 5},
-                "viandegrillee": {"viande": 1},
-                "poissongrillee": {"poisson": 1},
-                "viandesechee": {"viande": 1,
-                                 "miel": 1},
-                "marmelade": {"framboise": 4,
-                              "bleuet": 2},
-                "repasbifteck": {"viande": 1,
-                                 "carotte": 1,
-                                 "herbes": 1},
-                "ragout": {"viande": 1,
-                           "navet": 1,
-                           "carotte": 3},
-                "soupecarotte": {"carotte": 1,
-                                 "champignon": 3},
-                "tourtiere": {"viande": 2,
-                              "herbes": 3,
-                              "farineorge": 3},
-                "wrapthon": {"poisson": 2,
-                             "oignon": 1,
-                             "farineorge": 2},
-                "soupeoignon": {"farineorge": 1,
-                                "oignon": 3},
-                "saucisse": {"entraille": 1,
-                             "viande": 2,
-                             "herbes": 1},
-                "hydromelresispoison": {"miel": 10,
-                                        "charbon": 10,
-                                        "herbes": 5},
-                "hydromelresisfroid": {"miel": 10,
-                                       "entraille": 5,
-                                       "herbes": 2},
-                "hydromelvie": {"miel": 10,
-                                "framboise": 5,
-                                "bleuets": 2}
-                }
 
     def __init__(self, parent, mondict):
         self.parent = parent
