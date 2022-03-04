@@ -61,10 +61,10 @@ class Maison(Batiment):
         self.image = couleur[0] + "_" + montype
         self.montype = montype
         self.tier = 1
-        self.ressources = {"metal": 0,
-                         "bois": 0,
-                         "nourriture": 0,
-                         "roche": 0
+        self.ressources = {"metal": 100,
+                         "bois": 100,
+                         "nourriture": 100,
+                         "roche": 100
                          }
         self.recettespossible = ["lingotcuivre", "lingotetain"]
 

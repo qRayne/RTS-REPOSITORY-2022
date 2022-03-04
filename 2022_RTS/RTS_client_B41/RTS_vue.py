@@ -550,10 +550,13 @@ class Vue():
         for j in self.modele.joueurs.keys():
             # ajuster les infos du HUD
             if j == self.parent.monnom:
-                self.infohud["Nourriture"][0].set(self.modele.joueurs[j].ressources["nourriture"])
-                self.infohud["Bois"][0].set(self.modele.joueurs[j].ressources["bois"])
-                self.infohud["Pierre"][0].set(self.modele.joueurs[j].ressources["roche"])
-                self.infohud["Métal"][0].set(self.modele.joueurs[j].ressources["metal"])
+                clemaison = self.modele.joueurs[j].batiments["maison"].keys()
+                cle = list(clemaison)[0]
+                maison = self.modele.joueurs[j].batiments["maison"][cle]
+                self.infohud["Nourriture"][0].set(str(maison.ressources["nourriture"]))
+                self.infohud["Bois"][0].set(str(maison.ressources["bois"]))
+                self.infohud["Pierre"][0].set(str(maison.ressources["roche"]))
+                self.infohud["Métal"][0].set(str(maison.ressources["metal"]))
                 self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
             # ajuster les constructions de chaque joueur
