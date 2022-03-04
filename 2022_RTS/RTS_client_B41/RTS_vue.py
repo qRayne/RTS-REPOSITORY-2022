@@ -285,7 +285,7 @@ class Vue():
         self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
-
+        self.canevas.tag_bind("batiment", "<Button-3>", self.creer_entiteGuerrier)
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
 
     def defiler_vertical(self, evt):
@@ -358,7 +358,7 @@ class Vue():
         self.cadresubcraft = Frame(self.cadrecraft, height=300, width=300, bg="grey")
         self.cadresubcraft.columnconfigure(1, minsize=30)
         self.cadresubcraft.grid_propagate(0)
-        self.craftinglabels = []
+        self.craftingbuttons = []
         self.craftingreqlabels = []
         for j in self.modele.joueurs.keys():
             if j==self.parent.monnom:
@@ -366,22 +366,35 @@ class Vue():
                 cle = list(clemaison)[0]
                 maison= self.modele.joueurs[j].batiments["maison"][cle]
 
-                for k in maison.recettespossible:
-                    recettenomlabel = Label(self.cadresubcraft, text=k, anchor="w", bg="grey")
-                    keyslist = list(self.modele.recettes[k])
-                    reqtext = ""
-                    for key in keyslist:
-                        reqtext += key + ": " + str(maison.ressources[key]) + "/" + str(self.modele.recettes[k][key]) + ", "
 
-                    recetterequislabel = Label(self.cadresubcraft, text=reqtext, anchor="w", bg="grey")
-                    self.craftingreqlabels.append(recetterequislabel)
+                chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Chaussure", j))
+                text = "metal: " + str(maison.ressources["metal"]) + "/1"
+                chausReqLab = Label(self.cadresubcraft, text=text)
+                self.craftingbuttons.append(chausUpgBtn)
+                self.craftingreqlabels.append(chausReqLab)
 
-                    self.craftinglabels.append(recettenomlabel)
+                outilUpgBtn = Button(self.cadresubcraft, text="Outils")
+                text = "metal: " + str(maison.ressources["metal"]) + "/1"
+                outilReqLab = Label(self.cadresubcraft, text=text)
+                self.craftingbuttons.append(outilUpgBtn)
+                self.craftingreqlabels.append(outilReqLab)
+
+                armesUpgBtn = Button(self.cadresubcraft, text="Armes")
+                text = "metal: " + str(maison.ressources["metal"]) + "/2"
+                armesReqLab = Label(self.cadresubcraft, text=text)
+                self.craftingbuttons.append(armesUpgBtn)
+                self.craftingreqlabels.append(armesReqLab)
+
+                armurUpgBtn = Button(self.cadresubcraft, text="Armures")
+                text = "metal: " + str(maison.ressources["metal"]) + "/2"
+                armurReqLab = Label(self.cadresubcraft, text=text)
+                self.craftingbuttons.append(armurUpgBtn)
+                self.craftingreqlabels.append(armurReqLab)
 
 
         self.cadresubcraft.grid(column=0, row=2)
         rowcount = 0
-        for label in self.craftinglabels:
+        for label in self.craftingbuttons:
             label.grid(column=0, row=rowcount)
             rowcount += 1
 
@@ -390,6 +403,9 @@ class Vue():
             label.grid(column=2, row=rowcount)
             rowcount +=1
 
+
+    def upgrade(self, upgradetype, player):
+        self.modele.joueurs[player].upgrade(upgradetype)
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
@@ -769,6 +785,19 @@ class Vue():
         if not mestags and self.action.persochoisi and self.action.prochaineaction:
             pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
             self.action.construire_batiment(pos)
+
+    def creer_entiteGuerrier(self, evt):
+        x, y = evt.x, evt.y
+        mestags = self.canevas.gettags(CURRENT)
+        if self.parent.monnom in mestags:
+            if "batiment" in mestags:
+                if "caserne" in mestags:
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, "creerperso", ["archer", mestags[4], mestags[2], pos]]
+
+
+
+                self.parent.actionsrequises.append(action)
 
     def creer_entite(self,evt):
         x,y=evt.x,evt.y
