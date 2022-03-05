@@ -13,49 +13,50 @@ import RTS_vuecadres
 
 class Vue():
     def __init__(self,parent,urlserveur,monnom,testdispo):
-        self.parent=parent
-        self.root=Tk()
+        self.parent = parent
+        self.root = Tk()
         self.root.title("Je suis "+monnom)
-        self.monnom=monnom
+        self.monnom = monnom
+        self.debutselect = []
         # attributs
-        self.cadrechaton=0
-        self.textchat=""
-        self.infohud={}
-        self.tailleminicarte=200
+        self.cadrechaton = 0
+        self.textchat = ""
+        self.infohud = {}
+        self.tailleminicarte = 200
         self.btnchat = None
         self.btnaide = None
         self.btncraft = None
 
         self.cadreactif=None
         # # objet pour cumuler les manipulations du joueur pour generer une action de jeu
-        self.action=Action(self)
+        self.action = Action(self)
 
         # cadre principal de l'application
-        self.cadreapp=Frame(self.root,width=500,height=400,bg="snow")
-        self.cadreapp.pack(expand=1,fill=BOTH)
+        self.cadreapp = Frame(self.root, width=500, height=400, bg="snow")
+        self.cadreapp.pack(expand=1, fill=BOTH)
 
         # # un dictionnaire pour conserver les divers cadres du jeu, creer plus bas
-        self.cadres={}
-        self.creer_cadres(urlserveur,monnom,testdispo)
+        self.cadres = {}
+        self.creer_cadres(urlserveur, monnom, testdispo)
         self.changer_cadre("splash")
 
         # self.root.protocol("WM_DELETE_WINDOW", self.demanderabandon)
         # # sera charge apres l'initialisation de la partie, contient les donnees pour mettre l'interface a jour
-        self.modele=None
+        self.modele = None
         # # variable pour suivre le trace du multiselect
-        self.debut_selection=[]
-        self.selecteuractif=None
+        self.debut_selection = []
+        self.selecteuractif = None
         # # images des assets, definies dans le modue loadeurimages
-        self.images=chargerimages()
-        self.gifs=chargergifs()
+        self.images = chargerimages()
+        self.gifs = chargergifs()
 
 ####### INTERFACES GRAPHIQUES
-    def changer_cadre(self,nomcadre: str):
-        cadre=self.cadres[nomcadre]
+    def changer_cadre(self, nomcadre: str):
+        cadre = self.cadres[nomcadre]
         if self.cadreactif:
             self.cadreactif.pack_forget()
-        self.cadreactif=cadre
-        self.cadreactif.pack(expand=1,fill=BOTH)
+        self.cadreactif = cadre
+        self.cadreactif.pack(expand=1, fill=BOTH)
 
     ###### LES CADRES ############################################################################################
     def creer_cadres(self, urlserveur: str, monnom: str, testdispo: str):
@@ -277,12 +278,10 @@ class Vue():
         self.canevas.tag_bind("bouleau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("sapin", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("pin", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("roche", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("cuivre", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("pierre", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("framboises", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("bleuets", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("champignons", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("eau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("batiment", "<Button-3>", self.creer_entiteGuerrier)
@@ -464,7 +463,7 @@ class Vue():
         coul=self.modele.joueurs[self.parent.monnom].couleur
         self.cadrejeuinfo.config(bg=coul[1])
         self.creer_aide()
-        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","abri","usineballiste","forge", "fournaise"])
+        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","forge", "fournaise"])
         self.creer_chatter()
         self.creercrafting()
         # on affiche les maisons, point de depart des divers joueurs
@@ -494,47 +493,38 @@ class Vue():
 
         self.modele.listebiotopes=[]
         minitaillecase=int(self.tailleminicarte/self.modele.taillecarte)
-        couleurs={0:"",
-                  "hetre":"light green",
-                  "bouleau": "DarkGoldenrod1",
-                  "pin": "dark green",
-                  "sapin": "dark olive green",
-                  "eau":"light blue",
-                  "aureus":"tan",
-                  "roche":"gray30",
-                  "cuivre": "DarkOrange3",
-                  "marais":"seagreen"}
-        for i,t in enumerate(self.modele.regions):
-            if t!="plaine":
-                for j,c in enumerate(self.modele.regions[t]):
-                    for cle,k in self.modele.regions[t][c].dicocases.items():
-                        y1=k.y*minitaillecase
-                        y2=y1+minitaillecase
-                        x1=k.x*minitaillecase
-                        x2=x1+minitaillecase
-                        self.minicarte.create_rectangle(x1,y1,x2,y2,outline="",
-                                                        #fill=couleurs[self.modele.cartecase[k[1]][k[0]].type]),
-                                                        fill=couleurs[k.parent.montype])
+        couleurs = {0: "",
+                    "hetre": "light green",
+                    "bouleau": "DarkGoldenrod1",
+                    "pin": "dark green",
+                    "sapin": "dark olive green",
+                    "pierre": "gray30"
+                    }
+        for i, t in enumerate(self.modele.regions):
+            if t != "plaine":
+                for j, c in enumerate(self.modele.regions[t]):
+                    for cle, k in self.modele.regions[t][c].dicocases.items():
+                        y1 = k.y * minitaillecase
+                        y2 = y1 + minitaillecase
+                        x1 = k.x * minitaillecase
+                        x2 = x1 + minitaillecase
+                        self.minicarte.create_rectangle(x1, y1, x2, y2, outline="", fill=couleurs[k.parent.montype])
 
         # Affichage des batiments intiaux sur l'aire de jeu et sur la minicarte
-        px=int(self.tailleminicarte/self.modele.aireX)
-        py=int(self.tailleminicarte/self.modele.aireY)
-
         for j in self.modele.joueurs.keys():
             for i in self.modele.joueurs[j].batiments["maison"].keys():
-                m=self.modele.joueurs[j].batiments["maison"][i]
-                coul=self.modele.joueurs[j].couleur[0]
-                self.canevas.create_image(m.x,m.y,image=self.images[coul+"_maison"],
-                                          tags=("statique",j,m.id,"batiment",m.montype,""))
-                                          #tags=("mobile","",i.id,)
+                m = self.modele.joueurs[j].batiments["maison"][i]
+                coul = self.modele.joueurs[j].couleur[0]
+                self.canevas.create_image(m.x, m.y, image=self.images[coul+"_maison"],
+                                          tags=("statique", j, m.id, "batiment",m.montype, ""))
                 # afficher sur minicarte
                 coul=self.modele.joueurs[j].couleur[1]
-                x1=int((m.x/self.modele.aireX)*self.tailleminicarte)
-                y1=int((m.y/self.modele.aireY)*self.tailleminicarte)
-                self.minicarte.create_rectangle(x1-2,y1-2,x1+2,y1+2,fill=coul,tags=(j,m.id,"artefact","maison"))
+                x1 = (m.x/self.modele.aireX) * self.tailleminicarte
+                y1 = (m.y/self.modele.aireY) * self.tailleminicarte
+                self.minicarte.create_rectangle(x1-2, y1-2, x1+2, y1+2, fill=coul, tags=(j, m.id, "artefact", "maison"))
 
-    def afficher_bio(self,bio):
-        self.canevas.create_image(bio.x,bio.y,image=self.images[bio.img],tags=("statique","",bio.id,"biotope",bio.montype,""))
+    def afficher_bio(self, bio):
+        self.canevas.create_image(bio.x, bio.y, image=self.images[bio.img], tags=("statique", "", bio.id, "biotope", bio.montype, ""))
 
     def afficher_batiment(self,joueur,batiment):
         coul=self.modele.joueurs[joueur].couleur[0]
@@ -542,21 +532,13 @@ class Vue():
         self.canevas.delete(batiment.id)
 
         print(self.parent.monnom)
-        chose=self.canevas.create_image(batiment.x,batiment.y,image=self.images[batiment.image],
-                                  tags=("statique",self.parent.monnom,batiment.id,"batiment",batiment.montype,""))
-
+        chose = self.canevas.create_image(batiment.x, batiment.y, image=self.images[batiment.image], tags=("statique", self.parent.monnom, batiment.id, "batiment", batiment.montype, ""))
         x0, y0, x2, y2 = self.canevas.bbox(chose)
 
-        couleurs={0:"",
-                  1:"light green",
-                  2:"light blue",
-                  3:"tan",
-                  4:"gray30",
-                  5:"orange"}
-        coul=self.modele.joueurs[joueur].couleur[1]
-        x1=int((batiment.x/self.modele.aireX)*self.tailleminicarte)
-        y1=int((batiment.y/self.modele.aireY)*self.tailleminicarte)
-        self.minicarte.create_rectangle(x1-2,y1-2,x1+2,y1+2,fill=coul,tags=(self.parent.monnom,batiment.id,"artefact",batiment.montype))
+        coul = self.modele.joueurs[joueur].couleur[1]
+        x1 = (batiment.x/self.modele.aireX)*self.tailleminicarte
+        y1 = (batiment.y/self.modele.aireY)*self.tailleminicarte
+        self.minicarte.create_rectangle(x1-2, y1-2, x1+2, y1+2, fill=coul, tags=(self.parent.monnom, batiment.id, "artefact", batiment.montype))
         return [x0, y0, x2, y2]
 
     def afficher_jeu(self):
@@ -577,83 +559,65 @@ class Vue():
                 maison = self.modele.joueurs[j].batiments["maison"][cle]
                 self.infohud["Nourriture"][0].set(str(maison.ressources["nourriture"]))
                 self.infohud["Bois"][0].set(str(maison.ressources["bois"]))
-                self.infohud["Pierre"][0].set(str(maison.ressources["roche"]))
+                self.infohud["Pierre"][0].set(str(maison.ressources["pierre"]))
                 self.infohud["Métal"][0].set(str(maison.ressources["metal"]))
                 self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
-                s=self.modele.joueurs[j].batiments['siteconstruction'][p]
-                if s.etat=="attente":
-                    self.canevas.create_image(s.x,s.y,anchor=CENTER,image=self.images["siteX"],
-                                              tags=("mobile",j,p,"batiment",type(s).__name__,""))
-                                              #tags=(j,s.id,"artefact","mobile","siteconstruction","batiments"))
+                s = self.modele.joueurs[j].batiments['siteconstruction'][p]
+                if s.etat == "attente":
+                    self.canevas.create_image(s.x, s.y, anchor=CENTER, image=self.images["siteX"],
+                                              tags=("mobile", j, p, "batiment", type(s).__name__, ""))
                 else:
-                    self.canevas.create_image(s.x,s.y,anchor=CENTER,image=self.images["EnConstruction"],
-                                              tags=("mobile",j,p,"batiment",type(s).__name__,""))
+                    self.canevas.create_image(s.x, s.y, anchor=CENTER, image=self.images["EnConstruction"],
+                                              tags=("mobile", j, p, "batiment", type(s).__name__, ""))
 
             # ajuster les persos de chaque joueur et leur dépendance (ici javelots des ouvriers)
             for p in self.modele.joueurs[j].persos.keys():
                 for k in self.modele.joueurs[j].persos[p].keys():
-                    i=self.modele.joueurs[j].persos[p][k]
-                    coul=self.modele.joueurs[j].couleur[0]
-                    self.canevas.create_image(i.x,i.y,anchor=S,image=self.images[i.image],
-                                              tags=("mobile",j,k,"perso",type(i).__name__,""))
-                                              #tags=(j,k,"artefact","mobile","perso",p))
+                    i = self.modele.joueurs[j].persos[p][k]
+                    self.canevas.create_image(i.x, i.y, anchor=S, image=self.images[i.image],
+                                              tags=("mobile", j, k, "perso", type(i).__name__,""))
                     if k in self.action.persochoisi:
-                        self.canevas.create_rectangle(i.x-10,i.y+5,i.x+10,i.y+10,fill="yellow",
-                                                      tags=("mobile",j,p,"perso",type(i).__name__,"persochoisi"))
-                                                      #tags=(j,k,"artefact","mobile","persochoisi"))
+                        self.canevas.create_rectangle(i.x-10, i.y+5, i.x+10, i.y+10, fill="yellow",
+                                                      tags=("mobile", j, p, "perso", type(i).__name__, "persochoisi"))
 
                     # dessiner javelot de l'ouvrier
-                    if p=="ouvrier":
+                    if p == "ouvrier":
                         for b in self.modele.joueurs[j].persos[p][k].javelots:
-                            self.canevas.create_image(b.x,b.y,image=self.images[b.image],
-                                                      tags=("mobile",j,b.id,"",type(b).__name__,""))
-                                              #tags=(j,b.id,"artefact","mobile","javelot"))
-
+                            self.canevas.create_image(b.x, b.y, image=self.images[b.image],
+                                                      tags=("mobile", j, b.id, "", type(b).__name__, ""))
 
         # ajuster les choses vivantes dependantes de la partie (mais pas des joueurs)
         for j in self.modele.biotopes["daim"].keys():
-            i=self.modele.biotopes["daim"][j]
-            if i.etat=="mort":
-                self.canevas.create_image(i.x,i.y,image=self.images["daimMORT"],
-                                          tags=("mobile","",i.id,"biotope",i.montype,""))
-                                          #tags=("",i.id,"artefact","daim","mobile"))
-
+            i = self.modele.biotopes["daim"][j]
+            if i.etat == "mort":
+                self.canevas.create_image(i.x, i.y, image=self.images["daimMORT"],
+                                          tags=("mobile", "", i.id, "biotope", i.montype, ""))
             else:
-                self.canevas.create_image(i.x,i.y,image=self.images[i.img],
-                                          tags=("mobile","",i.id,"biotope",i.montype,""))
-                                          #tags=("",i.id,"artefact","daim","mobile"))
-
-
-        # ajuster les choses vivantes dependantes de la partie (mais pas des joueurs)
-        for j in self.modele.biotopes["eau"].keys():
-            i=self.modele.biotopes["eau"][j]
-            if i.sprite:
-                self.canevas.create_image(i.x,i.y,image=self.gifs[i.sprite][i.spriteno],
-                                          tags=("mobile","",i.id,"biotope",type(i).__name__,""))
-                                          #tags=("",i.id,"artefact","eau","mobile"))
+                self.canevas.create_image(i.x, i.y, image=self.images[i.img],
+                                          tags=("mobile", "", i.id, "biotope", i.montype, ""))
 
         # mettre les chat a jour si de nouveaux messages sont arrives
         if self.textchat and self.modele.joueurs[self.parent.monnom].chatneuf:
             self.textchat.delete(0, END)
             self.textchat.insert(END, *self.modele.joueurs[self.parent.monnom].monchat)
-            if self.modele.joueurs[self.parent.monnom].chatneuf and self.action.chaton==0:
+            if self.modele.joueurs[self.parent.monnom].chatneuf and self.action.chaton == 0:
                 self.btnchat.config(bg="orange")
-            self.modele.joueurs[self.parent.monnom].chatneuf=0
+            self.modele.joueurs[self.parent.monnom].chatneuf = 0
 
     def centrer_maison(self):
         self.root.update()
-        cle=list(self.modele.joueurs[self.monnom].batiments["maison"].keys())[0]
-        x=self.modele.joueurs[self.monnom].batiments["maison"][cle].x
-        y=self.modele.joueurs[self.monnom].batiments["maison"][cle].y
+        cle = list(self.modele.joueurs[self.monnom].batiments["maison"].keys())[0]
+        x = self.modele.joueurs[self.monnom].batiments["maison"][cle].x
+        y = self.modele.joueurs[self.monnom].batiments["maison"][cle].y
 
-        x1=self.canevas.winfo_width()/2
-        y1=self.canevas.winfo_height()/2
+        x1 = self.canevas.winfo_width()/2
+        y1 = self.canevas.winfo_height()/2
 
-        pctx=(x-x1)/self.modele.aireX
-        pcty=(y-y1)/self.modele.aireY
+        pctx = (x-x1)/self.modele.aireX
+        pcty = (y-y1)/self.modele.aireY
 
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
@@ -662,52 +626,44 @@ class Vue():
 ##### ACTIONS DU JOUEUR #######################################################################
 
     def annuler_action(self,evt):
-        mestags=self.canevas.gettags(CURRENT)
+        mestags = self.canevas.gettags(CURRENT)
         if not mestags:
             self.canevasaction.delete(self.action.widgetsactifs)
             if self.action.btnactif:
                 self.action.btnactif.config(bg="SystemButtonFace")
-            self.action=Action(self)
+            self.action = Action(self)
 
     def fermer_chat(self):
-        self.textchat=None
+        self.textchat = None
         self.fenchat.destroy()
 
     def ajouter_selection(self,evt):
-        mestags=self.canevas.gettags(CURRENT)
+        mestags = self.canevas.gettags(CURRENT)
         if self.parent.monnom == mestags[1]:
             if "Ouvrier" == mestags[4]:
                 self.action.persochoisi.append(mestags[2])
                 self.action.afficher_commande_perso()
-        ######
             else:
                 self.action.persochoisi.append(mestags[2])
 
-        # BUG quand on attaque
-        # elif self.action.persochoisi!= []:
-        #     self.action.ciblechoisi=mestags
-        #     self.action.attaquer()
-
     # Methodes pour multiselect
     def debuter_multiselection(self,evt):
-        self.debutselect=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-        x1,y1=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-        self.selecteuractif=self.canevas.create_rectangle(x1,y1,x1+1,y1+1,outline="red",width=2,
-                                                          dash=(2,2),tags=("","selecteur","","artefact"))
-
+        self.debutselect = (self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
+        x1, y1 = (self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
+        self.selecteuractif = self.canevas.create_rectangle(x1, y1, x1+1, y1+1, outline="red",width=2, dash=(2, 2), tags=("", "selecteur", "", "artefact"))
 
     def afficher_multiselection(self,evt):
         if self.debutselect:
-            x1,y1=self.debutselect
-            x2,y2=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-            self.canevas.coords(self.selecteuractif,x1,y1,x2,y2)
+            x1, y1 = self.debutselect
+            x2, y2 = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+            self.canevas.coords(self.selecteuractif, x1, y1, x2, y2)
 
     def terminer_multiselection(self,evt):
         if self.debutselect:
-            x1,y1=self.debutselect
-            x2,y2=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-            self.debutselect=[]
-            objchoisi=(list(self.canevas.find_enclosed(x1,y1,x2,y2)))
+            x1, y1 = self.debutselect
+            x2, y2 = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+            self.debutselect = []
+            objchoisi = (list(self.canevas.find_enclosed(x1, y1, x2, y2)))
             for i in objchoisi:
                 if self.parent.monnom not in self.canevas.gettags(i):
                     objchoisi.remove(i)
@@ -720,58 +676,56 @@ class Vue():
     ### FIN du multiselect
 
     def ramasser_ressource(self,evt):
-        tag=self.canevas.gettags(CURRENT)
-        if tag[1]=="" and self.action.persochoisi:
+        tag = self.canevas.gettags(CURRENT)
+        if tag[1] == "" and self.action.persochoisi:
             self.action.ramasser_ressource(tag)
         else:
             print(tag[4])
 
     def chasser_ressource(self,evt):
-        tag=self.canevas.gettags(CURRENT)
-        if tag[1]=="" and self.action.persochoisi and tag[4]=="daim":
+        tag = self.canevas.gettags(CURRENT)
+        if tag[1] == "" and self.action.persochoisi and tag[4] == "daim":
             self.action.chasser_ressource(tag)
         else:
             print(tag[3])
 
-    def indiquer_position(self,evt):
-        tag=self.canevas.gettags(CURRENT)
+    def indiquer_position(self, evt):
+        tag = self.canevas.gettags(CURRENT)
         if not tag and self.action.persochoisi:
-            x,y=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-            self.action.position=[x,y]
+            x, y = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+            self.action.position = [x, y]
             self.action.deplacer()
 
     # Cette fonction permet se se deplacer via un click sur la minicarte
-    def deplacer_carte(self,evt):
-        x=evt.x
-        y=evt.y
+    def deplacer_carte(self, evt):
+        x = evt.x
+        y = evt.y
 
-        pctx=x/self.tailleminicarte
-        pcty=y/self.tailleminicarte
+        pctx = x/self.tailleminicarte
+        pcty = y/self.tailleminicarte
 
-        xl=(self.canevas.winfo_width()/2)/self.modele.aireX
-        yl=(self.canevas.winfo_height()/2)/self.modele.aireY
+        xl = (self.canevas.winfo_width()/2)/self.modele.aireX
+        yl = (self.canevas.winfo_height()/2)/self.modele.aireY
 
         self.canevas.xview_moveto(pctx-xl)
         self.canevas.yview_moveto(pcty-yl)
-        xl=self.canevas.winfo_width()
-        yl=self.canevas.winfo_height()
 
-    def batir_artefact(self,evt):
+    def batir_artefact(self, evt):
         # on obtient l'information du bouton de menu cliquer
-        obj=evt.widget
-        if self.action.btnactif: # si un autre bouton etait deja choisi
-            if self.action.btnactif != obj: # et qu'il est different du nouveau
-                self.action.btnactif.config(bg="SystemButtonFace") # change couleur pour deselection du precedent
-        #test de cout a cet endroit
-        nomsorte=obj.cget("text") # on utilise pour identifier la sorte de batiment à produire
-        self.action.btnactif=obj
+        obj = evt.widget
+        if self.action.btnactif:  # si un autre bouton etait deja choisi
+            if self.action.btnactif != obj:  # et qu'il est different du nouveau
+                self.action.btnactif.config(bg="SystemButtonFace")  # change couleur pour deselection du precedent
+        # test de cout a cet endroit
+        nomsorte = obj.cget("text")  # on utilise pour identifier la sorte de batiment à produire
+        self.action.btnactif = obj
 
-        #on valide qu'on a assez de ressources pour construire
-        vals=self.parent.trouver_valeurs()
-        ok=1
-        for k,val in self.modele.joueurs[self.monnom].ressources.items():
-            if val != 0 and val<= vals[nomsorte][k]:
-                ok=0 # on indique qu'on a PAS les ressources
+        # on valide qu'on a assez de ressources pour construire
+        vals = self.parent.trouver_valeurs()
+        ok = 1
+        for k, val in self.modele.joueurs[self.monnom].ressources.items():
+            if val != 0 and val <= vals[nomsorte][k]:
+                ok = 0  # on indique qu'on a PAS les ressources
                 break
         if ok:
             self.action.prochaineaction=obj.cget("text")
@@ -781,9 +735,9 @@ class Vue():
             print("VOUS N'AVEZ PAS ASSEZ DE",k)
 
     def construire_batiment(self,evt):
-        mestags=self.canevas.gettags(CURRENT)
+        mestags = self.canevas.gettags(CURRENT)
         if not mestags and self.action.persochoisi and self.action.prochaineaction:
-            pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
+            pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
             self.action.construire_batiment(pos)
 
     def creer_entiteGuerrier(self, evt):
@@ -792,118 +746,101 @@ class Vue():
         if self.parent.monnom in mestags:
             if "batiment" in mestags:
                 if "caserne" in mestags:
-                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
                     action = [self.parent.monnom, "creerperso", ["archer", mestags[4], mestags[2], pos]]
-
-
-
                 self.parent.actionsrequises.append(action)
 
     def creer_entite(self,evt):
-        x,y=evt.x,evt.y
-        mestags=self.canevas.gettags(CURRENT)
+        x, y = evt.x, evt.y
+        mestags = self.canevas.gettags(CURRENT)
         if self.parent.monnom in mestags:
             if "batiment" in mestags:
                 if "maison" in mestags:
-                    pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-                    action=[self.parent.monnom,"creerperso",["ouvrier",mestags[4],mestags[2],pos]]
+                    pos = (self.canevas.canvasx(x),self.canevas.canvasy(y))
+                    action = [self.parent.monnom, "creerperso", ["ouvrier", mestags[4], mestags[2], pos]]
                 if "caserne" in mestags:
-                    pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-                    action=[self.parent.monnom,"creerperso",["soldat",mestags[4],mestags[2],pos]]
-                if "abri" in mestags:
-                    pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-                    action=[self.parent.monnom,"creerperso",["druide",mestags[4],mestags[2],pos]]
-                if "usineballiste" in mestags:
-                    pos=(self.canevas.canvasx(evt.x),self.canevas.canvasy(evt.y))
-                    action=[self.parent.monnom,"creerperso",["ballista",mestags[4],mestags[2],pos]]
+                    pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
+                    action = [self.parent.monnom, "creerperso", ["soldat", mestags[4], mestags[2], pos]]
                 if "fournaise" in mestags:
                     pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
-                    action = [self.parent.monnom, "convertirbois", ["ouvrier", mestags[4], mestags[2], pos]]
+                    action = [self.parent.monnom, "convertirpierre", ["ouvrier", mestags[4], mestags[2], pos]]
                 if "forge" in mestags:
-                    actionsPossiblesForges = ["creerarmes", "creerarmures", "creeroutils"]
-                    choixAleatoire = random.choice(actionsPossiblesForges)
+                    actionspossiblesforges = ["creerarmes", "creerarmures", "creeroutils"]
+                    choixaleatoire = random.choice(actionspossiblesforges)
                     pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
-                    action = [self.parent.monnom, choixAleatoire, [mestags[4], mestags[2], pos]]
+                    action = [self.parent.monnom, choixaleatoire, [mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
-        ###### les ATTAQUES SUR BATIMENT INACTIFS
-        # elif self.action.persochoisi:
-        #     self.action.ciblechoisi=mestags
-        #     self.action.attaquer()
 
 # Singleton (mais pas automatique) sert a conserver les manipulations du joueur pour demander une action
 ######   CET OBJET SERVIRA À CONSERVER LES GESTES ET INFOS REQUISES POUR PRODUIRE UNE ACTION DE JEU
 class Action():
     def __init__(self,parent):
-        self.parent=parent
-        self.persochoisi=[]
-        self.ciblechoisi=None
-        self.position=[]
-        self.btnactif=None  # le bouton choisi pour creer un batiment
-        self.prochaineaction=None # utiliser pour les batiments seulement
-        self.widgetsactifs=[]
-        self.chaton=0
-        self.aideon=0
-        self.craftwindow=0
-        self.craftwindowtoggle=0
+        self.parent = parent
+        self.persochoisi = []
+        self.ciblechoisi = None
+        self.position = []
+        self.btnactif = None  # le bouton choisi pour creer un batiment
+        self.prochaineaction = None  # utiliser pour les batiments seulement
+        self.widgetsactifs = []
+        self.chaton = 0
+        self.aideon = 0
+        self.craftwindow = 0
+        self.craftwindowtoggle = 0
 
     def attaquer(self):
         if self.persochoisi:
-            qui=self.ciblechoisi[1]
-            cible=self.ciblechoisi[2]
-            sorte=self.ciblechoisi[5]
-            action=[self.parent.parent.monnom,"attaquer",[self.persochoisi,[qui,cible,sorte]]]
+            qui = self.ciblechoisi[1]
+            cible = self.ciblechoisi[2]
+            sorte = self.ciblechoisi[5]
+            action = [self.parent.parent.monnom, "attaquer", [self.persochoisi, [qui, cible, sorte]]]
             self.parent.parent.actionsrequises.append(action)
 
     def deplacer(self):
         if self.persochoisi:
-            action=[self.parent.parent.monnom,"deplacer",[self.position,self.persochoisi]]
+            action = [self.parent.parent.monnom, "deplacer", [self.position, self.persochoisi]]
             self.parent.parent.actionsrequises.append(action)
 
-    def chasser_ressource(self,tag):
+    def chasser_ressource(self, tag):
         if self.persochoisi:
-            action=[self.parent.parent.monnom,"chasserressource",[tag[4],tag[2],self.persochoisi]]
+            action = [self.parent.parent.monnom, "chasserressource", [tag[4], tag[2], self.persochoisi]]
             self.parent.parent.actionsrequises.append(action)
 
-    def ramasser_ressource(self,tag):
+    def ramasser_ressource(self, tag):
         if self.persochoisi:
-            action=[self.parent.parent.monnom,"ramasserressource",[tag[4],tag[2],self.persochoisi]]
+            action = [self.parent.parent.monnom, "ramasserressource", [tag[4], tag[2], self.persochoisi]]
             self.parent.parent.actionsrequises.append(action)
 
     def construire_batiment(self,pos):
         self.btnactif.config(bg="SystemButtonFace")
-        self.btnactif=None
-        action=[self.parent.monnom,"construirebatiment",[self.persochoisi,self.prochaineaction,pos]]
+        self.btnactif = None
+        action = [self.parent.monnom, "construirebatiment", [self.persochoisi, self.prochaineaction, pos]]
         self.parent.parent.actionsrequises.append(action)
 
     def afficher_commande_perso(self):
-        self.widgetsactifs=self.parent.canevasaction.create_window(100,60,
-                                                window=self.parent.cadreouvrier,
-                                                anchor=N)
+        self.widgetsactifs = self.parent.canevasaction.create_window(100, 60, window=self.parent.cadreouvrier, anchor=N)
         self.parent.root.update()
-        fh=self.parent.cadreouvrier.winfo_height()
-        ch=int(self.    parent.canevasaction.cget("height"))
-        if fh+60>ch:
-            cl=int(self.parent.canevasaction.cget("width"))
-            self.parent.canevasaction.config(scrollregion=(0,0,cl,fh+60))
+        fh = self.parent.cadreouvrier.winfo_height()
+        ch = int(self.parent.canevasaction.cget("height"))
+        if fh + 60 > ch:
+            cl = int(self.parent.canevasaction.cget("width"))
+            self.parent.canevasaction.config(scrollregion=(0, 0, cl, fh+60))
 
 
     def envoyer_chat(self,evt):
-        txt=self.parent.entreechat.get()
-        joueur=self.parent.joueurs.get()
+        txt = self.parent.entreechat.get()
+        joueur = self.parent.joueurs.get()
         if joueur:
-            action=[self.parent.monnom,"chatter",[self.parent.monnom+": "+txt,self.parent.monnom,joueur]]
+            action = [self.parent.monnom, "chatter", [self.parent.monnom + ": " + txt, self.parent.monnom, joueur]]
             self.parent.parent.actionsrequises.append(action)
 
     def chatter(self):
-        if self.chaton==0:
-            x1,x2=self.parent.scrollH.get()
-            x3=self.parent.modele.aireX*x1
-            y1,y2=self.parent.scrollV.get()
-            y3=self.parent.modele.aireY*y1
-            self.parent.cadrechaton=self.parent.canevas.create_window(x3,y3,
-                                                window=self.parent.cadrechat,
-                                                anchor=N+W)
+        if self.chaton == 0:
+            x1, x2 = self.parent.scrollH.get()
+            x3 = self.parent.modele.aireX * x1
+            y1, y2 = self.parent.scrollV.get()
+            y3 = self.parent.modele.aireY * y1
+            self.parent.cadrechaton = self.parent.canevas.create_window(x3, y3, window=self.parent.cadrechat, anchor=NE)
             self.parent.btnchat.config(bg="SystemButtonFace")
             self.chaton=1
         else:
@@ -913,16 +850,14 @@ class Action():
 
     def aider(self):
         if self.aideon==0:
-            x1,x2=self.parent.scrollH.get()
-            x3=self.parent.modele.aireX*x2
-            y1,y2=self.parent.scrollV.get()
-            y3=self.parent.modele.aireY*y1
-            self.aideon=self.parent.canevas.create_window(x3,y3,
-                                                window=self.parent.cadreaide,
-                                                anchor=N+E)
+            x1, x2 = self.parent.scrollH.get()
+            x3 = self.parent.modele.aireX*x2
+            y1, y2 = self.parent.scrollV.get()
+            y3 = self.parent.modele.aireY*y1
+            self.aideon = self.parent.canevas.create_window(x3, y3, window=self.parent.cadreaide, anchor=NE)
         else:
             self.parent.canevas.delete(self.aideon)
-            self.aideon=0
+            self.aideon = 0
 
     def crafter(self):
         if self.craftwindowtoggle == 0:
@@ -930,7 +865,7 @@ class Action():
             x3 = self.parent.modele.aireX * x2
             y1, y2 = self.parent.scrollV.get()
             y3 = self.parent.modele.aireY * y1
-            self.craftwindow = self.parent.canevas.create_window(x3, y3, window=self.parent.cadrecraft, anchor= N + E)
+            self.craftwindow = self.parent.canevas.create_window(x3, y3, window=self.parent.cadrecraft, anchor=NE)
             self.craftwindowtoggle = 1
 
         else:
