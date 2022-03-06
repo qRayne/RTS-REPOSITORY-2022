@@ -125,6 +125,18 @@ class NPC:
         self.currentQuest = currentQuest
         self.questInProgress = False
 
+class Stele:
+    def __init__(self,joueurs):
+        self.joueurs = joueurs
+
+    def nbrune(self):
+        for i in self.joueurs:
+            print("le joueur " + str(self.joueurs[i].nom) + " a " + str(self.joueurs[i].nbPointsRune) + " points")
+            print("le joueur est dans la " + str(self.joueurs[i].rune))
+
+    def incrementerPoints(self,joueurI):
+        joueurI.nbPointsRune += 50
+
 
 class Daim:
     def __init__(self, parent, id, x, y, notyperegion=-1, idregion=None):
@@ -816,12 +828,14 @@ class Joueur():
                      "soldat": Soldat,
                      "archer": Archer, }
 
-    def __init__(self, parent, id, nom, couleur, x, y):
+    def __init__(self, parent, id, nom, couleur, x, y,rune,nbPointsRune):
         self.parent = parent
         self.nom = nom
         self.id = id
         self.x = x
         self.y = y
+        self.rune = rune
+        self.nbPointsRune = nbPointsRune
         self.couleur = couleur
         self.monchat = []
         self.chatneuf = 0
@@ -1262,9 +1276,13 @@ class Partie():
             # placer les joueurs dans des quandrants differents
             j = random.choice(tableauOrdreMap)
             tableauOrdreMap.remove(j)
+            rune = "rune " + str(j+1)
+            runePoints = 0
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
-            self.joueurs[i] = Joueur(self, id, i, coul, x, y)
+            self.joueurs[i] = Joueur(self, id, i, coul, x, y,rune,runePoints)
+        creerSteele = Stele(self.joueurs)
+        print(creerSteele.nbrune())
 
     def deplacer(self):
         for i in self.joueurs:
