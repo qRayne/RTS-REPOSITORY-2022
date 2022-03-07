@@ -4,6 +4,9 @@ import ast
 
 import json
 import random
+
+import self as self
+
 from helper import Helper
 from RTS_divers import *
 import math
@@ -954,14 +957,20 @@ class Joueur():
         id = get_prochain_id()
         # payer batiment
         vals = Partie.valeurs
-        for k, val in self.ressources.items():
-            self.ressources[k] = val - vals[sorte][k]
+        for k, val in self.mamaison.ressources.items():
+            if (self.mamaison.ressources[k] > 0 ):
+                ok = True
+                self.mamaison.ressources[k] = val - vals[sorte][k]
+            else:
+                ok = False
+                break
 
-        siteconstruction = SiteConstruction(self, id, pos[0], pos[1], sorte)
-        self.batiments["siteconstruction"][id] = siteconstruction
-        for i in perso:
-            self.persos["ouvrier"][i].construire_site_construction(siteconstruction)
-            # self.persos["ouvrier"][i].construire_batiment(siteconstruction)
+        if (ok):
+            siteconstruction = SiteConstruction(self, id, pos[0], pos[1], sorte)
+            self.batiments["siteconstruction"][id] = siteconstruction
+            for i in perso:
+                self.persos["ouvrier"][i].construire_site_construction(siteconstruction)
+                # self.persos["ouvrier"][i].construire_batiment(siteconstruction)
 
     def installer_batiment(self, batiment):
         # self.batiments['siteconstruction'].pop(batiment.id)
@@ -1070,10 +1079,17 @@ class Joueur():
 
 
 
+
 #######################  LE MODELE est la partie #######################
 class Partie():
+
+    def cout(self, ressouces):
+        nbressource = self.mamaison.ressources
+
+
+
     valeurs = {"maison": {"nourriture": 0,
-                          "bois": 100,
+                          "bois": 50,
                           "pierre": 0,
                           "metal": 0,
                           "delai": 400
@@ -1160,6 +1176,9 @@ class Partie():
         for i in self.biotopes:
             total += len(self.biotopes[i])
         self.montrer_msg_general(str(total))
+
+
+
 
     def trouver_valeurs(self):
         vals = Partie.valeurs
