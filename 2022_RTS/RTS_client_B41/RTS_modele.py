@@ -1344,7 +1344,6 @@ class Partie():
         nbSecondesJeu = t - self.debut
         if nbSecondesJeu != 0 and nbSecondesJeu % 5 == 0:
             self.stele.__getitem__(0).incrementerPointsSec()
-        print(self.stele.__getitem__(0).nbrune())
         self.renouveler_ressources_naturelles()
 
     def renouveler_ressources_naturelles(self):
