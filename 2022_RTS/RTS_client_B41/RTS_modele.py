@@ -1045,12 +1045,29 @@ class Joueur():
         print(choixOutil)
 
     def upgrade(self, upgradetype):
+        clemaison = self.batiments["maison"].keys()
+        cle = list(clemaison)[0]
+        maison = self.batiments["maison"][cle]
+
         if upgradetype == "Chaussure":
-            clemaison = self.batiments["maison"].keys()
-            cle = list(clemaison)[0]
-            maison = self.batiments["maison"][cle]
             maison.ressources["metal"] -= 1
             self.chaussureniveau += 1
+        if upgradetype == "Armes":
+            maison.ressources["metal"] -= 1
+            self.armesniveau += 1
+        if upgradetype == "Outils":
+            maison.ressources["metal"] -= 1
+            self.outilsniveau += 1
+        if upgradetype == "Armure":
+            maison.ressources["metal"] -= 1
+            self.outilsniveau += 1
+
+        for i in self.persos:
+            for j in self.persos[i]:
+                p = self.persos[i][j]
+                p.vitesse = 5 + self.chaussureniveau
+
+
 
 
 #######################  LE MODELE est la partie #######################
