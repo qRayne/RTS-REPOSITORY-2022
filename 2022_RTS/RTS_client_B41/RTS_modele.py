@@ -126,8 +126,9 @@ class NPC:
         self.questInProgress = False
 
 class Stele:
-    def __init__(self,joueurs):
+    def __init__(self,joueurs,parent):
         self.joueurs = joueurs
+        self.parent = parent
 
     def nbrune(self):
         for i in self.joueurs:
@@ -135,7 +136,11 @@ class Stele:
             print("le joueur est dans la " + str(self.joueurs[i].rune))
 
     def incrementerPoints(self,joueurI):
-        joueurI.nbPointsRune += 50
+        joueurI.nbPointsRune += 20
+
+    def incrementerPointsSec(self):
+        for i in self.joueurs:
+            self.joueurs[i].nbPointsRune += 0.125
 
 
 class Daim:
@@ -1091,6 +1096,7 @@ class Partie():
         self.taillecase = 20
         self.taillecarte = int(self.aireX / self.taillecase)
         self.cartecase = []
+        self.stele = []
         self.make_carte_case()
 
         self.delaiprochaineaction = 20
@@ -1281,8 +1287,9 @@ class Partie():
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
             self.joueurs[i] = Joueur(self, id, i, coul, x, y,rune,runePoints)
-        creerSteele = Stele(self.joueurs)
-        print(creerSteele.nbrune())
+        steeleInitial = Stele(self.joueurs,self)
+        self.stele.append(steeleInitial)
+        self.stele.__getitem__(0).nbrune()
 
     def deplacer(self):
         for i in self.joueurs:
@@ -1290,6 +1297,7 @@ class Partie():
 
     def jouer_prochain_coup(self, cadrecourant):
         self.ressourcemorte = []
+        t = int(time.time())
         ##################################################################
         # faire nouvelle action recu du serveur si on est au bon cadrecourant
         # ATTENTION : NE PAS TOUCHER 
@@ -1313,10 +1321,13 @@ class Partie():
                 self.msggeneral = ""
                 self.msggeneralcompteur = 0
         else:
-            t = int(time.time())
             msg = "cadre: " + str(cadrecourant) + " - secs: " + str(t - self.debut)
             self.msggeneral = msg
 
+        nbSecondesJeu = t - self.debut
+        if nbSecondesJeu != 0 and nbSecondesJeu % 5 == 0:
+            self.stele.__getitem__(0).incrementerPointsSec()
+        print(self.stele.__getitem__(0).nbrune())
         self.renouveler_ressources_naturelles()
 
     def renouveler_ressources_naturelles(self):
