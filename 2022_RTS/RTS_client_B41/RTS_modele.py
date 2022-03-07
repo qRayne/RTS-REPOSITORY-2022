@@ -393,7 +393,7 @@ class Perso():
         self.cible = None
         self.position_visee = None
         self.cibleennemi = None
-        self.mana = 100
+        self.vie = 100
         self.force = 5
         self.champvision = 100
         self.vitesse = 5
@@ -424,9 +424,9 @@ class Perso():
             self.actioncourante = "deplacer"
 
     def recevoir_coup(self, force):
-        self.mana -= force
+        self.vie -= force
         print("Ouch")
-        if self.mana < 1:
+        if self.vie < 1:
             print("MORTS")
             self.parent.annoncer_mort(self)
             return 1
@@ -654,16 +654,24 @@ class Ouvrier(Perso):
             i.bouger()
 
     def ramasser(self):
-        self.ramassage += 1
-        self.cible.valeur -= 1
-        if self.cible.valeur == 0 or self.ramassage == self.quota:
+        self.ramassage += 0.1 + (self.parent.outilsniveau * 0.2)
+        self.cible.valeur -= 0.1 + (self.parent.outilsniveau * 0.2)
+        if self.cible.valeur == 0 or self.ramassage >= self.quota:
             self.actioncourante = "retourbatimentmere"
             self.position_visee = [self.batimentmere.x, self.batimentmere.y]
             if self.cible.valeur == 0:
                 self.parent.avertir_ressource_mort(self.typeressource, self.cible)
+            self.ramassage = int(self.ramassage)
         else:
-            self.x = self.x + random.randrange(4) - 2
-            self.y = self.y + random.randrange(4) - 2
+            toggle = False
+            if toggle == False:
+                self.x = self.x + random.randrange(2)
+                self.y = self.y + random.randrange(2)
+                toggle = True
+            if toggle == True:
+                self.x = self.x - random.randrange(2)
+                self.y = self.y - random.randrange(2)
+                toggle = False
 
     def construire_batiment(self):
         self.cible.decremente_delai()
@@ -1066,6 +1074,11 @@ class Joueur():
             for j in self.persos[i]:
                 p = self.persos[i][j]
                 p.vitesse = 5 + self.chaussureniveau
+                p.force += self.armesniveau
+                p.vie += (10 * self.arumureniveau)
+
+                if p.montype == "ouvrier":
+                    p.quota = 20 + (3 * self.outilsniveau)
 
 
 
