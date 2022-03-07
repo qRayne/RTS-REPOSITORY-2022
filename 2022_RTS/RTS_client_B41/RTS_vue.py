@@ -405,6 +405,7 @@ class Vue():
 
     def upgrade(self, upgradetype, player):
         self.modele.joueurs[player].upgrade(upgradetype)
+        self.subcrafting()
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
