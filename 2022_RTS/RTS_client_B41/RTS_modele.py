@@ -1071,7 +1071,7 @@ class Joueur():
         if upgradetype == "Outils":
             maison.ressources["metal"] -= 1
             self.outilsniveau += 1
-        if upgradetype == "Armure":
+        if upgradetype == "Armures":
             maison.ressources["metal"] -= 1
             self.outilsniveau += 1
 

@@ -355,7 +355,12 @@ class Vue():
 
     def subcrafting(self):
         self.cadresubcraft = Frame(self.cadrecraft, height=300, width=300, bg="grey")
-        self.cadresubcraft.columnconfigure(1, minsize=30)
+        self.cadresubcraft.columnconfigure(1, minsize=100)
+        self.cadresubcraft.columnconfigure(3, minsize=100)
+        self.cadresubcraft.rowconfigure(1, minsize=20)
+        self.cadresubcraft.rowconfigure(4, minsize=20)
+        self.cadresubcraft.rowconfigure(7, minsize=20)
+        self.cadresubcraft.rowconfigure(10, minsize=20)
         self.cadresubcraft.grid_propagate(0)
         self.craftingbuttons = []
         self.craftingreqlabels = []
@@ -372,19 +377,19 @@ class Vue():
                 self.craftingbuttons.append(chausUpgBtn)
                 self.craftingreqlabels.append(chausReqLab)
 
-                outilUpgBtn = Button(self.cadresubcraft, text="Outils")
+                outilUpgBtn = Button(self.cadresubcraft, text="Outils", command=lambda: self.upgrade("Outils", j))
                 text = "metal: " + str(maison.ressources["metal"]) + "/1"
                 outilReqLab = Label(self.cadresubcraft, text=text)
                 self.craftingbuttons.append(outilUpgBtn)
                 self.craftingreqlabels.append(outilReqLab)
 
-                armesUpgBtn = Button(self.cadresubcraft, text="Armes")
+                armesUpgBtn = Button(self.cadresubcraft, text="Armes", command=lambda: self.upgrade("Armes", j))
                 text = "metal: " + str(maison.ressources["metal"]) + "/2"
                 armesReqLab = Label(self.cadresubcraft, text=text)
                 self.craftingbuttons.append(armesUpgBtn)
                 self.craftingreqlabels.append(armesReqLab)
 
-                armurUpgBtn = Button(self.cadresubcraft, text="Armures")
+                armurUpgBtn = Button(self.cadresubcraft, text="Armures", command=lambda: self.upgrade("Armures", j))
                 text = "metal: " + str(maison.ressources["metal"]) + "/2"
                 armurReqLab = Label(self.cadresubcraft, text=text)
                 self.craftingbuttons.append(armurUpgBtn)
@@ -392,15 +397,15 @@ class Vue():
 
 
         self.cadresubcraft.grid(column=0, row=2)
-        rowcount = 0
+        rowcount = 2
         for label in self.craftingbuttons:
-            label.grid(column=0, row=rowcount)
-            rowcount += 1
+            label.grid(column=2, row=rowcount)
+            rowcount += 3
 
-        rowcount = 0
+        rowcount = 3
         for label in self.craftingreqlabels:
             label.grid(column=2, row=rowcount)
-            rowcount +=1
+            rowcount += 3
 
 
     def upgrade(self, upgradetype, player):
