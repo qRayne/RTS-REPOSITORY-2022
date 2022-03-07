@@ -46,15 +46,6 @@ class Batiment():
             return 1
 
 
-class Usineballiste(Batiment):
-    def __init__(self, parent, id, couleur, x, y, montype):
-        Batiment.__init__(self, parent, id, x, y)
-        self.image = couleur[0] + "_" + montype
-        self.montype = montype
-        self.maxperso = 10
-        self.perso = 0
-
-
 class Maison(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
@@ -62,14 +53,12 @@ class Maison(Batiment):
         self.montype = montype
         self.tier = 1
         self.ressources = {"metal": 100,
-                         "bois": 100,
-                         "nourriture": 100,
-                         "roche": 100
-                         }
+                           "bois": 100,
+                           "nourriture": 100,
+                           "pierre": 100
+                           }
 
 
-
-# Création de la classe Forge qui est une sous classe de Batiment
 class Forge(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
@@ -112,14 +101,10 @@ class Fournaise(Batiment):
         self.perso = 0
         self.arret = False
         self.prixConstruction = {"lingot": 6}
-
         self.inventaire = {"bois": 0}
 
-    def convertireBoisCharbon(self):
-        pass
 
-
-class Abri():
+class Caserne(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
         Batiment.__init__(self, parent, id, x, y)
         self.image = couleur[0] + "_" + montype
@@ -128,16 +113,7 @@ class Abri():
         self.perso = 0
 
 
-class Caserne():
-    def __init__(self, parent, id, couleur, x, y, montype):
-        Batiment.__init__(self, parent, id, x, y)
-        self.image = couleur[0] + "_" + montype
-        self.montype = montype
-        self.maxperso = 20
-        self.perso = 0
-
-
-class NPC():
+class NPC:
     def __init__(self, parent, id, spawnX, spawnY, playerID, currentQuest):
         self.id = id
         self.x = spawnX
@@ -149,18 +125,20 @@ class NPC():
         self.currentQuest = currentQuest
         self.questInProgress = False
 
+class Stele:
+    def __init__(self,joueurs):
+        self.joueurs = joueurs
 
-class Quete():
-    def __init__(self, id, name, playerID, questText, isCompleted, objType):
-        self.id = id
-        self.name = name
-        self.playerID = playerID
-        self.questText = questText
-        self.isCompleted = isCompleted
-        self.objType = objType
+    def nbrune(self):
+        for i in self.joueurs:
+            print("le joueur " + str(self.joueurs[i].nom) + " a " + str(self.joueurs[i].nbPointsRune) + " points")
+            print("le joueur est dans la " + str(self.joueurs[i].rune))
+
+    def incrementerPoints(self,joueurI):
+        joueurI.nbPointsRune += 50
 
 
-class Daim():
+class Daim:
     def __init__(self, parent, id, x, y, notyperegion=-1, idregion=None):
         self.parent = parent
         self.id = id
@@ -238,7 +216,7 @@ class Daim():
         self.img = self.nomimg + self.dir
 
 
-class Biotope():
+class Biotope:
     def __init__(self, parent, id, monimg, x, y, montype, idregion=0, posid="0"):
         self.parent = parent
         self.id = id
@@ -258,7 +236,7 @@ class Framboises(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 1
+        self.valeur = 10
 
 
 class Bleuets(Biotope):
@@ -267,7 +245,7 @@ class Bleuets(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 1
+        self.valeur = 20
 
 
 class Champignons(Biotope):
@@ -276,50 +254,10 @@ class Champignons(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 1
+        self.valeur = 15
 
 
-class Marais(Biotope):
-    typeressource = ['marais1',
-                     'marais2',
-                     'marais3']
-
-    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
-        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 100
-
-
-class Eau(Biotope):
-    typeressource = ['eaugrand1',
-                     'eaugrand2',
-                     'eaugrand3',
-                     'eaujoncD',
-                     'eaujoncG',
-                     'eauquenouillesD',
-                     'eauquenouillesG',
-                     'eauquenouillesgrand',
-                     'eautourbillon',
-                     'eautroncs']
-
-    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
-        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        n = random.randrange(50)
-        if n == 6:
-            self.spritelen = 6  # len(self.parent.parent.vue.gifs["poissons"])
-            self.sprite = "poissons"
-            self.spriteno = random.randrange(self.spritelen)
-            self.valeur = 100
-        else:
-            self.valeur = 10
-
-    def jouer_prochain_coup(self):
-        if self.sprite:
-            self.spriteno += 1
-            if self.spriteno > self.spritelen - 1:
-                self.spriteno = 0
-
-
-class Roche(Biotope):
+class Pierre(Biotope):
     typeressource = ['roches1 grand',
                      'roches1petit',
                      'roches2grand',
@@ -335,28 +273,36 @@ class Roche(Biotope):
         self.valeur = 100
 
 
-class Cuivre(Biotope):
-    typeressource = ['cuivre1 grand',
-                     'cuivre1petit',
-                     'cuivre2grand',
-                     'cuivre2petit']
+class Pin(Biotope):
+    typeressource = ['pin']
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 100
+        self.valeur = 250
 
 
-class Bois(Biotope):
-    typeressource = ['arbre0grand',
-                     'arbre0petit',
-                     'arbre1grand',
-                     'arbre2grand',
-                     'arbresapin0grand',
-                     'arbresapin0petit']
+class Sapin(Biotope):
+    typeressource = ['sapin']
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 30
+        self.valeur = 200
+
+
+class Hetre(Biotope):
+    typeressource = ['hetre']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 50
+
+
+class Bouleau(Biotope):
+    typeressource = ['bouleau']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 75
 
 
 class Fleche():
@@ -577,28 +523,16 @@ class Archer(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
 
-class Chevalier(Perso):
-    def __init__(self, parent, id, maison, couleur, x, y, montype):
-        Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
-
-class Druide(Perso):
-    def __init__(self, parent, id, maison, couleur, x, y, montype):
-        Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
-
-
-class Ballista(Perso):
-    def __init__(self, parent, id, maison, couleur, x, y, montype):
-        Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
-
-        self.dir = "DH"
+        self.dir = "D"
         self.image = couleur[0] + "_" + montype + self.dir
         self.cible = None
         self.angle = None
-        self.distancefeumax = 30
-        self.distancefeu = 30
+        self.distancefeumax = 50
+        self.distancefeu = 50
+        self.delaifeu = 0
+        self.delaifeumax = 30
         self.fleches = []
         self.cibleennemi = None
-        # self.nomimg="ballista"
 
     def cibler(self, pos):
         self.position_visee = pos
@@ -629,7 +563,8 @@ class Ballista(Perso):
     def attaquerennemi(self):
         if self.delaifeu == 0:
             id = get_prochain_id()
-            fleche = Fleche(self, id, self.ciblennemi)
+            fleche = Fleche(self, id, self.cibleennemi)
+            self.fleches.append(fleche)
             self.delaifeu = self.delaifeumax
         for i in self.fleches:
             rep = i.bouger()
@@ -663,7 +598,6 @@ class Ouvrier(Perso):
                                  "validerjavelot": self.valider_javelot,
                                  }
 
-
     def chasser_ramasser(self, objetcible, sontype, actiontype):
         self.cible = objetcible
         self.typeressource = sontype
@@ -674,10 +608,12 @@ class Ouvrier(Perso):
         reponse = self.bouger()
         if reponse == "rendu":
             if self.cible:
-                if self.typeressource == "daim" or self.typeressource == "eau":
-                    self.parent.ressources["viande"] += self.ramassage
+                if self.typeressource == "daim" or self.typeressource == "framboises" or self.typeressource == "bleuets" or self.typeressource == "champignons":
+                    self.parent.mamaison.ressources["nourriture"] += self.ramassage
+                elif self.typeressource == "hetre" or self.typeressource == "bouleau" or self.typeressource == "sapin" or self.typeressource == "pin":
+                    self.parent.mamaison.ressources["bois"] += self.ramassage
                 else:
-                    self.parent.ressources[self.typeressource] += self.ramassage
+                    self.parent.mamaison.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
                 if self.cible.valeur < 1:
                     rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
@@ -725,10 +661,6 @@ class Ouvrier(Perso):
             self.position_visee = [self.batimentmere.x, self.batimentmere.y]
             if self.cible.valeur == 0:
                 self.parent.avertir_ressource_mort(self.typeressource, self.cible)
-                # rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
-                # if rep:
-                #     if self.id != rep.id:
-                #         self.cible=rep
         else:
             self.x = self.x + random.randrange(4) - 2
             self.y = self.y + random.randrange(4) - 2
@@ -894,31 +826,22 @@ class Caseregion():
 class Joueur():
     classespersos = {"ouvrier": Ouvrier,
                      "soldat": Soldat,
-                     "archer": Archer,}
+                     "archer": Archer, }
 
-    def __init__(self, parent, id, nom, couleur, x, y):
+    def __init__(self, parent, id, nom, couleur, x, y,rune,nbPointsRune):
         self.parent = parent
         self.nom = nom
         self.id = id
         self.x = x
         self.y = y
+        self.rune = rune
+        self.nbPointsRune = nbPointsRune
         self.couleur = couleur
         self.monchat = []
         self.chatneuf = 0
         self.ressourcemorte = []
-        self.ressources = {"viande": 200,
-                           "framboises": 50,
-                           "bleuets": 50,
-                           "champignons": 50,
-                           "bois": 200,
-                           "boisdebase": 200,
-                           "boisfin": 200,
-                           "roche": 200,
-                           "silex": 200,
-                           "cuivre": 50,
-                           "etain": 50,
-                           "fer": 50,
-                           "charbon": 0}
+        self.ressources = {}
+        self.mamaison = None
         self.persos = {"ouvrier": {},
                        "soldat": {},
                        "archer": {},
@@ -928,9 +851,7 @@ class Joueur():
                        "ballista": {}}
 
         self.batiments = {"maison": {},
-                          "abri": {},
                           "caserne": {},
-                          "usineballiste": {},
                           "siteconstruction": {},
                           "forge": {},
                           "fournaise": {}}
@@ -943,7 +864,7 @@ class Joueur():
                         "attaquer": self.attaquer,
                         "chatter": self.chatter,
                         "abandonner": self.abandonner,
-                        "convertirbois": self.convertir_bois,
+                        "convertirpierre": self.convertir_pierre,
                         "creerarmes": self.creer_armes,
                         "creerarmures": self.creer_armures,
                         "creeroutils": self.creer_outils
@@ -1026,6 +947,7 @@ class Joueur():
     def creer_point_origine(self, x, y):
         idmaison = get_prochain_id()
         self.batiments["maison"][idmaison] = Maison(self, idmaison, self.couleur, x, y, "maison")
+        self.mamaison = self.batiments["maison"][idmaison]
 
     def construire_batiment(self, param):
         perso, sorte, pos = param
@@ -1070,20 +992,19 @@ class Joueur():
         self.persos[sorteperso][id] = Joueur.classespersos[sorteperso](self, id, batiment, self.couleur, x, y,
                                                                        sorteperso)
 
-    def convertir_bois(self, param):
-        n = self.parent.joueurs.keys()
-        for i in n:
-            if i == self.nom:
-                clemaison = self.parent.joueurs[i].batiments["maison"].keys()
-                cle = list(clemaison)[0]
-                maison = self.parent.joueurs[i].batiments["maison"][cle]
-                total = maison.ressources["roche"]
+    def convertir_pierre(self, param):
 
-                if total > 0:
-                    maison.ressources["metal"] += 1
-                    maison.ressources["roche"] -= 10
+        # n = self.parent.joueurs.keys()
+        # for i in n:
+        #     if i == self.nom:
+        #         clemaison = self.parent.joueurs[i].batiments["maison"].keys()
+        #         cle = list(clemaison)[0]
+        #         maison = self.parent.joueurs[i].batiments["maison"][cle]
+        nbressource = self.mamaison.ressources["pierre"]
 
-
+        if nbressource >= 10:
+            self.mamaison.ressources["metal"] += 1
+            self.mamaison.ressources["pierre"] -= 10
 
     def creer_perso(self, param):
         sorteperso, batimentsource, idbatiment, pos = param
@@ -1124,101 +1045,57 @@ class Joueur():
         print(choixOutil)
 
     def upgrade(self, upgradetype):
+        clemaison = self.batiments["maison"].keys()
+        cle = list(clemaison)[0]
+        maison = self.batiments["maison"][cle]
+
         if upgradetype == "Chaussure":
-            clemaison = self.batiments["maison"].keys()
-            cle = list(clemaison)[0]
-            maison = self.batiments["maison"][cle]
             maison.ressources["metal"] -= 1
             self.chaussureniveau += 1
+        if upgradetype == "Armes":
+            maison.ressources["metal"] -= 1
+            self.armesniveau += 1
+        if upgradetype == "Outils":
+            maison.ressources["metal"] -= 1
+            self.outilsniveau += 1
+        if upgradetype == "Armure":
+            maison.ressources["metal"] -= 1
+            self.outilsniveau += 1
+
+        for i in self.persos:
+            for j in self.persos[i]:
+                p = self.persos[i][j]
+                p.vitesse = 5 + self.chaussureniveau
+
+
 
 
 #######################  LE MODELE est la partie #######################
 class Partie():
-    valeurs = {"maison": {"viande": 0,
-                          "bois": 20,
-                          "roche": 20,
-                          "cuivre": 0,
-                          "framboises": 0,
-                          "bleuets": 0,
-                          "champignons": 0,
-                          "boisdebase": 0,
-                          "boisfin": 0,
-                          "etain": 0,
-                          "fer": 0,
-                          "silex": 0,
-                          "charbon": 0,
-                          "delai": 50, },
-               "abri": {"viande": 0,
-                        "bois": 10,
-                        "roche": 5,
-                        "cuivre": 0,
-                        "framboises": 0,
-                        "bleuets": 0,
-                        "champignons": 0,
-                        "boisdebase": 0,
-                        "boisfin": 0,
-                        "etain": 0,
-                        "fer": 0,
-                        "silex": 0,
-                        "charbon": 0,
-                        "delai": 30},
-               "caserne": {"viande": 0,
-                           "bois": 10,
-                           "roche": 5,
-                           "cuivre": 0,
-                           "framboises": 0,
-                           "bleuets": 0,
-                           "champignons": 0,
-                           "boisdebase": 0,
-                           "boisfin": 0,
-                           "etain": 0,
-                           "fer": 0,
-                           "silex": 0,
-                           "charbon": 0,
-                           "delai": 60},
-               "usineballiste": {"viande": 0,
-                                 "bois": 10,
-                                 "roche": 5,
-                                 "cuivre": 0,
-                                 "framboises": 0,
-                                 "bleuets": 0,
-                                 "champignons": 0,
-                                 "boisdebase": 0,
-                                 "boisfin": 0,
-                                 "etain": 0,
-                                 "fer": 0,
-                                 "silex": 0,
-                                 "charbon": 0,
-                                 "delai": 80},
-               "forge": {"viande": 0,
-                         "bois": 30,
-                         "roche": 10,
-                         "framboises": 0,
-                         "bleuets": 0,
-                         "champignons": 0,
-                         "boisdebase": 0,
-                         "boisfin": 0,
-                         "etain": 0,
-                         "fer": 0,
-                         "silex": 0,
-                         "cuivre": 0,
-                         "charbon": 0,
-                         "delai": 30},
-
-               "fournaise": {"viande": 0,
-                             "bois": 10,
-                             "roche": 5,
-                             "cuivre": 0,
-                             "framboises": 0,
-                             "bleuets": 0,
-                             "champignons": 0,
-                             "boisdebase": 0,
-                             "boisfin": 0,
-                             "etain": 0,
-                             "fer": 0,
-                             "silex": 0,
-                             "charbon": 0,
-                             "delai": 80}
+    valeurs = {"maison": {"nourriture": 0,
+                          "bois": 100,
+                          "pierre": 0,
+                          "metal": 0,
+                          "delai": 400
+                          },
+               "caserne": {"nourriture": 0,
+                           "bois": 50,
+                           "pierre": 0,
+                           "metal": 0,
+                           "delai": 200
+                           },
+               "forge": {"nourriture": 0,
+                         "bois": 50,
+                         "pierre": 20,
+                         "metal": 10,
+                         "delai": 250
+                         },
+               "fournaise": {"nourriture": 0,
+                             "bois": 50,
+                             "pierre": 25,
+                             "metal": 0,
+                             "delai": 80
+                             }
                }
 
     def __init__(self, parent, mondict):
@@ -1239,37 +1116,39 @@ class Partie():
         ###  reference vers les classes appropriées
         self.classesbatiments = {"maison": Maison,
                                  "caserne": Caserne,
-                                 "abri": Abri,
-                                 "usineballiste": Usineballiste,
                                  "forge": Forge,
                                  "fournaise": Fournaise}
         self.classespersos = {"ouvrier": Ouvrier,
                               "soldat": Soldat,
-                              "archer": Archer,
-                              "chevalier": Chevalier,
-                              "druide": Druide}
+                              "archer": Archer}
         self.ressourcemorte = []
         self.msggeneral = None
         self.msggeneraldelai = 30
         self.msggeneralcompteur = 0
         self.listebiotopes = []
         self.biotopes = {"daim": {},
-                         "bois": {},
-                         "roche": {},
-                         "cuivre": {},
-                         "eau": {},
-                         "marais": {},
+                         "hetre": {},
+                         "bouleau": {},
+                         "pin": {},
+                         "sapin": {},
+                         "pierre": {},
+                         # "eau": {},
+                         # "marais": {},
                          "framboises": {},
                          "bleuets": {},
                          "champignons": {}
                          }
 
         self.regions = {}
-        self.regionstypes = [["bois", 50, 20, 5, "forest green"],
-                             ["eau", 10, 20, 12, "light blue"],
-                             ["marais", 3, 8, 8, "DarkSeaGreen3"],
-                             ["roche", 8, 3, 6, "gray60"],
-                             ["cuivre", 8, 3, 6, "DarkOrange3"]]
+        self.regionstypes = [["hetre", 10, 10, 3, "forest green"],
+                             ["bouleau", 10, 10, 3, "forest green"],
+                             ["pin", 10, 20, 2, "forest green"],
+                             ["sapin", 10, 20, 2, "forest green"],
+                             # ["eau", 10, 20, 12, "light blue"],
+                             # ["marais", 3, 8, 8, "DarkSeaGreen3"],
+                             ["pierre", 8, 3, 6, "gray60"]  # ,
+                             # ["cuivre", 8, 3, 6, "DarkOrange3"]
+                             ]
         self.creer_regions()
         self.creer_biotopes()
         self.creer_population(mondict)
@@ -1311,11 +1190,11 @@ class Partie():
                 self.listebiotopes.append(mondaim)
                 n -= 1
 
-        self.creer_biotope("bois", "bois", Bois)
-        self.creer_biotope("roche", "roche", Roche)
-        self.creer_biotope("cuivre", "cuivre", Cuivre)
-        self.creer_biotope("eau", "eau", Eau)
-        self.creer_biotope("marais", "marais", Marais)
+        self.creer_biotope("hetre", "hetre", Hetre)
+        self.creer_biotope("pin", "pin", Pin)
+        self.creer_biotope("sapin", "sapin", Sapin)
+        self.creer_biotope("bouleau", "bouleau", Bouleau)
+        self.creer_biotope("pierre", "pierre", Pierre)
 
     def creer_biotope(self, region, ressource, typeclasse):  # creation des forets
         typeressource = typeclasse.typeressource
@@ -1345,22 +1224,21 @@ class Partie():
     def creer_regions(self):
         for reg in self.regionstypes:
             nomregion = reg[0]
-            nbrreg = reg[1]
-            minreg = reg[2]
-            rndreg = reg[3]
-            coulreg = reg[4]
+            nbrregion = reg[1]
+            minregion = reg[2]
+            randregion = reg[3]
             self.regions[nomregion] = {}
-            for i in range(nbrreg):
-                listecasereg = []
+            for k in range(nbrregion):
+
                 # trouve une case dans la carte
                 x = random.randrange(self.taillecarte)
                 y = random.randrange(self.taillecarte)
-                # calcule la largeur (x) et hauteur(y) de la regtion
-                taillex = random.randrange(reg[3]) + reg[2]
-                tailley = random.randrange(reg[3]) + reg[2]
-                # verifie que la region de deborde pas vers l'exterieur du jeu
-                # (ex: si le centre de la region est case 1,1
-                # et on la veut 10 case de large, cette region debuterait a la case -5, qui n'existe pas
+
+                # calcule la largeur (x) et hauteur(y) de la region
+                taillex = random.randrange(randregion) + minregion
+                tailley = random.randrange(randregion) + minregion
+
+                # vérifie que la region ne déborde pas vers l'extérieur du jeu
                 x0 = x - int(taillex / 2)
                 if x0 < 0:
                     x0 = 0
@@ -1388,7 +1266,6 @@ class Partie():
                     for j in range(taillex):
                         self.cartecase[y0 + i][x0 + j].parent = newregion
                         self.cartecase[y0 + i][x0 + j].montype = nomregion
-                        # listereg.append(self.cartecase[y0+i][x0+j])
                         casereg = self.cartecase[y0 + i][x0 + j]
                         casereg.parent = newregion
                         dicoreg[casereg.id] = casereg
@@ -1416,9 +1293,13 @@ class Partie():
             # placer les joueurs dans des quandrants differents
             j = random.choice(tableauOrdreMap)
             tableauOrdreMap.remove(j)
+            rune = "rune " + str(j+1)
+            runePoints = 0
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
-            self.joueurs[i] = Joueur(self, id, i, coul, x, y)
+            self.joueurs[i] = Joueur(self, id, i, coul, x, y,rune,runePoints)
+        creerSteele = Stele(self.joueurs)
+        print(creerSteele.nbrune())
 
     def deplacer(self):
         for i in self.joueurs:
@@ -1438,9 +1319,6 @@ class Partie():
         # demander aux objets de s'activer
         for i in self.biotopes["daim"].keys():
             self.biotopes["daim"][i].deplacer()
-
-        for i in self.biotopes["eau"].keys():
-            self.biotopes["eau"][i].jouer_prochain_coup()
 
         # demander aux objets de s'activer
         for i in self.joueurs.keys():
