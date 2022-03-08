@@ -126,14 +126,14 @@ class NPC:
         self.questInProgress = False
 
 class Stele:
-    def __init__(self,joueurs,parent):
+    def __init__(self, joueurs, parent):
         self.joueurs = joueurs
         self.parent = parent
 
     def nbrune(self):
         for i in self.joueurs:
-            print("le joueur " + str(self.joueurs[i].nom) + " a " + str(self.joueurs[i].nbPointsRune) + " points")
-            print("le joueur est dans la " + str(self.joueurs[i].rune))
+            print("le joueur ", str(self.joueurs[i].nom), " a ", str(self.joueurs[i].nbPointsRune), " points")
+            print("le joueur est dans la ", str(self.joueurs[i].rune))
 
     def incrementerPoints(self,joueurI):
         joueurI.nbPointsRune += 20
@@ -171,18 +171,9 @@ class Daim:
             x = self.position_visee[0]
             y = self.position_visee[1]
             x1, y1 = Helper.getAngledPoint(self.angle, self.vitesse, self.x, self.y)
-            # probleme potentiel de depasser la bordure et de ne pas trouver la case suivante
             case = self.parent.trouver_case(x1, y1)
-            # if case[0]>self.parent.taillecarte or case[0]<0:
-            #    self.cible=None
-            # elif case[1]>self.parent.taillecarte or case[1]<0:
-            #    self.cible=None
-            # else:
             if case.montype != "plaine":
                 pass
-                # print("marche dans ",self.parent.regionstypes[self.parent.cartecase[case[1]][case[0]]])
-            # changer la vitesse tant qu'il est sur un terrain irregulier
-            # FIN DE TEST POUR SURFACE MARCHEE
             self.x, self.y = x1, y1
             dist = Helper.calcDistance(self.x, self.y, x, y)
             if dist <= self.vitesse:
@@ -201,10 +192,6 @@ class Daim:
             x = (random.randrange(200) - 100) + self.x
             y = (random.randrange(200) - 100) + self.y
             case = self.parent.trouver_case(x, y)
-            # if case[0]>self.parent.taillecarte or case[0]<0:
-            #    continue
-            # if case[1]>self.parent.taillecarte or case[1]<0:
-            #    continue
 
             if case.montype == "plaine" or case.montype == "foretnoire" or case.montype == "prairie":
                 self.position_visee = [x, y]
@@ -286,7 +273,7 @@ class Rocher(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 100
+        self.valeur = 300
 
 
 class Pin(Biotope):
