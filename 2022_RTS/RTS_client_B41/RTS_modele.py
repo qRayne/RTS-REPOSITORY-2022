@@ -125,6 +125,23 @@ class NPC:
         self.currentQuest = currentQuest
         self.questInProgress = False
 
+class Stele:
+    def __init__(self,joueurs,parent):
+        self.joueurs = joueurs
+        self.parent = parent
+
+    def nbrune(self):
+        for i in self.joueurs:
+            print("le joueur " + str(self.joueurs[i].nom) + " a " + str(self.joueurs[i].nbPointsRune) + " points")
+            print("le joueur est dans la " + str(self.joueurs[i].rune))
+
+    def incrementerPoints(self,joueurI):
+        joueurI.nbPointsRune += 20
+
+    def incrementerPointsSec(self):
+        for i in self.joueurs:
+            self.joueurs[i].nbPointsRune += 0.125
+
 
 class Daim:
     def __init__(self, parent, id, x, y, notyperegion=-1, idregion=None):
@@ -392,7 +409,7 @@ class Perso():
         self.cible = None
         self.position_visee = None
         self.cibleennemi = None
-        self.mana = 100
+        self.vie = 100
         self.force = 5
         self.champvision = 100
         self.vitesse = 5
@@ -423,9 +440,9 @@ class Perso():
             self.actioncourante = "deplacer"
 
     def recevoir_coup(self, force):
-        self.mana -= force
+        self.vie -= force
         print("Ouch")
-        if self.mana < 1:
+        if self.vie < 1:
             print("MORTS")
             self.parent.annoncer_mort(self)
             return 1
@@ -659,16 +676,24 @@ class Ouvrier(Perso):
             i.bouger()
 
     def ramasser(self):
-        self.ramassage += 1
-        self.cible.valeur -= 1
-        if self.cible.valeur == 0 or self.ramassage == self.quota:
+        self.ramassage += 0.1 + (self.parent.outilsniveau * 0.2)
+        self.cible.valeur -= 0.1 + (self.parent.outilsniveau * 0.2)
+        if self.cible.valeur == 0 or self.ramassage >= self.quota:
             self.actioncourante = "retourbatimentmere"
             self.position_visee = [self.batimentmere.x, self.batimentmere.y]
             if self.cible.valeur == 0:
                 self.parent.avertir_ressource_mort(self.typeressource, self.cible)
+            self.ramassage = int(self.ramassage)
         else:
-            self.x = self.x + random.randrange(4) - 2
-            self.y = self.y + random.randrange(4) - 2
+            toggle = False
+            if toggle == False:
+                self.x = self.x + random.randrange(2)
+                self.y = self.y + random.randrange(2)
+                toggle = True
+            if toggle == True:
+                self.x = self.x - random.randrange(2)
+                self.y = self.y - random.randrange(2)
+                toggle = False
 
     def construire_batiment(self):
         self.cible.decremente_delai()
@@ -840,12 +865,14 @@ class Joueur():
                      "soldat": Soldat,
                      "archer": Archer, }
 
-    def __init__(self, parent, id, nom, couleur, x, y):
+    def __init__(self, parent, id, nom, couleur, x, y,rune,nbPointsRune):
         self.parent = parent
         self.nom = nom
         self.id = id
         self.x = x
         self.y = y
+        self.rune = rune
+        self.nbPointsRune = nbPointsRune
         self.couleur = couleur
         self.monchat = []
         self.chatneuf = 0
@@ -1058,12 +1085,34 @@ class Joueur():
         print(choixOutil)
 
     def upgrade(self, upgradetype):
+        clemaison = self.batiments["maison"].keys()
+        cle = list(clemaison)[0]
+        maison = self.batiments["maison"][cle]
+
         if upgradetype == "Chaussure":
-            clemaison = self.batiments["maison"].keys()
-            cle = list(clemaison)[0]
-            maison = self.batiments["maison"][cle]
             maison.ressources["metal"] -= 1
             self.chaussureniveau += 1
+        if upgradetype == "Armes":
+            maison.ressources["metal"] -= 1
+            self.armesniveau += 1
+        if upgradetype == "Outils":
+            maison.ressources["metal"] -= 1
+            self.outilsniveau += 1
+        if upgradetype == "Armures":
+            maison.ressources["metal"] -= 1
+            self.outilsniveau += 1
+
+        for i in self.persos:
+            for j in self.persos[i]:
+                p = self.persos[i][j]
+                p.vitesse = 5 + self.chaussureniveau
+                p.force += self.armesniveau
+                p.vie += (10 * self.arumureniveau)
+
+                if p.montype == "ouvrier":
+                    p.quota = 20 + (3 * self.outilsniveau)
+
+
 
 
 #######################  LE MODELE est la partie #######################
@@ -1104,6 +1153,7 @@ class Partie():
         self.taillecase = 50
         self.taillecarte = int(self.aireX / self.taillecase)
         self.cartecase = []
+        self.stele = []
         self.make_carte_case()
 
         self.delaiprochaineaction = 20
@@ -1327,9 +1377,14 @@ class Partie():
             # placer les joueurs dans des quandrants differents
             j = random.choice(tableauOrdreMap)
             tableauOrdreMap.remove(j)
+            rune = "rune " + str(j+1)
+            runePoints = 0
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
-            self.joueurs[i] = Joueur(self, id, i, coul, x, y)
+            self.joueurs[i] = Joueur(self, id, i, coul, x, y,rune,runePoints)
+        steeleInitial = Stele(self.joueurs,self)
+        self.stele.append(steeleInitial)
+        self.stele.__getitem__(0).nbrune()
 
     def deplacer(self):
         for i in self.joueurs:
@@ -1337,6 +1392,7 @@ class Partie():
 
     def jouer_prochain_coup(self, cadrecourant):
         self.ressourcemorte = []
+        t = int(time.time())
         ##################################################################
         # faire nouvelle action recu du serveur si on est au bon cadrecourant
         # ATTENTION : NE PAS TOUCHER 
@@ -1360,10 +1416,12 @@ class Partie():
                 self.msggeneral = ""
                 self.msggeneralcompteur = 0
         else:
-            t = int(time.time())
             msg = "cadre: " + str(cadrecourant) + " - secs: " + str(t - self.debut)
             self.msggeneral = msg
 
+        nbSecondesJeu = t - self.debut
+        if nbSecondesJeu != 0 and nbSecondesJeu % 5 == 0:
+            self.stele.__getitem__(0).incrementerPointsSec()
         self.renouveler_ressources_naturelles()
 
     def renouveler_ressources_naturelles(self):
