@@ -228,7 +228,7 @@ class Framboises(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 10
+        self.valeur = 10.0
 
 
 class Bleuets(Biotope):
@@ -237,7 +237,7 @@ class Bleuets(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 20
+        self.valeur = 20.0
 
 
 class Champignons(Biotope):
@@ -246,7 +246,7 @@ class Champignons(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 15
+        self.valeur = 15.0
 
 
 class Caillous(Biotope):
@@ -256,7 +256,7 @@ class Caillous(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 100
+        self.valeur = 100.0
 
 
 class Pierre(Biotope):
@@ -264,7 +264,7 @@ class Pierre(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 200
+        self.valeur = 200.0
 
 
 class Rocher(Biotope):
@@ -273,7 +273,7 @@ class Rocher(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 300
+        self.valeur = 300.0
 
 
 class Pin(Biotope):
@@ -281,7 +281,7 @@ class Pin(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 40
+        self.valeur = 40.0
 
 
 class Sapin(Biotope):
@@ -289,7 +289,7 @@ class Sapin(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 35
+        self.valeur = 35.0
 
 
 class Hetre(Biotope):
@@ -297,7 +297,7 @@ class Hetre(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 10
+        self.valeur = 10.0
 
 
 class Bouleau(Biotope):
@@ -305,7 +305,7 @@ class Bouleau(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 15
+        self.valeur = 15.0
 
 
 class Fleche():
@@ -583,9 +583,11 @@ class Ouvrier(Perso):
         self.typeressource = None
         self.quota = 20
         self.ramassage = 0
+        self.qteramassage = 1
         self.cibletemp = None
         self.dejavisite = []
-        self.champvision = random.randrange(100) + 300
+        self.champvision = 100
+        self.champvisionmax = 800
         self.champchasse = 120
         self.javelots = []
         self.vitesse = 5 + self.parent.chaussureniveau
@@ -620,12 +622,8 @@ class Ouvrier(Perso):
                 else:
                     self.parent.mamaison.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
-                if self.cible.valeur < 1:
+                if self.cible.valeur == 0:
                     rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
-                    if self.cible.montype == "daim":
-                        self.parent.ndaims -= 1
-                    elif self.cible.montype == "framboises" or self.cible.montype == "champignons" or self.cible.montype == "bleuets":
-                        self.parent.nbuissons -= 1
                     self.cibler(rep)
                 if self.cible:
                     self.cibler(self.cible)
@@ -663,13 +661,18 @@ class Ouvrier(Perso):
             i.bouger()
 
     def ramasser(self):
-        self.ramassage += 0.1 + (self.parent.outilsniveau * 0.2)
-        self.cible.valeur -= 0.1 + (self.parent.outilsniveau * 0.2)
+        self.ramassage += self.qteramassage
+        self.cible.valeur -= self.qteramassage
+        print("valeur: ", self.cible.valeur)
         if self.cible.valeur == 0 or self.ramassage >= self.quota:
             self.actioncourante = "retourbatimentmere"
             self.position_visee = [self.batimentmere.x, self.batimentmere.y]
-            if self.cible.valeur == 0:
+            if self.cible.valeur <= 0:
                 self.parent.avertir_ressource_mort(self.typeressource, self.cible)
+                if self.cible.montype == "daim":
+                    self.parent.ndaims -= 1
+                elif self.cible.montype == "framboises" or self.cible.montype == "champignons" or self.cible.montype == "bleuets":
+                    self.parent.nbuissons -= 1
             self.ramassage = int(self.ramassage)
         else:
             toggle = False
@@ -716,31 +719,42 @@ class Ouvrier(Perso):
 
     def chercher_nouvelle_ressource(self, type, idreg):
         print("Je cherche nouvelle ressource")
-        if type != "framboises" and type != "bleuets" and type != "champignons" and type != "daim":
-            reg = self.parent.parent.regions[type]
-            if idreg in reg:
-                regspec = self.parent.parent.regions[type][idreg]
-                n = len(regspec.dicocases)
-                while n > 0:
-                    clecase = list(regspec.dicocases.keys())
-                    case = regspec.dicocases[random.choice(clecase)]
-                    n -= 1
-                    if case.ressources:
-                        clecase2 = list(case.ressources.keys())
-                        newress = case.ressources[random.choice(clecase2)]
-                        if newress.montype == type:
-                            return newress
-                return None
-        else:
-            nb = len(self.parent.parent.biotopes[type])
+        # if type != "framboises" and type != "bleuets" and type != "champignons" and type != "daim":
+        #     reg = self.parent.parent.regions[type]
+        #     if idreg in reg:
+        #         regspec = self.parent.parent.regions[type][idreg]
+        #         n = len(regspec.dicocases)
+        #         while n > 0:
+        #             clecase = list(regspec.dicocases.keys())
+        #             case = regspec.dicocases[random.choice(clecase)]
+        #             n -= 1
+        #             if case.ressources:
+        #                 clecase2 = list(case.ressources.keys())
+        #                 newress = case.ressources[random.choice(clecase2)]
+        #                 if newress.montype == type:
+        #                     return newress
+        #         return None
+        # else:
+        nb = len(self.parent.parent.biotopes[type])
+        vision = self.champvision
+        chercheressource = True
+        while chercheressource:
             for i in range(nb):
                 rep = random.choice(list(self.parent.parent.biotopes[type].keys()))
                 obj = self.parent.parent.biotopes[type][rep]
                 if obj != self.cible:
                     distance = Helper.calcDistance(self.x, self.y, obj.x, obj.y)
-                    if distance <= self.champvision:
+                    if distance <= vision:
+                        chercheressource = False
                         return obj
-            return None
+            # si l'ouvrier ne trouve pas de la même ressource dans son champs de vision, il l'aggrandi jusqu'à un max.
+            # Ca fait en sorte qu'il prendra les ressources plus près de lui en premier, règle générale.
+            if chercheressource and vision < self.champvisionmax:
+                vision += 50
+            else:
+                chercheressource = False
+        print("Je n'ai pas trouvé de nouvelles ressources près de ma maison")
+        return None
 
     # def deplacer(self,pos):
     #     self.position_visee = pos
@@ -1108,25 +1122,25 @@ class Partie():
                           "bois": 100,
                           "pierre": 0,
                           "metal": 0,
-                          "delai": 400
+                          "delai": 10
                           },
                "caserne": {"nourriture": 0,
                            "bois": 50,
                            "pierre": 0,
                            "metal": 0,
-                           "delai": 200
+                           "delai": 10
                            },
                "forge": {"nourriture": 0,
                          "bois": 50,
                          "pierre": 20,
                          "metal": 10,
-                         "delai": 250
+                         "delai": 10
                          },
                "fournaise": {"nourriture": 0,
                              "bois": 50,
                              "pierre": 25,
                              "metal": 0,
-                             "delai": 80
+                             "delai": 10
                              }
                }
 
