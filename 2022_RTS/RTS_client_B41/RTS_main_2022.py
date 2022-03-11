@@ -236,13 +236,13 @@ class Controleur():
     def verifierPoint(self):
         nomJoueurGagant = None
         for i in self.modele.joueurs:
-            if self.modele.joueurs[i].nbPointsRune >= 0.25:
+            if self.modele.joueurs[i].nbPointsRune >= 1500:
                 nomJoueurGagant = self.modele.joueurs[i].nom
         return nomJoueurGagant
 
     def game_over(self):
         self.gameover = True
-        #self.modele = None
+        self.abandonner()
         print("C'est le joueur " + str(self.verifierPoint()) + " qui remporte la partie")
 
 if __name__ == '__main__':
