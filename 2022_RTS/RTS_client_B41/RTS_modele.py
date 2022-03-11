@@ -129,21 +129,25 @@ class NPC:
         self.questInProgress = False
 
 class Stele:
-    def __init__(self, joueurs, parent):
-        self.joueurs = joueurs
+    def __init__(self,parent,joueur,id,x,y):
         self.parent = parent
+        self.joueur = joueur
+        self.image = None # à changer
+        self.id = id
+        self.x = x
+        self.y = y
 
     def nbrune(self):
-        for i in self.joueurs:
-            print("le joueur ", str(self.joueurs[i].nom), " a ", str(self.joueurs[i].nbPointsRune), " points")
-            print("le joueur est dans la ", str(self.joueurs[i].rune))
+        print("le joueur ", str(self.joueur.nom), " a ", str(self.joueur.nbPointsRune), " points")
+        print("le joueur est dans la ", str(self.joueur.rune))
 
-    def incrementerPoints(self,joueurI):
-        joueurI.nbPointsRune += 20
+    def incrementerPoints(self):
+        self.joueur.nbPointsRune += 20
 
     def incrementerPointsSec(self):
-        for i in self.joueurs:
-            self.joueurs[i].nbPointsRune += 0.125
+        for i in self.parent.joueurs:
+            self.parent.joueurs[i].nbPointsRune += 0.125
+            round(self.parent.joueurs[i].nbPointsRune)
 
 
 class Daim:
@@ -1170,7 +1174,7 @@ class Partie():
         self.taillecase = 50
         self.taillecarte = int(self.aireX / self.taillecase)
         self.cartecase = []
-        self.stele = []
+        self.stele = {}
         self.make_carte_case()
 
         self.delaiprochaineaction = 20
@@ -1402,9 +1406,10 @@ class Partie():
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
             self.joueurs[i] = Joueur(self, id, i, coul, x, y,rune,runePoints)
-        steeleInitial = Stele(self.joueurs,self)
-        self.stele.append(steeleInitial)
-        self.stele.__getitem__(0).nbrune()
+            self.stele[i] = Stele(self,self.joueurs[i],id,x,y,)
+
+        for i in self.stele:
+            self.stele.__getitem__(i).nbrune()
 
     def deplacer(self):
         for i in self.joueurs:
@@ -1441,7 +1446,8 @@ class Partie():
 
         nbSecondesJeu = t - self.debut
         if nbSecondesJeu != 0 and nbSecondesJeu % 5 == 0:
-            self.stele.__getitem__(0).incrementerPointsSec()
+            for i in self.stele:
+                self.stele.__getitem__(i).incrementerPointsSec()
         self.renouveler_ressources_naturelles()
 
     def renouveler_ressources_naturelles(self):

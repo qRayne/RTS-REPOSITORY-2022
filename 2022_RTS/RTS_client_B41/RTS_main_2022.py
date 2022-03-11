@@ -40,6 +40,7 @@ class Controleur():
                        "Non connecté")  # la vue pour l'affichage et les controles du jeu
 
         self.vue.root.mainloop()  # la boucle des evenements (souris, click, clavier)
+        self.gameover = False
 
     def connecter_serveur(self, url_serveur):
         self.urlserveur = url_serveur  # le dernier avant le clic
@@ -165,6 +166,9 @@ class Controleur():
         self.vue.root.after(self.maindelai,
                             self.boucler_sur_jeu)  # appel ulterieur de la meme fonction jusqu'a l'arret de la partie
 
+        if self.verifierPoint() is not None:
+            self.game_over()
+
     ##############   FONCTIONS pour serveur #################
     # methode speciale pour remettre les parametres du serveur a leurs valeurs par defaut
     def reset_partie(self):
@@ -228,6 +232,18 @@ class Controleur():
 
     def montrer_stats(self,evt):
         self.modele.calc_stats()
+
+    def verifierPoint(self):
+        nomJoueurGagant = None
+        for i in self.modele.joueurs:
+            if self.modele.joueurs[i].nbPointsRune >= 0.25:
+                nomJoueurGagant = self.modele.joueurs[i].nom
+        return nomJoueurGagant
+
+    def game_over(self):
+        self.gameover = True
+        #self.modele = None
+        print("C'est le joueur " + str(self.verifierPoint()) + " qui remporte la partie")
 
 if __name__ == '__main__':
     print("Bienvenue au RTS")
