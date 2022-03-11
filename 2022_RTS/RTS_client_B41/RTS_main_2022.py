@@ -92,7 +92,7 @@ class Controleur():
     def initialiser_partie(self, mondict):
         initaleatoire = mondict[1][0][0]
         #random.seed(12471)  # random FIXE pour test ou ...
-        #random.seed(int(initaleatoire))   # qui prend la valeur generer par le serveur
+        random.seed(int(initaleatoire))   # qui prend la valeur generer par le serveur
 
         # on recoit la derniere liste des joueurs pour la partie
         listejoueurs = []
