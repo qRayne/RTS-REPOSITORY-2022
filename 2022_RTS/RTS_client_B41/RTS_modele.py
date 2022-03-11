@@ -129,14 +129,14 @@ class NPC:
         self.questInProgress = False
 
 class Stele:
-    def __init__(self,joueurs,parent):
+    def __init__(self, joueurs, parent):
         self.joueurs = joueurs
         self.parent = parent
 
     def nbrune(self):
         for i in self.joueurs:
-            print("le joueur " + str(self.joueurs[i].nom) + " a " + str(self.joueurs[i].nbPointsRune) + " points")
-            print("le joueur est dans la " + str(self.joueurs[i].rune))
+            print("le joueur ", str(self.joueurs[i].nom), " a ", str(self.joueurs[i].nbPointsRune), " points")
+            print("le joueur est dans la ", str(self.joueurs[i].rune))
 
     def incrementerPoints(self,joueurI):
         joueurI.nbPointsRune += 20
@@ -174,18 +174,9 @@ class Daim:
             x = self.position_visee[0]
             y = self.position_visee[1]
             x1, y1 = Helper.getAngledPoint(self.angle, self.vitesse, self.x, self.y)
-            # probleme potentiel de depasser la bordure et de ne pas trouver la case suivante
             case = self.parent.trouver_case(x1, y1)
-            # if case[0]>self.parent.taillecarte or case[0]<0:
-            #    self.cible=None
-            # elif case[1]>self.parent.taillecarte or case[1]<0:
-            #    self.cible=None
-            # else:
             if case.montype != "plaine":
                 pass
-                # print("marche dans ",self.parent.regionstypes[self.parent.cartecase[case[1]][case[0]]])
-            # changer la vitesse tant qu'il est sur un terrain irregulier
-            # FIN DE TEST POUR SURFACE MARCHEE
             self.x, self.y = x1, y1
             dist = Helper.calcDistance(self.x, self.y, x, y)
             if dist <= self.vitesse:
@@ -204,12 +195,8 @@ class Daim:
             x = (random.randrange(200) - 100) + self.x
             y = (random.randrange(200) - 100) + self.y
             case = self.parent.trouver_case(x, y)
-            # if case[0]>self.parent.taillecarte or case[0]<0:
-            #    continue
-            # if case[1]>self.parent.taillecarte or case[1]<0:
-            #    continue
 
-            if case.montype == "plaine":
+            if case.montype == "plaine" or case.montype == "foretnoire" or case.montype == "prairie":
                 self.position_visee = [x, y]
                 n = 0
         self.angle = Helper.calcAngle(self.x, self.y, self.position_visee[0], self.position_visee[1])
@@ -244,7 +231,7 @@ class Framboises(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 10
+        self.valeur = 10.0
 
 
 class Bleuets(Biotope):
@@ -253,7 +240,7 @@ class Bleuets(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 20
+        self.valeur = 20.0
 
 
 class Champignons(Biotope):
@@ -262,23 +249,34 @@ class Champignons(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype):
         Biotope.__init__(self, parent, id, monimg, x, y, montype)
-        self.valeur = 15
+        self.valeur = 15.0
 
 
-class Pierre(Biotope):
-    typeressource = ['roches1 grand',
-                     'roches1petit',
-                     'roches2grand',
-                     'roches2petit',
-                     'roches3grand',
-                     'roches3petit',
-                     'roches4grand',
-                     'roches4petit',
-                     'roches5grand']
+class Caillous(Biotope):
+    typeressource = ['caillous1',
+                     'caillous2',
+                     'caillous3']
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 100
+        self.valeur = 100.0
+
+
+class Pierre(Biotope):
+    typeressource = ['pierre1']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 200.0
+
+
+class Rocher(Biotope):
+    typeressource = ['rocher1',
+                     'rocher2']
+
+    def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
+        Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
+        self.valeur = 300.0
 
 
 class Pin(Biotope):
@@ -286,7 +284,7 @@ class Pin(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 250
+        self.valeur = 40.0
 
 
 class Sapin(Biotope):
@@ -294,7 +292,7 @@ class Sapin(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 200
+        self.valeur = 35.0
 
 
 class Hetre(Biotope):
@@ -302,7 +300,7 @@ class Hetre(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 50
+        self.valeur = 10.0
 
 
 class Bouleau(Biotope):
@@ -310,7 +308,7 @@ class Bouleau(Biotope):
 
     def __init__(self, parent, id, monimg, x, y, montype, cleregion, posid):
         Biotope.__init__(self, parent, id, monimg, x, y, montype, cleregion, posid)
-        self.valeur = 75
+        self.valeur = 15.0
 
 
 class Fleche():
@@ -588,9 +586,11 @@ class Ouvrier(Perso):
         self.typeressource = None
         self.quota = 20
         self.ramassage = 0
+        self.qteramassage = 1
         self.cibletemp = None
         self.dejavisite = []
-        self.champvision = random.randrange(100) + 300
+        self.champvision = 100
+        self.champvisionmax = 800
         self.champchasse = 120
         self.javelots = []
         self.vitesse = 5 + self.parent.chaussureniveau
@@ -620,10 +620,12 @@ class Ouvrier(Perso):
                     self.parent.mamaison.ressources["nourriture"] += self.ramassage
                 elif self.typeressource == "hetre" or self.typeressource == "bouleau" or self.typeressource == "sapin" or self.typeressource == "pin":
                     self.parent.mamaison.ressources["bois"] += self.ramassage
+                elif self.typeressource == "caillous" or self.typeressource == "pierre" or self.typeressource == "rocher":
+                    self.parent.mamaison.ressources["pierre"] += self.ramassage
                 else:
                     self.parent.mamaison.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
-                if self.cible.valeur < 1:
+                if self.cible.valeur == 0:
                     rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
                     self.cibler(rep)
                 if self.cible:
@@ -662,13 +664,18 @@ class Ouvrier(Perso):
             i.bouger()
 
     def ramasser(self):
-        self.ramassage += 0.1 + (self.parent.outilsniveau * 0.2)
-        self.cible.valeur -= 0.1 + (self.parent.outilsniveau * 0.2)
+        self.ramassage += self.qteramassage
+        self.cible.valeur -= self.qteramassage
+        print("valeur: ", self.cible.valeur)
         if self.cible.valeur == 0 or self.ramassage >= self.quota:
             self.actioncourante = "retourbatimentmere"
             self.position_visee = [self.batimentmere.x, self.batimentmere.y]
-            if self.cible.valeur == 0:
+            if self.cible.valeur <= 0:
                 self.parent.avertir_ressource_mort(self.typeressource, self.cible)
+                if self.cible.montype == "daim":
+                    self.parent.ndaims -= 1
+                elif self.cible.montype == "framboises" or self.cible.montype == "champignons" or self.cible.montype == "bleuets":
+                    self.parent.nbuissons -= 1
             self.ramassage = int(self.ramassage)
         else:
             toggle = False
@@ -715,31 +722,42 @@ class Ouvrier(Perso):
 
     def chercher_nouvelle_ressource(self, type, idreg):
         print("Je cherche nouvelle ressource")
-        if type != "framboises" and type != "bleuets" and type != "champignons" and type != "daim":
-            reg = self.parent.parent.regions[type]
-            if idreg in reg:
-                regspec = self.parent.parent.regions[type][idreg]
-                n = len(regspec.dicocases)
-                while n > 0:
-                    clecase = list(regspec.dicocases.keys())
-                    case = regspec.dicocases[random.choice(clecase)]
-                    n -= 1
-                    if case.ressources:
-                        clecase2 = list(case.ressources.keys())
-                        newress = case.ressources[random.choice(clecase2)]
-                        if newress.montype == type:
-                            return newress
-                return None
-        else:
-            nb = len(self.parent.parent.biotopes[type])
+        # if type != "framboises" and type != "bleuets" and type != "champignons" and type != "daim":
+        #     reg = self.parent.parent.regions[type]
+        #     if idreg in reg:
+        #         regspec = self.parent.parent.regions[type][idreg]
+        #         n = len(regspec.dicocases)
+        #         while n > 0:
+        #             clecase = list(regspec.dicocases.keys())
+        #             case = regspec.dicocases[random.choice(clecase)]
+        #             n -= 1
+        #             if case.ressources:
+        #                 clecase2 = list(case.ressources.keys())
+        #                 newress = case.ressources[random.choice(clecase2)]
+        #                 if newress.montype == type:
+        #                     return newress
+        #         return None
+        # else:
+        nb = len(self.parent.parent.biotopes[type])
+        vision = self.champvision
+        chercheressource = True
+        while chercheressource:
             for i in range(nb):
                 rep = random.choice(list(self.parent.parent.biotopes[type].keys()))
                 obj = self.parent.parent.biotopes[type][rep]
                 if obj != self.cible:
                     distance = Helper.calcDistance(self.x, self.y, obj.x, obj.y)
-                    if distance <= self.champvision:
+                    if distance <= vision:
+                        chercheressource = False
                         return obj
-            return None
+            # si l'ouvrier ne trouve pas de la même ressource dans son champs de vision, il l'aggrandi jusqu'à un max.
+            # Ca fait en sorte qu'il prendra les ressources plus près de lui en premier, règle générale.
+            if chercheressource and vision < self.champvisionmax:
+                vision += 50
+            else:
+                chercheressource = False
+        print("Je n'ai pas trouvé de nouvelles ressources près de ma maison")
+        return None
 
     # def deplacer(self,pos):
     #     self.position_visee = pos
@@ -833,11 +851,18 @@ class Caseregion():
     def __init__(self, parent, id, x, y):
         self.parent = parent
         self.id = id
-        self.montype = "plaine"
         self.ressources = {}
         self.x = x
         self.y = y
+        self.montype = self.definirtyperegion(x,y)
 
+    def definirtyperegion(self, x, y):
+        if ((0 <= x < 20) or (60 < x <= 80)) and ((0 <= y < 20) or (60 < y <= 80)):
+            return "plaine"
+        elif (25 < x <= 55) and (25 < y <= 55):
+            return "prairie"
+        else:
+            return "foretnoire"
 
 class Joueur():
     classespersos = {"ouvrier": Ouvrier,
@@ -887,6 +912,9 @@ class Joueur():
                         }
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
+
+        self.nbuissons = self.parent.nbuissons
+        self.ndaims = self.parent.ndaims
 
         self.outilsniveau = 0
         self.chaussureniveau = 0
@@ -1110,25 +1138,25 @@ class Partie():
                           "bois": 50,
                           "pierre": 0,
                           "metal": 0,
-                          "delai": 400
+                          "delai": 10
                           },
                "caserne": {"nourriture": 0,
                            "bois": 50,
                            "pierre": 0,
                            "metal": 0,
-                           "delai": 200
+                           "delai": 10
                            },
                "forge": {"nourriture": 0,
                          "bois": 50,
                          "pierre": 20,
                          "metal": 10,
-                         "delai": 250
+                         "delai": 10
                          },
                "fournaise": {"nourriture": 0,
                              "bois": 50,
                              "pierre": 25,
                              "metal": 0,
-                             "delai": 80
+                             "delai": 10
                              }
                }
 
@@ -1139,13 +1167,18 @@ class Partie():
         self.aireX = 4000
         self.aireY = 4000
         # Decoupage de la surface
-        self.taillecase = 20
+        self.taillecase = 50
         self.taillecarte = int(self.aireX / self.taillecase)
         self.cartecase = []
         self.stele = []
         self.make_carte_case()
 
         self.delaiprochaineaction = 20
+
+        self.nbuissons = 0
+        self.maxbuissons = 20
+        self.ndaims = 0
+        self.maxdaims = 20
 
         self.joueurs = {}
         ###  reference vers les classes appropriées
@@ -1166,23 +1199,22 @@ class Partie():
                          "bouleau": {},
                          "pin": {},
                          "sapin": {},
+                         "caillous": {},
                          "pierre": {},
-                         # "eau": {},
-                         # "marais": {},
+                         "rocher": {},
                          "framboises": {},
                          "bleuets": {},
                          "champignons": {}
                          }
 
         self.regions = {}
-        self.regionstypes = [["hetre", 10, 10, 3, "forest green"],
-                             ["bouleau", 10, 10, 3, "forest green"],
-                             ["pin", 10, 20, 2, "forest green"],
-                             ["sapin", 10, 20, 2, "forest green"],
-                             # ["eau", 10, 20, 12, "light blue"],
-                             # ["marais", 3, 8, 8, "DarkSeaGreen3"],
-                             ["pierre", 8, 3, 6, "gray60"]  # ,
-                             # ["cuivre", 8, 3, 6, "DarkOrange3"]
+        self.regionstypes = [["hetre", 20, 2, 1, "forest green"],
+                             ["bouleau", 20, 2, 1, "forest green"],
+                             ["pin", 100, 4, 2, "forest green"],
+                             ["sapin", 75, 4, 2, "forest green"],
+                             ["caillous", 15, 2, 1, "gray60"],
+                             ["pierre", 15, 2, 1, "gray60"],
+                             ["rocher", 15, 2, 1, "gray60"]
                              ]
         self.creer_regions()
         self.creer_biotopes()
@@ -1216,23 +1248,24 @@ class Partie():
 
     def creer_biotopes(self):
         # creer des daims éparpillés
-        n = 20
-        while n:
+        while self.ndaims < self.maxdaims:
             x = random.randrange(self.aireX)
             y = random.randrange(self.aireY)
             case = self.trouver_case(x, y)
-            if case.montype == "plaine":
+            if case.montype == "plaine" or case.montype == "foretnoire" or case.montype == "prairie":
                 id = get_prochain_id()
                 mondaim = Daim(self, id, x, y)
                 self.biotopes["daim"][id] = mondaim
                 self.listebiotopes.append(mondaim)
-                n -= 1
+                self.ndaims += 1
 
         self.creer_biotope("hetre", "hetre", Hetre)
         self.creer_biotope("pin", "pin", Pin)
         self.creer_biotope("sapin", "sapin", Sapin)
         self.creer_biotope("bouleau", "bouleau", Bouleau)
+        self.creer_biotope("caillous", "caillous", Caillous)
         self.creer_biotope("pierre", "pierre", Pierre)
+        self.creer_biotope("rocher", "rocher", Rocher)
 
     def creer_biotope(self, region, ressource, typeclasse):  # creation des forets
         typeressource = typeclasse.typeressource
@@ -1241,8 +1274,13 @@ class Partie():
             listecases = self.regions[region][cleregion].dicocases
             # for listecase in self.regions[region]:
             # nressource = random.randrange(int(len(listecases) / 3)) + int((len(listecases) / 5))
-            nressource = int((random.randrange(len(listecases)) / 3) + 1)
+            if region == "sapin" or region == "pin":
+                nressource = random.randrange(10, 30)
+            else:
+                nressource = random.randrange(1, 3)
+
             while nressource:
+                # placer les ressources plus ou moins dans les bons biomes (types)
                 cases = list(listecases.keys())
                 pos = listecases[random.choice(cases)]
                 # pos=random.choice(listecases)
@@ -1265,12 +1303,40 @@ class Partie():
             nbrregion = reg[1]
             minregion = reg[2]
             randregion = reg[3]
+            x = 0
+            y = 0
             self.regions[nomregion] = {}
             for k in range(nbrregion):
 
-                # trouve une case dans la carte
-                x = random.randrange(self.taillecarte)
-                y = random.randrange(self.taillecarte)
+                # placer la pierre dans la région "prairie"
+                if nomregion == "pierre" or nomregion == "caillous" or nomregion == "rocher":
+                    pasuneprairie = True
+                    while pasuneprairie:
+                        x = random.randrange(self.taillecarte)
+                        y = random.randrange(self.taillecarte)
+                        case = self.cartecase[y][x]
+                        if case.montype == "prairie":
+                            pasuneprairie = False
+
+                # placer les conifères dans la foret noire
+                elif nomregion == "pin" or nomregion == "sapin":
+                    pasuneforet = True
+                    while pasuneforet:
+                        x = random.randrange(self.taillecarte)
+                        y = random.randrange(self.taillecarte)
+                        case = self.cartecase[y][x]
+                        if case.montype == "foretnoire":
+                            pasuneforet = False
+
+                # on place le reste
+                else:
+                    pasuneplaine = True
+                    while pasuneplaine:
+                        x = random.randrange(self.taillecarte)
+                        y = random.randrange(self.taillecarte)
+                        case = self.cartecase[y][x]
+                        if case.montype == "plaine":
+                            pasuneplaine = False
 
                 # calcule la largeur (x) et hauteur(y) de la region
                 taillex = random.randrange(randregion) + minregion
@@ -1380,27 +1446,62 @@ class Partie():
 
     def renouveler_ressources_naturelles(self):
         if self.delaiprochaineaction == 0:
-            self.generer_ressource(Framboises, "framboises")
-            self.generer_ressource(Bleuets, "bleuets")
-            self.generer_ressource(Champignons, "champignons")
-            self.delaiprochaineaction = 200
+            if self.nbuissons < self.maxbuissons:
+                self.generer_buissons()
+            if self.ndaims < self.maxdaims:
+                self.generer_daims()
+            self.delaiprochaineaction = 20
         else:
             self.delaiprochaineaction -= 1
 
-    def generer_ressource(self, ressource, nom_ressource):
-        typeressource = ressource.typeressource
-        n = 1
-        while n:
-            x = random.randrange(self.aireX)
-            y = random.randrange(self.aireY)
-            case = self.trouver_case(x, y)
-            if case.montype == "plaine":
-                id = get_prochain_id()
-                img = random.choice(typeressource)
-                cette_ressource = ressource(self, id, img, x, y, nom_ressource)
-                self.biotopes[nom_ressource][id] = cette_ressource
-                n -= 1
-                self.parent.afficher_bio(cette_ressource)
+    def generer_buissons(self):
+        # On regénère les buissons si il y en a moins que le max sur la carte
+        x = random.randrange(self.aireX)
+        y = random.randrange(self.aireY)
+        case = self.trouver_case(x, y)
+
+            #Si la case est de type "prairie", la boucle while se répète sans incrémenter
+        if case.montype == "plaine":
+            if random.randrange(2) < 1:
+                ressource = Champignons
+                nom_ressource = "champignons"
+            else:
+                ressource = Framboises
+                nom_ressource = "framboises"
+            id = get_prochain_id()
+            img = random.choice(ressource.typeressource)
+            cette_ressource = ressource(self, id, img, x, y, nom_ressource)
+            self.biotopes[nom_ressource][id] = cette_ressource
+            self.nbuissons += 1
+            print(self.nbuissons, " (+framboises)")
+            self.parent.afficher_bio(cette_ressource)
+        elif case.montype == "foretnoire":
+            if random.randrange(2) < 1:
+                ressource = Champignons
+                nom_ressource = "champignons"
+            else:
+                ressource = Bleuets
+                nom_ressource = "bleuets"
+            id = get_prochain_id()
+            img = random.choice(ressource.typeressource)
+            cette_ressource = ressource(self, id, img, x, y, nom_ressource)
+            self.biotopes[nom_ressource][id] = cette_ressource
+            self.nbuissons += 1
+            print(self.nbuissons, " (+bleuets)")
+            self.parent.afficher_bio(cette_ressource)
+
+    def generer_daims(self):
+        # On ramene le nombre de daims au max si il y en a moins sur la carte
+        x = random.randrange(self.aireX)
+        y = random.randrange(self.aireY)
+        case = self.trouver_case(x, y)
+        if case.montype == "plaine" or case.montype == "foretnoire" or case.montype == "prairie":
+            id = get_prochain_id()
+            mondaim = Daim(self, id, x, y)
+            self.biotopes["daim"][id] = mondaim
+            self.listebiotopes.append(mondaim)
+            self.ndaims += 1
+            print(self.ndaims, " (+daim)")
 
     # VERIFIER CES FONCTIONS SUR LA CARTECASE
 

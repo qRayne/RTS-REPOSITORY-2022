@@ -177,7 +177,7 @@ class Vue():
         # on crée les scrollbar AVANT le canevas de jeu car le canevas est dépendant de leur
         self.scrollV=Scrollbar(self.cadrecanevas,orient=VERTICAL)
         self.scrollH=Scrollbar(self.cadrecanevas,orient=HORIZONTAL)
-        self.canevas=Canvas(self.cadrecanevas,width=400,height=400,bg="DarkOliveGreen2",
+        self.canevas=Canvas(self.cadrecanevas,width=400,height=400,bg="DarkOliveGreen1",
                             yscrollcommand = self.scrollV.set,
                             xscrollcommand = self.scrollH.set )
         self.scrollV.config( command = self.canevas.yview)
@@ -250,7 +250,7 @@ class Vue():
         self.canevasaction.create_text(100, 30, text=self.parent.monnom, font=("arial", 18, "bold"), anchor=S, tags=("nom"))
 
         # minicarte
-        self.minicarte=Canvas(self.cadreaction, width=self.tailleminicarte, height=self.tailleminicarte, bg="tan1", highlightthickness=0)
+        self.minicarte=Canvas(self.cadreaction, width=self.tailleminicarte, height=self.tailleminicarte, bg="pale green", highlightthickness=0)
         self.minicarte.grid(row=2, column=0)
         self.minicarte.bind("<Button-1>", self.deplacer_carte)
 
@@ -278,7 +278,9 @@ class Vue():
         self.canevas.tag_bind("bouleau", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("sapin", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("pin", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("caillous", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("pierre", "<Button-1>", self.ramasser_ressource)
+        self.canevas.tag_bind("rocher", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("framboises", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("bleuets", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("champignons", "<Button-1>", self.ramasser_ressource)
@@ -486,6 +488,19 @@ class Vue():
 
     ##FONCTIONS D'AFFICHAGES##################################
     def afficher_depart(self):
+        # afficher les couleurs des biomes au sol
+        for i in list(self.modele.cartecase):
+            for j in i:
+                taillecase = self.modele.taillecase
+                x = j.x * taillecase
+                y = j.y * taillecase
+
+                if j.montype == "foretnoire" or j.montype == "pin" or j.montype == "sapin":
+                    self.canevas.create_rectangle(x, y, x + taillecase, y + taillecase, outline="", fill="DarkOliveGreen3")
+                elif j.montype == "prairie" or j.montype == "pierre" or j.montype == "caillous" or j.montype == "rocher":
+                    self.canevas.create_rectangle(x, y, x + taillecase, y + taillecase, outline="", fill="khaki")
+
+        #afficher les biotopes
         self.modele.listebiotopes.sort(key = lambda c: c.y)
         for i in self.modele.listebiotopes:
             if i.montype=="daim":
@@ -498,13 +513,16 @@ class Vue():
                                                   #tags=("mobile","",i.id,)
 
         self.modele.listebiotopes=[]
-        minitaillecase=int(self.tailleminicarte/self.modele.taillecarte)
+
+        minitaillecase=self.tailleminicarte/self.modele.taillecarte
         couleurs = {0: "",
-                    "hetre": "light green",
-                    "bouleau": "DarkGoldenrod1",
-                    "pin": "dark green",
-                    "sapin": "dark olive green",
-                    "pierre": "gray30"
+                    "hetre": "forest green",
+                    "bouleau": "forest green",
+                    "pin": "forest green",
+                    "sapin": "forest green",
+                    "caillous": "gray40",
+                    "pierre": "gray40",
+                    "rocher": "gray40"
                     }
         for i, t in enumerate(self.modele.regions):
             if t != "plaine":
