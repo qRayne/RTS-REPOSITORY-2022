@@ -1406,7 +1406,7 @@ class Partie():
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
             self.joueurs[i] = Joueur(self, id, i, coul, x, y,rune,runePoints)
-            self.stele[i] = Stele(self,self.joueurs[i],id,x,y,)
+            self.stele[i] = Stele(self,self.joueurs[i],id,x/6,y/6)
 
         for i in self.stele:
             self.stele.__getitem__(i).nbrune()
