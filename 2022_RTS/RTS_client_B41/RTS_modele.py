@@ -5,8 +5,6 @@ import ast
 import json
 import random
 
-import self as self
-
 from helper import Helper
 from RTS_divers import *
 import math
@@ -55,10 +53,10 @@ class Maison(Batiment):
         self.image = couleur[0] + "_" + montype
         self.montype = montype
         self.tier = 1
-        self.ressources = {"metal": 100,
-                           "bois": 100,
-                           "nourriture": 100,
-                           "pierre": 100
+        self.ressources = {"metal": 1000,
+                           "bois": 1000,
+                           "nourriture": 1000,
+                           "pierre": 1000
                            }
 
 
@@ -74,26 +72,6 @@ class Forge(Batiment):
                                  "bois": 30,
                                  "pierre": 10}
 
-        self.armes = {"baton": 0,
-                      "epieu": 0,
-                      "masse": 0,
-                      "epee": 0,
-                      "hache": 0}
-
-        self.armures = {"armureCuir": 0,
-                        "armureTroll": 0,
-                        "armureBronze": 0,
-                        "armureAcier": 0,
-                        "armureArgent": 0,
-                        "armureLin": 0}
-
-        self.outils = {"hacheSilex": 0,
-                       "piocheRamure": 0,
-                       "hacheBronze": 0,
-                       "piocheBronze": 0,
-                       "hacheFer": 0,
-                       "piocheFer": 0}
-
 
 class Fournaise(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
@@ -104,7 +82,6 @@ class Fournaise(Batiment):
         self.perso = 0
         self.arret = False
         self.prixConstruction = {"lingot": 6}
-        self.inventaire = {"bois": 0}
 
 
 class Caserne(Batiment):
@@ -134,6 +111,8 @@ class Stele:
         self.joueur = joueur
         self.image = None # à changer
         self.id = id
+        self.tickparsec = 25
+        self.delai = self.tickparsec
         self.x = x
         self.y = y
 
@@ -145,9 +124,12 @@ class Stele:
         self.joueur.nbPointsRune += 20
 
     def incrementerPointsSec(self):
-        for i in self.parent.joueurs:
-            self.parent.joueurs[i].nbPointsRune += 0.125
-            round(self.parent.joueurs[i].nbPointsRune)
+        if self.delai == 0:
+            self.joueur.nbPointsRune += 1
+            self.delai = self.tickparsec
+        else:
+            self.delai -= 1
+
 
 
 class Daim:
@@ -596,6 +578,8 @@ class Ouvrier(Perso):
         self.champvision = 100
         self.champvisionmax = 800
         self.champchasse = 120
+        self.delailoop = 25
+        self.delaianim = self.delailoop / 5
         self.javelots = []
         self.vitesse = 5 + self.parent.chaussureniveau
         self.etats_et_actions = {"bouger": self.bouger,
@@ -668,8 +652,9 @@ class Ouvrier(Perso):
             i.bouger()
 
     def ramasser(self):
-        self.ramassage += self.qteramassage
-        self.cible.valeur -= self.qteramassage
+        if self.delailoop == 25:
+            self.ramassage += self.qteramassage
+            self.cible.valeur -= self.qteramassage
         print("valeur: ", self.cible.valeur)
         if self.cible.valeur == 0 or self.ramassage >= self.quota:
             self.actioncourante = "retourbatimentmere"
@@ -682,15 +667,16 @@ class Ouvrier(Perso):
                     self.parent.nbuissons -= 1
             self.ramassage = int(self.ramassage)
         else:
-            toggle = False
-            if toggle == False:
-                self.x = self.x + random.randrange(2)
-                self.y = self.y + random.randrange(2)
-                toggle = True
-            if toggle == True:
-                self.x = self.x - random.randrange(2)
-                self.y = self.y - random.randrange(2)
-                toggle = False
+            if self.delaianim == 5:
+                self.y -= 5
+            elif self.delaianim == 1:
+                self.y += 5
+            if self.delaianim > 0:
+                self.delaianim -= 1
+        self.delailoop -= 1
+        if self.delailoop == 0:
+            self.delailoop = 25
+            self.delaianim = self.delailoop / 5
 
     def construire_batiment(self):
         self.cible.decremente_delai()
