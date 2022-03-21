@@ -72,6 +72,11 @@ class Forge(Batiment):
                                  "bois": 30,
                                  "pierre": 10}
 
+class Ferme(Batiment):
+    def __init__(self,parent,id,couleur,x,y,montype):
+        Batiment.__init__(self,parent,id,x,y)
+        self.image = couleur[0] + "_" + montype
+        self.montype = montype
 
 class Fournaise(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
@@ -885,7 +890,8 @@ class Joueur():
                           "caserne": {},
                           "siteconstruction": {},
                           "forge": {},
-                          "fournaise": {}}
+                          "fournaise": {},
+                          "ferme":{}}
 
         self.actions = {"creerperso": self.creer_perso,
                         "deplacer": self.deplacer,
@@ -1147,6 +1153,12 @@ class Partie():
                              "pierre": 25,
                              "metal": 0,
                              "delai": 10
+                             },
+               "ferme":        {"nourriture": 0,
+                             "bois": 50,
+                             "pierre": 25,
+                             "metal": 0,
+                             "delai": 10
                              }
                }
 
@@ -1175,7 +1187,8 @@ class Partie():
         self.classesbatiments = {"maison": Maison,
                                  "caserne": Caserne,
                                  "forge": Forge,
-                                 "fournaise": Fournaise}
+                                 "fournaise": Fournaise,
+                                 "ferme":Ferme}
         self.classespersos = {"ouvrier": Ouvrier,
                               "soldat": Soldat,
                               "archer": Archer}

@@ -472,7 +472,7 @@ class Vue():
         coul=self.modele.joueurs[self.parent.monnom].couleur
         self.cadrejeuinfo.config(bg=coul[1])
         self.creer_aide()
-        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","forge", "fournaise"])
+        self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","forge", "fournaise","ferme"])
         self.creer_chatter()
         self.creercrafting()
         # on affiche les maisons, point de depart des divers joueurs
@@ -795,6 +795,9 @@ class Vue():
                     choixaleatoire = random.choice(actionspossiblesforges)
                     pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
                     action = [self.parent.monnom, choixaleatoire, [mestags[4], mestags[2], pos]]
+                if "ferme" in mestags:
+                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+                    action = [self.parent.monnom, None, [None, mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
 
