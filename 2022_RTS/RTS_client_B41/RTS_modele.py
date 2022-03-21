@@ -302,7 +302,7 @@ class Bouleau(Biotope):
         self.valeur = 15.0
 
 
-class Fleche():
+class Fleche:
     def __init__(self, parent, id, proie):
         self.parent = parent
         self.id = id
@@ -335,7 +335,7 @@ class Fleche():
             return self
 
 
-class Javelot():
+class Javelot:
     def __init__(self, parent, id, proie):
         self.parent = parent
         self.id = id
