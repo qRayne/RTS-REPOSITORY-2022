@@ -128,7 +128,7 @@ class Stele:
 
     def incrementerPointsSec(self):
         if self.delai == 0:
-            self.joueur.nbPointsRune += 1
+            self.joueur.nbPointsRune += (1 * self.rune)
             self.delai = self.tickparsec
         else:
             self.delai -= 1
