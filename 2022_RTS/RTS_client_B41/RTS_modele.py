@@ -109,7 +109,7 @@ class Stele:
     def __init__(self,parent,joueur,id,x,y):
         self.parent = parent
         self.joueur = joueur
-        self.image = None # à changer
+        self.image = "images/stele/stele0.png" # à changer
         self.id = id
         self.tickparsec = 25
         self.delai = self.tickparsec
