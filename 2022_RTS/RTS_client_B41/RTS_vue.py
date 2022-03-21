@@ -202,7 +202,8 @@ class Vue():
         self.infohud = {"Nourriture": None,
                       "Bois": None,
                       "Pierre": None,
-                      "Métal": None}
+                      "Métal": None,
+                      "Point":None}
 
         # fonction interne uniquement pour reproduire chaque info de ressource
         def creer_champ_interne(listechamp):
@@ -585,6 +586,7 @@ class Vue():
                 self.infohud["Bois"][0].set(str(maison.ressources["bois"]))
                 self.infohud["Pierre"][0].set(str(maison.ressources["pierre"]))
                 self.infohud["Métal"][0].set(str(maison.ressources["metal"]))
+                self.infohud["Point"][0].set(str(self.modele.joueurs[j].nbPointsRune))
                 self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
             # ajuster les constructions de chaque joueur
