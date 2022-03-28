@@ -567,11 +567,17 @@ class Vue():
                 coul = self.modele.joueurs[j].couleur[0]
                 self.canevas.create_image(m.x, m.y, image=self.images[coul+"_maison"],
                                           tags=("statique", j, m.id, "batiment",m.montype, ""))
+
+                s = self.modele.joueurs[j].stele
+                self.canevas.create_image(s.x, s.y, image=self.images["stele1"],
+                                        tags=("statique", s, s.id, "stele", "", ""))
+
                 # afficher sur minicarte
                 coul=self.modele.joueurs[j].couleur[1]
                 x1 = (m.x/self.modele.aireX) * self.tailleminicarte
                 y1 = (m.y/self.modele.aireY) * self.tailleminicarte
                 self.minicarte.create_rectangle(x1-2, y1-2, x1+2, y1+2, fill=coul, tags=(j, m.id, "artefact", "maison"))
+
 
     def afficher_bio(self, bio):
         self.canevas.create_image(bio.x, bio.y, image=self.images[bio.img], tags=("statique", "", bio.id, "biotope", bio.montype, ""))
@@ -612,7 +618,7 @@ class Vue():
                 self.infohud["Pierre"][0].set(str(maison.ressources["pierre"]))
                 self.infohud["Métal"][0].set(str(maison.ressources["metal"]))
                 self.infohud["Point"][0].set(str(self.modele.joueurs[j].nbPointsRune))
-                self.infohud["Rune"][0].set(str(self.modele.stele[j].rune))
+                self.infohud["Rune"][0].set(str(self.modele.joueurs[j].stele.rune))
                 self.infohud["msggeneral"][0].config(text=self.modele.msggeneral)
 
             # ajuster les constructions de chaque joueur
