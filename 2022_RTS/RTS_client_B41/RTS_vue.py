@@ -17,6 +17,7 @@ class Vue():
         self.root = Tk()
         self.root.title("Je suis "+monnom)
         self.monnom = monnom
+        self.mamaison = ""
         self.debutselect = []
         # attributs
         self.cadrechaton = 0
@@ -26,6 +27,8 @@ class Vue():
         self.btnchat = None
         self.btnaide = None
         self.btncraft = None
+        self.craftingopen = False
+
 
         self.cadreactif=None
         # # objet pour cumuler les manipulations du joueur pour generer une action de jeu
@@ -63,6 +66,7 @@ class Vue():
         self.cadres["splash"] = self.creer_cadre_splash(urlserveur, monnom, testdispo)
         self.cadres["lobby"] = self.creer_cadre_lobby()
         self.cadres["jeu"] = self.creer_cadre_jeu()
+        self.cadres["crafting"] = self.creer_crafting()
 
     # le splash (ce qui 'splash' à l'écran lors du démarrage)
     # sera le cadre visuel initial lors du lancement de l'application
@@ -122,6 +126,13 @@ class Vue():
 
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadresplash
+
+    def trouver_maison(self):
+        for j in self.modele.joueurs.keys():
+            if j == self.parent.monnom:
+                clemaison = self.modele.joueurs[j].batiments["maison"].keys()
+                cle = list(clemaison)[0]
+                self.mamaison = self.modele.joueurs[j].batiments["maison"][cle]
 
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
@@ -288,7 +299,7 @@ class Vue():
         self.canevas.tag_bind("champignons", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
-        self.canevas.tag_bind("batiment", "<Button-3>", self.creer_entiteGuerrier)
+        self.canevas.tag_bind("batiment", "<Button-3>", self.subcrafting)
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
 
     def defiler_vertical(self, evt):
@@ -347,18 +358,8 @@ class Vue():
 
 
     ## cadre qui affiche le menu de crafting
-    def creercrafting(self):
-        self.cadrecraft = Frame(self.canevas, height=400, width=430)
-        self.cadrecraft.rowconfigure(1, minsize=30)
-        self.cadrecraft.columnconfigure(0, minsize=300)
-        self.cadrecraft.grid_propagate(0)
-        self.btninventory = Button(self.cadrecraft, text="Inventaire")
-        self.btncraft = Button(self.cadrecraft, text="Crafting", command=self.subcrafting)
-        self.btninventory.grid(column=2, row=0, padx=2)
-        self.btncraft.grid(column=3, row=0, padx=2)
-
-    def subcrafting(self):
-        self.cadresubcraft = Frame(self.cadrecraft, height=300, width=300, bg="grey")
+    def creer_crafting(self):
+        self.cadresubcraft = Frame(self.canevas, height=300, width=300, bg="grey")
         self.cadresubcraft.columnconfigure(1, minsize=100)
         self.cadresubcraft.columnconfigure(3, minsize=100)
         self.cadresubcraft.rowconfigure(1, minsize=20)
@@ -368,39 +369,33 @@ class Vue():
         self.cadresubcraft.grid_propagate(0)
         self.craftingbuttons = []
         self.craftingreqlabels = []
-        for j in self.modele.joueurs.keys():
-            if j==self.parent.monnom:
-                clemaison = self.modele.joueurs[j].batiments["maison"].keys()
-                cle = list(clemaison)[0]
-                maison= self.modele.joueurs[j].batiments["maison"][cle]
+
+        self.textchaussure = StringVar()
+        self.textoutil = StringVar()
+        self.textarme = StringVar()
+        self.textarmur = StringVar()
 
 
-                chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Chaussure", j))
-                text = "metal: " + str(maison.ressources["metal"]) + "/1"
-                chausReqLab = Label(self.cadresubcraft, text=text)
-                self.craftingbuttons.append(chausUpgBtn)
-                self.craftingreqlabels.append(chausReqLab)
+        chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Outils", self.monnom))
+        chausReqLab = Label(self.cadresubcraft, textvariable=self.textchaussure)
+        self.craftingbuttons.append(chausUpgBtn)
+        self.craftingreqlabels.append(chausReqLab)
 
-                outilUpgBtn = Button(self.cadresubcraft, text="Outils", command=lambda: self.upgrade("Outils", j))
-                text = "metal: " + str(maison.ressources["metal"]) + "/1"
-                outilReqLab = Label(self.cadresubcraft, text=text)
-                self.craftingbuttons.append(outilUpgBtn)
-                self.craftingreqlabels.append(outilReqLab)
+        outilUpgBtn = Button(self.cadresubcraft, text="Outils", command=lambda: self.upgrade("Outils", self.monnom))
+        outilReqLab = Label(self.cadresubcraft, textvariable=self.textoutil)
+        self.craftingbuttons.append(outilUpgBtn)
+        self.craftingreqlabels.append(outilReqLab)
 
-                armesUpgBtn = Button(self.cadresubcraft, text="Armes", command=lambda: self.upgrade("Armes", j))
-                text = "metal: " + str(maison.ressources["metal"]) + "/2"
-                armesReqLab = Label(self.cadresubcraft, text=text)
-                self.craftingbuttons.append(armesUpgBtn)
-                self.craftingreqlabels.append(armesReqLab)
+        armesUpgBtn = Button(self.cadresubcraft, text="Armes", command=lambda: self.upgrade("Armes", self.monnom))
+        armesReqLab = Label(self.cadresubcraft, textvariable=self.textarme)
+        self.craftingbuttons.append(armesUpgBtn)
+        self.craftingreqlabels.append(armesReqLab)
 
-                armurUpgBtn = Button(self.cadresubcraft, text="Armures", command=lambda: self.upgrade("Armures", j))
-                text = "metal: " + str(maison.ressources["metal"]) + "/2"
-                armurReqLab = Label(self.cadresubcraft, text=text)
-                self.craftingbuttons.append(armurUpgBtn)
-                self.craftingreqlabels.append(armurReqLab)
+        armurUpgBtn = Button(self.cadresubcraft, text="Armures", command=lambda: self.upgrade("Armures", self.monnom))
+        armurReqLab = Label(self.cadresubcraft, textvariable=self.textarmur)
+        self.craftingbuttons.append(armurUpgBtn)
+        self.craftingreqlabels.append(armurReqLab)
 
-
-        self.cadresubcraft.grid(column=0, row=2)
         rowcount = 2
         for label in self.craftingbuttons:
             label.grid(column=2, row=rowcount)
@@ -411,10 +406,37 @@ class Vue():
             label.grid(column=2, row=rowcount)
             rowcount += 3
 
+        return self.cadresubcraft
+
+    def subcrafting(self, evt):
+        self.trouver_maison()
+        posx, posy = evt.x, evt.y
+        mestags = self.canevas.gettags(CURRENT)
+        if self.parent.monnom in mestags:
+            if "batiment" in mestags:
+                if "forge" in mestags:
+
+                    self.textchaussure.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
+                    self.textoutil.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
+                    self.textarmur.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
+                    self.textarme.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
+
+
+                    posx = self.canevas.canvasx(posx)
+                    posy = self.canevas.canvasy(posy)
+
+                    if self.craftingopen:
+                        self.canevas.delete("crafting")
+                        self.craftingopen = False
+                    else:
+                        self.canevas.create_window(posx + 100, posy - 100, window=self.cadres["crafting"],
+                                                   tags=("crafting",))
+                        self.craftingopen = True
+
 
     def upgrade(self, upgradetype, player):
         self.modele.joueurs[player].upgrade(upgradetype)
-        self.subcrafting()
+
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
@@ -475,7 +497,7 @@ class Vue():
         self.creer_aide()
         self.creer_cadre_ouvrier(coul[0]+"_",["maison","caserne","forge", "fournaise","ferme"])
         self.creer_chatter()
-        self.creercrafting()
+        self.creer_crafting()
         # on affiche les maisons, point de depart des divers joueurs
         self.afficher_depart()
         self.root.update()
