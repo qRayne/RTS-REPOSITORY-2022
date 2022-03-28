@@ -356,9 +356,53 @@ class Vue():
         self.entreechat.pack(expand=1,fill=X)
         self.cadreparler.pack(expand=1,fill=X)
 
-
     ## cadre qui affiche le menu de crafting
     def creer_crafting(self):
+        self.cadresubcraft = Frame(self.canevas, height=300, width=300, bg="grey")
+        self.craftingbuttons = []
+        self.craftingreqlabels = []
+
+        self.textchaussure = StringVar()
+        self.textoutil = StringVar()
+        self.textarme = StringVar()
+        self.textarmur = StringVar()
+
+
+        self.chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Outils", self.monnom))
+        self.craftingbuttons.append(self.chausUpgBtn)
+        self.chausReqLab = Label(self.cadresubcraft, textvariable=self.textchaussure)
+        self.craftingreqlabels.append(self.chausReqLab)
+
+        self.outilUpgBtn = Button(self.cadresubcraft, text="Outils", command=lambda: self.upgrade("Outils", self.monnom))
+        self.craftingbuttons.append(self.outilUpgBtn)
+        self.outilReqLab = Label(self.cadresubcraft, textvariable=self.textoutil)
+        self.craftingreqlabels.append(self.outilReqLab)
+
+        self.armesUpgBtn = Button(self.cadresubcraft, text="Armes", command=lambda: self.upgrade("Armes", self.monnom))
+        self.craftingbuttons.append(self.armesUpgBtn)
+        self.armesReqLab = Label(self.cadresubcraft, textvariable=self.textarme)
+        self.craftingreqlabels.append(self.armesReqLab)
+
+        self.armurUpgBtn = Button(self.cadresubcraft, text="Armures", command=lambda: self.upgrade("Armures", self.monnom))
+        self.craftingbuttons.append(self.armurUpgBtn)
+        self.armurReqLab = Label(self.cadresubcraft, textvariable=self.textarmur)
+        self.craftingreqlabels.append(self.armurReqLab)
+
+        rowcount = 2
+        for btn in self.craftingbuttons:
+            btn.grid(column=2, row=rowcount)
+            rowcount += 3
+
+        rowcount = 3
+        for label in self.craftingreqlabels:
+            label.grid(column=2, row=rowcount)
+            rowcount += 3
+
+        return self.cadresubcraft
+
+
+    ## cadre qui affiche le menu de crafting
+    def creer_crafting2(self):
         self.cadresubcraft = Frame(self.canevas, height=300, width=300, bg="grey")
         self.cadresubcraft.columnconfigure(1, minsize=100)
         self.cadresubcraft.columnconfigure(3, minsize=100)
@@ -371,15 +415,16 @@ class Vue():
         self.craftingreqlabels = []
 
         self.textchaussure = StringVar()
+        self.textchaussure.set("JM")
         self.textoutil = StringVar()
         self.textarme = StringVar()
         self.textarmur = StringVar()
 
 
         chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Outils", self.monnom))
-        chausReqLab = Label(self.cadresubcraft, textvariable=self.textchaussure)
+        self.chausReqLab = Label(self.cadresubcraft, textvariable=self.textchaussure)
         self.craftingbuttons.append(chausUpgBtn)
-        self.craftingreqlabels.append(chausReqLab)
+        self.craftingreqlabels.append(self.chausReqLab)
 
         outilUpgBtn = Button(self.cadresubcraft, text="Outils", command=lambda: self.upgrade("Outils", self.monnom))
         outilReqLab = Label(self.cadresubcraft, textvariable=self.textoutil)
@@ -409,28 +454,29 @@ class Vue():
         return self.cadresubcraft
 
     def subcrafting(self, evt):
-        self.trouver_maison()
-        posx, posy = evt.x, evt.y
+        #self.trouver_maison()
+        #posx, posy = evt.x, evt.y
         mestags = self.canevas.gettags(CURRENT)
         if self.parent.monnom in mestags:
             if "batiment" in mestags:
                 if "forge" in mestags:
 
-                    self.textchaussure.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
-                    self.textoutil.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
-                    self.textarmur.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
-                    self.textarme.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
+                    forge = self.modele.joueurs[self.parent.monnom].batiments["forge"][mestags[2]]
 
-
-                    ##ss
-
-                    posx = self.canevas.canvasx(posx)
-                    posy = self.canevas.canvasy(posy)
+                    posx = forge.x
+                    posy = forge.y
 
                     if self.craftingopen:
+                        test = self.canevas.gettags("crafting")
                         self.canevas.delete("crafting")
                         self.craftingopen = False
                     else:
+                        obj = self.modele.joueurs[self.parent.monnom].mamaison
+                        toto = str(obj.ressources["metal"]) + "/" + "1"
+                        self.chausReqLab.config(text=toto)
+                        self.textoutil.set("batman")
+                        self.textarmur.set(str(obj.ressources["metal"]) + "/" + "1")
+                        self.textarme.set(str(obj.ressources["metal"]) + "/" + "1")
                         self.canevas.create_window(posx + 100, posy - 100, window=self.cadres["crafting"],
                                                    tags=("crafting",))
                         self.craftingopen = True
