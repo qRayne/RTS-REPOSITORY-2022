@@ -422,6 +422,8 @@ class Vue():
                     self.textarme.set("" + str(self.mamaison.ressources["metal"]) + "/" + "1")
 
 
+                    ##s
+
                     posx = self.canevas.canvasx(posx)
                     posy = self.canevas.canvasy(posy)
 
