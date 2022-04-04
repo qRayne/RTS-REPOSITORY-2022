@@ -77,6 +77,7 @@ class Ferme(Batiment):
         Batiment.__init__(self,parent,id,x,y)
         self.image = couleur[0] + "_" + montype
         self.montype = montype
+        self.valeur = 5
 
 class Fournaise(Batiment):
     def __init__(self, parent, id, couleur, x, y, montype):
@@ -608,7 +609,7 @@ class Ouvrier(Perso):
         reponse = self.bouger()
         if reponse == "rendu":
             if self.cible:
-                if self.typeressource == "daim" or self.typeressource == "framboises" or self.typeressource == "bleuets" or self.typeressource == "champignons":
+                if self.typeressource == "daim" or self.typeressource == "framboises" or self.typeressource == "bleuets" or self.typeressource == "champignons" or self.typeressource == "ferme":
                     self.parent.mamaison.ressources["nourriture"] += self.ramassage
                 elif self.typeressource == "hetre" or self.typeressource == "bouleau" or self.typeressource == "sapin" or self.typeressource == "pin":
                     self.parent.mamaison.ressources["bois"] += self.ramassage
@@ -618,8 +619,15 @@ class Ouvrier(Perso):
                     self.parent.mamaison.ressources[self.typeressource] += self.ramassage
                 self.ramassage = 0
                 if self.cible.valeur == 0:
-                    rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
-                    self.cibler(rep)
+                    if self.cible.montype == "ferme":
+                        ravpossible = self.ravitaille_ferme(self.cible)
+                        if ravpossible:
+                            self.actioncourante = "ciblerressource"
+                        else:
+                            self.actioncourante = None
+                    else:
+                        rep = self.chercher_nouvelle_ressource(self.cible.montype, self.cible.idregion)
+                        self.cibler(rep)
                 if self.cible:
                     self.cibler(self.cible)
                     if self.cible.montype == "daim":
@@ -664,7 +672,8 @@ class Ouvrier(Perso):
             self.actioncourante = "retourbatimentmere"
             self.position_visee = [self.batimentmere.x, self.batimentmere.y]
             if self.cible.valeur <= 0:
-                self.parent.avertir_ressource_mort(self.typeressource, self.cible)
+                if self.cible.montype != "ferme":
+                    self.parent.avertir_ressource_mort(self.typeressource, self.cible)
                 if self.cible.montype == "daim":
                     self.parent.ndaims -= 1
                 elif self.cible.montype == "framboises" or self.cible.montype == "champignons" or self.cible.montype == "bleuets":
@@ -716,22 +725,6 @@ class Ouvrier(Perso):
 
     def chercher_nouvelle_ressource(self, type, idreg):
         print("Je cherche nouvelle ressource")
-        # if type != "framboises" and type != "bleuets" and type != "champignons" and type != "daim":
-        #     reg = self.parent.parent.regions[type]
-        #     if idreg in reg:
-        #         regspec = self.parent.parent.regions[type][idreg]
-        #         n = len(regspec.dicocases)
-        #         while n > 0:
-        #             clecase = list(regspec.dicocases.keys())
-        #             case = regspec.dicocases[random.choice(clecase)]
-        #             n -= 1
-        #             if case.ressources:
-        #                 clecase2 = list(case.ressources.keys())
-        #                 newress = case.ressources[random.choice(clecase2)]
-        #                 if newress.montype == type:
-        #                     return newress
-        #         return None
-        # else:
         nb = len(self.parent.parent.biotopes[type])
         vision = self.champvision
         chercheressource = True
@@ -753,49 +746,16 @@ class Ouvrier(Perso):
         print("Je n'ai pas trouvé de nouvelles ressources près de ma maison")
         return None
 
-    # def deplacer(self,pos):
-    #     self.position_visee = pos
-    #     self.actioncourante = "bouger"
-    #
-    # def bouger(self):
-    #     if self.position_visee:
-    #         # le if sert à savoir si on doit repositionner notre visee pour un objet
-    #         # dynamique comme le daim
-    #         x = self.position_visee[0]
-    #         y = self.position_visee[1]
-    #         ang = Helper.calcAngle(self.x, self.y, x, y)
-    #         x1, y1 = Helper.getAngledPoint(ang, self.vitesse, self.x, self.y)
-    #         ######## ICI METTRE TEST PROCHAIN PAS POUR VOIR SI ON PEUT AVANCER
-    #         self.test_etat_du_sol(x1, y1)
-    #         ######## FIN DE TEST POUR SURFACE MARCHEE
-    #         # si tout ba bien on continue avec la nouvelle valeur
-    #         self.x, self.y = x1, y1
-    #         # ici on test pour vori si nous rendu a la cible (en deca de la longueur de notre pas)
-    #         dist = Helper.calcDistance(self.x, self.y, x, y)
-    #         if dist <= self.vitesse:
-    #             if self.actioncourante=="bouger":
-    #                 self.actioncourante=None
-    #             return "rendu"
-    #         else:
-    #             return dist
-
-    # def test_etat_du_sol(self,x1, y1):
-    #     ######## SINON TROUVER VOIE DE CONTOURNEMENT
-    #     # ici oncalcule sur quelle case on circule
-    #     casex = x1 / self.parent.parent.taillecase
-    #     if casex != int(casex):
-    #         casex = int(casex) + 1
-    #     casey = y1 / self.parent.parent.taillecase
-    #     if casey != int(casey):
-    #         casey = int(casey) + 1
-    #     #####AJOUTER TEST DE LIMITE
-    #     # test si different de 0 (0=plaine), voir Partie pour attribution des valeurs
-    #     if self.parent.parent.cartecase[int(casey)][int(casex)].montype != "plaine":
-    #         # test pour être sur que de n'est 9 (9=batiment)
-    #         if self.parent.parent.cartecase[int(casey)][int(casex)].montype != "batiment":
-    #             print("marche dans ", )
-    #         else:
-    #             print("marche dans batiment")
+    def ravitaille_ferme(self, cible):
+        print("Je tente de ravitailler la ferme")
+        fermecible = cible
+        if self.parent.mamaison.ressources["bois"] > 25:
+            fermecible.valeur = 100
+            self.parent.mamaison.ressources["bois"] -= 25
+            return True
+        else:
+            print("ressources insuffisantes")
+            return False
 
     def abandonner_ressource(self, ressource):
         if ressource == self.cible:
@@ -973,7 +933,11 @@ class Joueur():
             for j in self.persos.keys():
                 if j == "ouvrier":
                     if i in self.persos[j]:
-                        self.persos[j][i].chasser_ramasser(self.parent.biotopes[typeress][idress],
+                        if typeress == "ferme":
+                            self.persos[j][i].chasser_ramasser(self.batiments[typeress][idress],
+                                                               typeress, "ciblerressource")
+                        else:
+                            self.persos[j][i].chasser_ramasser(self.parent.biotopes[typeress][idress],
                                                            typeress, "ciblerressource")
 
     def deplacer(self, param):

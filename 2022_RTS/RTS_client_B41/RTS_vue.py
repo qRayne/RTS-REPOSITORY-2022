@@ -286,6 +286,7 @@ class Vue():
 
         # acgtions liées aux objets dessinés par tag
         self.canevas.tag_bind("batiment", "<Button-1>", self.creer_entite)
+        self.canevas.tag_bind("ferme", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("perso", "<Button-1>", self.ajouter_selection)
         self.canevas.tag_bind("hetre", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("bouleau", "<Button-1>", self.ramasser_ressource)
@@ -781,7 +782,7 @@ class Vue():
 
     def ramasser_ressource(self,evt):
         tag = self.canevas.gettags(CURRENT)
-        if tag[1] == "" and self.action.persochoisi:
+        if (tag[1] == "" or tag[4] == "ferme") and self.action.persochoisi:
             self.action.ramasser_ressource(tag)
         else:
             print(tag[4])
@@ -858,7 +859,7 @@ class Vue():
         x, y = evt.x, evt.y
         mestags = self.canevas.gettags(CURRENT)
         if self.parent.monnom in mestags:
-            if "batiment" in mestags:
+            if "batiment" in mestags and "ferme" not in mestags:
                 if "maison" in mestags:
                     pos = (self.canevas.canvasx(x),self.canevas.canvasy(y))
                     action = [self.parent.monnom, "creerperso", ["ouvrier", mestags[4], mestags[2], pos]]
@@ -873,9 +874,6 @@ class Vue():
                     choixaleatoire = random.choice(actionspossiblesforges)
                     pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
                     action = [self.parent.monnom, choixaleatoire, [mestags[4], mestags[2], pos]]
-                if "ferme" in mestags:
-                    pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
-                    action = [self.parent.monnom, None, [None, mestags[4], mestags[2], pos]]
 
                 self.parent.actionsrequises.append(action)
 
