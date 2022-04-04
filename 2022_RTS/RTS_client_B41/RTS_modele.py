@@ -113,12 +113,10 @@ class NPC:
 class Stele:
     def __init__(self,parent,joueur,id,rune,x,y):
         self.parent = parent
-        self.joueur = joueur
-        self.image = "images/stele/stele0.png" # à changer
+        self.joueur = joueur #ImageTk.PhotoImage(Image.open("image"))'stele0' # à changer
         self.rune = rune
         self.id = id
-        self.tickparsec = 25
-        self.delai = self.tickparsec
+        self.tempsA = int(time.time())
         self.x = x
         self.y = y
 
@@ -126,12 +124,16 @@ class Stele:
         if self.rune >= 1:
             self.joueur.nbPointsRune += 20
 
+    def incrementerRune(self):
+        if self.rune < 4:
+            self.rune += 1
+
     def incrementerPointsSec(self):
-        if self.delai == 0:
+        tempsB = int(time.time())
+
+        if self.tempsA != tempsB:
             self.joueur.nbPointsRune += (1 * self.rune)
-            self.delai = self.tickparsec
-        else:
-            self.delai -= 1
+            self.tempsA = tempsB
 
 
 class Daim:
@@ -870,6 +872,7 @@ class Joueur():
         self.nbPointsRune = nbPointsRune
         self.couleur = couleur
         self.monchat = []
+        self.stele = None
         self.chatneuf = 0
         self.ressourcemorte = []
         self.ressources = {}
@@ -1168,7 +1171,6 @@ class Partie():
         self.taillecase = 50
         self.taillecarte = int(self.aireX / self.taillecase)
         self.cartecase = []
-        self.stele = {}
         self.make_carte_case()
 
         self.delaiprochaineaction = 20
@@ -1401,7 +1403,9 @@ class Partie():
             x = quadrants[j][b]
             y = quadrants[j][b + 1]
             self.joueurs[i] = Joueur(self, id, i, coul, x, y,runePoints)
-            self.stele[i] = Stele(self,self.joueurs[i],id,rune,x/6,y/6)
+            id = get_prochain_id()
+            self.joueurs[i].stele = Stele(self,self.joueurs[i],id,rune,x+100,y+100)
+
 
 
     def deplacer(self):
@@ -1427,6 +1431,7 @@ class Partie():
         # demander aux objets de s'activer
         for i in self.joueurs.keys():
             self.joueurs[i].jouer_prochain_coup()
+            self.joueurs[i].stele.incrementerPointsSec()
 
         if self.msggeneral and "cadre" not in self.msggeneral:
             self.msggeneralcompteur += 1
@@ -1437,10 +1442,6 @@ class Partie():
             msg = "cadre: " + str(cadrecourant) + " - secs: " + str(t - self.debut)
             self.msggeneral = msg
 
-        nbSecondesJeu = t - self.debut
-        if nbSecondesJeu != 0 and nbSecondesJeu % 5 == 0:
-            for i in self.stele:
-                self.stele.__getitem__(i).incrementerPointsSec()
         self.renouveler_ressources_naturelles()
 
     def renouveler_ressources_naturelles(self):
