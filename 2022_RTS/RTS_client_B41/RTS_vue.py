@@ -453,8 +453,8 @@ class Vue():
 
 
     def creer_spawn_guerrier(self):
-        self.cadrespawnguerrier = Frame(self.canevas, height = 25, width = 118, bg ="red")
-        self.cadrespawnguerrier.columnconfigure(2, minsize=20)
+        self.cadrespawnguerrier = Frame(self.canevas, height = 25, width = 110, bg ="black")
+        self.cadrespawnguerrier.columnconfigure(2)
         self.cadrespawnguerrier.grid_propagate(0)
 
 
@@ -462,7 +462,7 @@ class Vue():
         self.spawnGuerrierBtn.grid(column=1, row=1)
 
         self.spawnArcherBtn = Button(self.cadrespawnguerrier, text="Archer")
-        self.spawnArcherBtn.grid(column=3, row=1)
+        self.spawnArcherBtn.grid(column=2, row=1)
 
         return self.cadrespawnguerrier
 
@@ -479,8 +479,8 @@ class Vue():
                     self.spawnGuerrierBtn = Button(self.cadrespawnguerrier, text="Guerrier", command= lambda: self.creer_guerrier(posx, posy, mestags))
                     self.spawnGuerrierBtn.grid(column=1, row=1)
 
-                    self.spawnArcherBtn = Button(self.cadrespawnguerrier, text="Archer", command= lambda: self.creer_archer(posx, posy, mestags))
-                    self.spawnArcherBtn.grid(column=3, row=1)
+                    self.spawnArcherBtn = Button(self.cadrespawnguerrier, text="  Archer  ", command= lambda: self.creer_archer(posx, posy, mestags))
+                    self.spawnArcherBtn.grid(column=2, row=1)
 
                     if self.spawnwindowopen:
                         self.canevas.delete("spawning")
