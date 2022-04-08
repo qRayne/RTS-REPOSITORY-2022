@@ -120,6 +120,7 @@ class Stele:
         self.tempsA = int(time.time())
         self.x = x
         self.y = y
+        self.imageSteleDebut = self.parent.parent.vue.images["stele1"]
 
     def incrementerPoints(self):
         if self.rune >= 1:
@@ -863,7 +864,8 @@ class Joueur():
                         "convertirpierre": self.convertir_pierre,
                         "creerarmes": self.creer_armes,
                         "creerarmures": self.creer_armures,
-                        "creeroutils": self.creer_outils
+                        "creeroutils": self.creer_outils,
+                        "volerrune": self.volerrune
                         }
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
@@ -1082,8 +1084,24 @@ class Joueur():
                     p.quota = 20 + (3 * self.outilsniveau)
 
 
+    def volerrune(self,evtx,evty):
+        stelePerso = self.stele
+        listeSteleEnnemie = []
+        steleAttaquer = None
+        x = evtx
+        y = evty
 
 
+        print(x)
+        print(y)
+
+        # for j in listeSteleEnnemie:
+        #    # en haut gauche
+        #     #if 3383 < x < 3483:
+        #        # if 3393 < y < 3529:
+        #             steleAttaquer = j
+        #
+        # print(steleAttaquer)
 
 #######################  LE MODELE est la partie #######################
 class Partie():
@@ -1136,6 +1154,7 @@ class Partie():
         self.taillecarte = int(self.aireX / self.taillecase)
         self.cartecase = []
         self.make_carte_case()
+        self.listeStele = []
 
         self.delaiprochaineaction = 20
 
@@ -1193,6 +1212,10 @@ class Partie():
             total += len(self.biotopes[i])
         self.montrer_msg_general(str(total))
 
+        # on vérifie d'abord que la rune que l'on veut voler n'est pas la notre
+        for i in self.parent.listeStele:
+            if i == stelePerso:
+                listeSteleEnnemie.append(i)
 
 
 
@@ -1369,6 +1392,7 @@ class Partie():
             self.joueurs[i] = Joueur(self, id, i, coul, x, y,runePoints)
             id = get_prochain_id()
             self.joueurs[i].stele = Stele(self,self.joueurs[i],id,rune,x+100,y+100)
+            self.listeStele.append(self.joueurs[i].stele)
 
 
 
