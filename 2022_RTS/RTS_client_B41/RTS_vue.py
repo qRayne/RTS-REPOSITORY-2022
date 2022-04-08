@@ -851,14 +851,10 @@ class Vue():
     def volerrune(self,evt):
         x = evt.x
         y = evt.y
-        pctx = x / self.tailleminicarte
-        pcty = y / self.tailleminicarte
+        mestags = self.canevas.gettags(CURRENT)
 
-        xl = (self.canevas.winfo_width() / 2) / self.modele.aireX
-        yl = (self.canevas.winfo_height() / 2) / self.modele.aireY
-
-        self.modele.joueurs[self.monnom].volerrune(xl,yl)
-
+        if "stele" in mestags:
+            self.modele.joueurs[self.monnom].volerrune(mestags)
     def creer_guerrier(self, x, y, mestags):
         pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
         action = [self.parent.monnom, "creerperso", ["soldat", mestags[4], mestags[2], pos]]

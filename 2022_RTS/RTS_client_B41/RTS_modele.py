@@ -130,6 +130,14 @@ class Stele:
         if self.rune < 4:
             self.rune += 1
 
+    def decrementerRune(self):
+        if self.rune > 0:
+            self.rune -= 1
+
+    def decrementerRune(self):
+        if self.rune > 0:
+            self.rune -= 1
+
     def incrementerPointsSec(self):
         tempsB = int(time.time())
 
@@ -1084,24 +1092,24 @@ class Joueur():
                     p.quota = 20 + (3 * self.outilsniveau)
 
 
-    def volerrune(self,evtx,evty):
-        stelePerso = self.stele
-        listeSteleEnnemie = []
-        steleAttaquer = None
-        x = evtx
-        y = evty
+    def volerrune(self,mestags):
+        steleAttaquerid = None
+        steleClickee = mestags[2]
 
+        if self.stele.id != steleClickee:
+            steleAttaquerid = steleClickee
+        else:
+            print("même stèle")
 
-        print(x)
-        print(y)
+        if steleAttaquerid is not None:
+            for i in self.parent.listeStele:
+                if i.id == steleAttaquerid:
+                    steleAttaquer = i
+                    if steleAttaquer.rune >= 1:
+                        self.stele.incrementerRune()
+                        steleAttaquer.rune -= 1
+                    print("La rune ennemi a " + str(steleAttaquer.rune))
 
-        # for j in listeSteleEnnemie:
-        #    # en haut gauche
-        #     #if 3383 < x < 3483:
-        #        # if 3393 < y < 3529:
-        #             steleAttaquer = j
-        #
-        # print(steleAttaquer)
 
 #######################  LE MODELE est la partie #######################
 class Partie():
