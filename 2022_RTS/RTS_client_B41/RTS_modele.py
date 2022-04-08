@@ -1059,16 +1059,16 @@ class Joueur():
         maison = self.batiments["maison"][cle]
 
         if upgradetype == "Chaussure":
-            maison.ressources["metal"] -= 1
+            maison.ressources["metal"] -= 2 + (self.chaussureniveau * 2)
             self.chaussureniveau += 1
         if upgradetype == "Armes":
-            maison.ressources["metal"] -= 1
+            maison.ressources["metal"] -= 2 + (self.armesniveau * 2)
             self.armesniveau += 1
         if upgradetype == "Outils":
-            maison.ressources["metal"] -= 1
+            maison.ressources["metal"] -= 2 + (self.outilsniveau * 2)
             self.outilsniveau += 1
         if upgradetype == "Armures":
-            maison.ressources["metal"] -= 1
+            maison.ressources["metal"] -= 2 + (self.arumureniveau * 2)
             self.outilsniveau += 1
 
         for i in self.persos:

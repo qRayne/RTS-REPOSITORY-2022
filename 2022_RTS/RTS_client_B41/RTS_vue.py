@@ -28,6 +28,10 @@ class Vue():
         self.btnaide = None
         self.btncraft = None
         self.craftingopen = False
+        self.textchaussure = StringVar()
+        self.textoutil = StringVar()
+        self.textarme = StringVar()
+        self.textarmur = StringVar()
 
 
         self.cadreactif=None
@@ -360,16 +364,20 @@ class Vue():
     ## cadre qui affiche le menu de crafting
     def creer_crafting(self):
         self.cadresubcraft = Frame(self.canevas, height=300, width=300, bg="grey")
+        self.cadresubcraft.columnconfigure(1, minsize=100)
+        self.cadresubcraft.columnconfigure(3, minsize=100)
+        self.cadresubcraft.rowconfigure(1, minsize=20)
+        self.cadresubcraft.rowconfigure(4, minsize=20)
+        self.cadresubcraft.rowconfigure(7, minsize=20)
+        self.cadresubcraft.rowconfigure(10, minsize=20)
+        self.cadresubcraft.grid_propagate(0)
         self.craftingbuttons = []
         self.craftingreqlabels = []
 
-        self.textchaussure = StringVar()
-        self.textoutil = StringVar()
-        self.textarme = StringVar()
-        self.textarmur = StringVar()
 
 
-        self.chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Outils", self.monnom))
+
+        self.chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Chaussure", self.monnom))
         self.craftingbuttons.append(self.chausUpgBtn)
         self.chausReqLab = Label(self.cadresubcraft, textvariable=self.textchaussure)
         self.craftingreqlabels.append(self.chausReqLab)
@@ -402,58 +410,6 @@ class Vue():
         return self.cadresubcraft
 
 
-    ## cadre qui affiche le menu de crafting
-    def creer_crafting2(self):
-        self.cadresubcraft = Frame(self.canevas, height=300, width=300, bg="grey")
-        self.cadresubcraft.columnconfigure(1, minsize=100)
-        self.cadresubcraft.columnconfigure(3, minsize=100)
-        self.cadresubcraft.rowconfigure(1, minsize=20)
-        self.cadresubcraft.rowconfigure(4, minsize=20)
-        self.cadresubcraft.rowconfigure(7, minsize=20)
-        self.cadresubcraft.rowconfigure(10, minsize=20)
-        self.cadresubcraft.grid_propagate(0)
-        self.craftingbuttons = []
-        self.craftingreqlabels = []
-
-        self.textchaussure = StringVar()
-        self.textchaussure.set("JM")
-        self.textoutil = StringVar()
-        self.textarme = StringVar()
-        self.textarmur = StringVar()
-
-
-        chausUpgBtn = Button(self.cadresubcraft, text="Chaussures", command=lambda: self.upgrade("Outils", self.monnom))
-        self.chausReqLab = Label(self.cadresubcraft, textvariable=self.textchaussure)
-        self.craftingbuttons.append(chausUpgBtn)
-        self.craftingreqlabels.append(self.chausReqLab)
-
-        outilUpgBtn = Button(self.cadresubcraft, text="Outils", command=lambda: self.upgrade("Outils", self.monnom))
-        outilReqLab = Label(self.cadresubcraft, textvariable=self.textoutil)
-        self.craftingbuttons.append(outilUpgBtn)
-        self.craftingreqlabels.append(outilReqLab)
-
-        armesUpgBtn = Button(self.cadresubcraft, text="Armes", command=lambda: self.upgrade("Armes", self.monnom))
-        armesReqLab = Label(self.cadresubcraft, textvariable=self.textarme)
-        self.craftingbuttons.append(armesUpgBtn)
-        self.craftingreqlabels.append(armesReqLab)
-
-        armurUpgBtn = Button(self.cadresubcraft, text="Armures", command=lambda: self.upgrade("Armures", self.monnom))
-        armurReqLab = Label(self.cadresubcraft, textvariable=self.textarmur)
-        self.craftingbuttons.append(armurUpgBtn)
-        self.craftingreqlabels.append(armurReqLab)
-
-        rowcount = 2
-        for label in self.craftingbuttons:
-            label.grid(column=2, row=rowcount)
-            rowcount += 3
-
-        rowcount = 3
-        for label in self.craftingreqlabels:
-            label.grid(column=2, row=rowcount)
-            rowcount += 3
-
-        return self.cadresubcraft
-
     def subcrafting(self, evt):
         #self.trouver_maison()
         #posx, posy = evt.x, evt.y
@@ -468,23 +424,28 @@ class Vue():
                     posy = forge.y
 
                     if self.craftingopen:
-                        test = self.canevas.gettags("crafting")
                         self.canevas.delete("crafting")
                         self.craftingopen = False
                     else:
                         obj = self.modele.joueurs[self.parent.monnom].mamaison
-                        toto = str(obj.ressources["metal"]) + "/" + "1"
-                        self.chausReqLab.config(text=toto)
-                        self.textoutil.set("batman")
-                        self.textarmur.set(str(obj.ressources["metal"]) + "/" + "1")
-                        self.textarme.set(str(obj.ressources["metal"]) + "/" + "1")
-                        self.canevas.create_window(posx + 100, posy - 100, window=self.cadres["crafting"],
+                        joueur = self.modele.joueurs[self.parent.monnom]
+                        self.textchaussure.set(str(obj.ressources["metal"]) + "/" + str(2 + (2* joueur.chaussureniveau)))
+                        self.textoutil.set(str(obj.ressources["metal"]) + "/" + str(2 + (2* joueur.outilsniveau)))
+                        self.textarmur.set(str(obj.ressources["metal"]) + "/" + str(2 + (2* joueur.arumureniveau)))
+                        self.textarme.set(str(obj.ressources["metal"]) + "/" + str(2 + (2* joueur.armesniveau)))
+                        self.canevas.create_window(posx + 200, posy - 00, window=self.cadres["crafting"],
                                                    tags=("crafting",))
                         self.craftingopen = True
 
 
     def upgrade(self, upgradetype, player):
+        obj = self.modele.joueurs[self.parent.monnom].mamaison
+        joueur = self.modele.joueurs[self.parent.monnom]
         self.modele.joueurs[player].upgrade(upgradetype)
+        self.textchaussure.set(str(obj.ressources["metal"]) + "/" + str(2 + (2 * joueur.chaussureniveau)))
+        self.textoutil.set(str(obj.ressources["metal"]) + "/" + str(2 + (2 * joueur.outilsniveau)))
+        self.textarmur.set(str(obj.ressources["metal"]) + "/" + str(2 + (2 * joueur.arumureniveau)))
+        self.textarme.set(str(obj.ressources["metal"]) + "/" + str(2 + (2 * joueur.armesniveau)))
 
 
 
