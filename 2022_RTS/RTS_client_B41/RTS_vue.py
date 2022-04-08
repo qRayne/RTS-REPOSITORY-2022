@@ -28,6 +28,7 @@ class Vue():
         self.btnaide = None
         self.btncraft = None
         self.craftingopen = False
+        self.spawnwindowopen = False
         self.textchaussure = StringVar()
         self.textoutil = StringVar()
         self.textarme = StringVar()
@@ -71,6 +72,7 @@ class Vue():
         self.cadres["lobby"] = self.creer_cadre_lobby()
         self.cadres["jeu"] = self.creer_cadre_jeu()
         self.cadres["crafting"] = self.creer_crafting()
+        self.cadres["spawning"] = self.creer_spawn_guerrier()
 
     # le splash (ce qui 'splash' à l'écran lors du démarrage)
     # sera le cadre visuel initial lors du lancement de l'application
@@ -306,6 +308,7 @@ class Vue():
         self.canevas.tag_bind("daim", "<Button-1>", self.chasser_ressource)
         self.canevas.tag_bind("fournaise", "<Button-1>", self.ramasser_ressource)
         self.canevas.tag_bind("batiment", "<Button-3>", self.subcrafting)
+        self.canevas.tag_bind("batiment", "<Button-3>", self.spawn_guerrier)
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
 
     def defiler_vertical(self, evt):
@@ -448,6 +451,44 @@ class Vue():
         self.textarmur.set(str(obj.ressources["metal"]) + "/" + str(2 + (2 * joueur.arumureniveau)))
         self.textarme.set(str(obj.ressources["metal"]) + "/" + str(2 + (2 * joueur.armesniveau)))
 
+
+    def creer_spawn_guerrier(self):
+        self.cadrespawnguerrier = Frame(self.canevas, height = 25, width = 118, bg ="red")
+        self.cadrespawnguerrier.columnconfigure(2, minsize=20)
+        self.cadrespawnguerrier.grid_propagate(0)
+
+
+        self.spawnGuerrierBtn = Button(self.cadrespawnguerrier, text="Guerrier")
+        self.spawnGuerrierBtn.grid(column=1, row=1)
+
+        self.spawnArcherBtn = Button(self.cadrespawnguerrier, text="Archer")
+        self.spawnArcherBtn.grid(column=3, row=1)
+
+        return self.cadrespawnguerrier
+
+    def spawn_guerrier(self, evt):
+        mestags = self.canevas.gettags(CURRENT)
+        if self.parent.monnom in mestags:
+            if "batiment" in mestags:
+                if "caserne" in mestags:
+                    halldechasse = self.modele.joueurs[self.parent.monnom].batiments["caserne"][mestags[2]]
+
+                    posx = halldechasse.x
+                    posy = halldechasse.y
+
+                    self.spawnGuerrierBtn = Button(self.cadrespawnguerrier, text="Guerrier", command= lambda: self.creer_guerrier(posx, posy, mestags))
+                    self.spawnGuerrierBtn.grid(column=1, row=1)
+
+                    self.spawnArcherBtn = Button(self.cadrespawnguerrier, text="Archer", command= lambda: self.creer_archer(posx, posy, mestags))
+                    self.spawnArcherBtn.grid(column=3, row=1)
+
+                    if self.spawnwindowopen:
+                        self.canevas.delete("spawning")
+                        self.spawnwindowopen = False
+                    else:
+                        self.canevas.create_window(posx, posy - 50, window=self.cadres["spawning"],
+                                                   tags=("spawning",))
+                        self.spawnwindowopen = True
 
 
 ##### FONCTIONS DU SPLASH #########################################################################
@@ -818,27 +859,25 @@ class Vue():
 
         self.modele.joueurs[self.monnom].volerrune(xl,yl)
 
-    def creer_entiteGuerrier(self, evt):
-        x, y = evt.x, evt.y
-        mestags = self.canevas.gettags(CURRENT)
-        if self.parent.monnom in mestags:
-            if "batiment" in mestags:
-                if "caserne" in mestags:
-                    pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
-                    action = [self.parent.monnom, "creerperso", ["archer", mestags[4], mestags[2], pos]]
-                self.parent.actionsrequises.append(action)
+    def creer_guerrier(self, x, y, mestags):
+        pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
+        action = [self.parent.monnom, "creerperso", ["soldat", mestags[4], mestags[2], pos]]
+        self.parent.actionsrequises.append(action)
+
+    def creer_archer(self, x, y, mestags):
+        pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
+        action = [self.parent.monnom, "creerperso", ["archer", mestags[4], mestags[2], pos]]
+        self.parent.actionsrequises.append(action)
+
 
     def creer_entite(self,evt):
         x, y = evt.x, evt.y
         mestags = self.canevas.gettags(CURRENT)
         if self.parent.monnom in mestags:
-            if "batiment" in mestags and "ferme" not in mestags:
+            if "batiment" in mestags and "ferme" not in mestags and "caserne" not in mestags:
                 if "maison" in mestags:
                     pos = (self.canevas.canvasx(x),self.canevas.canvasy(y))
                     action = [self.parent.monnom, "creerperso", ["ouvrier", mestags[4], mestags[2], pos]]
-                if "caserne" in mestags:
-                    pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
-                    action = [self.parent.monnom, "creerperso", ["soldat", mestags[4], mestags[2], pos]]
                 if "fournaise" in mestags:
                     pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
                     action = [self.parent.monnom, "convertirpierre", ["ouvrier", mestags[4], mestags[2], pos]]

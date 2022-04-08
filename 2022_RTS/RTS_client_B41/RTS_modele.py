@@ -511,7 +511,7 @@ class Perso():
                 print("marche dans batiment")
 
 
-class Soldat(Perso):
+class Guerrier(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
         self.force = 20
@@ -821,7 +821,7 @@ class Caseregion():
 
 class Joueur():
     classespersos = {"ouvrier": Ouvrier,
-                     "soldat": Soldat,
+                     "soldat": Guerrier,
                      "archer": Archer, }
 
     def __init__(self, parent, id, nom, couleur, x, y,nbPointsRune):
@@ -1171,7 +1171,7 @@ class Partie():
                                  "fournaise": Fournaise,
                                  "ferme":Ferme}
         self.classespersos = {"ouvrier": Ouvrier,
-                              "soldat": Soldat,
+                              "soldat": Guerrier,
                               "archer": Archer}
         self.ressourcemorte = []
         self.msggeneral = None
