@@ -280,6 +280,7 @@ class Vue():
         self.canevas.bind("<Button-1>", self.annuler_action)
         self.canevas.bind("<Button-2>", self.indiquer_position)
         self.canevas.bind("<Button-3>", self.construire_batiment)
+        self.canevas.bind("<Double-Button-3>",self.volerrune)
         # faire une multiselection
         self.canevas.bind("<Shift-Button-1>", self.debuter_multiselection)
         self.canevas.bind("<Shift-B1-Motion>", self.afficher_multiselection)
@@ -577,7 +578,7 @@ class Vue():
                                           tags=("statique", j, m.id, "batiment",m.montype, ""))
 
                 s = self.modele.joueurs[j].stele
-                self.canevas.create_image(s.x, s.y, image=self.images["stele1"],
+                self.canevas.create_image(s.x, s.y, image=s.imageSteleDebut,
                                         tags=("statique", s, s.id, "stele", "", ""))
 
                 # afficher sur minicarte
@@ -805,6 +806,17 @@ class Vue():
         if not mestags and self.action.persochoisi and self.action.prochaineaction:
             pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
             self.action.construire_batiment(pos)
+
+    def volerrune(self,evt):
+        x = evt.x
+        y = evt.y
+        pctx = x / self.tailleminicarte
+        pcty = y / self.tailleminicarte
+
+        xl = (self.canevas.winfo_width() / 2) / self.modele.aireX
+        yl = (self.canevas.winfo_height() / 2) / self.modele.aireY
+
+        self.modele.joueurs[self.monnom].volerrune(xl,yl)
 
     def creer_entiteGuerrier(self, evt):
         x, y = evt.x, evt.y
