@@ -310,6 +310,7 @@ class Vue():
         self.canevas.tag_bind("batiment", "<Button-3>", self.subcrafting)
         self.canevas.tag_bind("batiment", "<Button-3>", self.spawn_guerrier)
         self.canevas.bind("<Control-Button-1>", self.parent.montrer_stats)
+        self.canevas.tag_bind("perso", "<Button-3>", self.attaquer_ennemis)
 
     def defiler_vertical(self, evt):
         rep = self.scrollV.get()[0]
@@ -674,28 +675,41 @@ class Vue():
             # ajuster les constructions de chaque joueur
             for p in self.modele.joueurs[j].batiments['siteconstruction']:
                 s = self.modele.joueurs[j].batiments['siteconstruction'][p]
-                if s.etat == "attente":
+                if s.etat == "attente":  # s.montype
                     self.canevas.create_image(s.x, s.y, anchor=CENTER, image=self.images["siteX"],
                                               tags=("mobile", j, p, "batiment", type(s).__name__, ""))
-                else:
+                else:  # s.montype
                     self.canevas.create_image(s.x, s.y, anchor=CENTER, image=self.images["EnConstruction"],
                                               tags=("mobile", j, p, "batiment", type(s).__name__, ""))
 
-            # ajuster les persos de chaque joueur et leur dépendance (ici javelots des ouvriers)
+                    # ajuster les persos de chaque joueur et leur dépendance (ici javelots des ouvriers)
             for p in self.modele.joueurs[j].persos.keys():
                 for k in self.modele.joueurs[j].persos[p].keys():
                     i = self.modele.joueurs[j].persos[p][k]
-                    self.canevas.create_image(i.x, i.y, anchor=S, image=self.images[i.image],
-                                              tags=("mobile", j, k, "perso", type(i).__name__,""))
-                    if k in self.action.persochoisi:
-                        self.canevas.create_rectangle(i.x-10, i.y+5, i.x+10, i.y+10, fill="yellow",
-                                                      tags=("mobile", j, p, "perso", type(i).__name__, "persochoisi"))
+
+                    # perso mort
+                    if i.etat == "mort":
+                        self.canevas.create_image(i.x, i.y, image=self.images["daimMORT"])
+                    else:  # i.montype
+                        self.canevas.create_image(i.x, i.y, anchor=S, image=self.images[i.image],
+                                                  tags=("mobile", j, k, "perso", type(i).__name__, ""))
+
+                    if k in self.action.persochoisi:  # i.montype
+                        self.canevas.create_rectangle(i.x - 10, i.y + 5, i.x + 10, i.y + 10, fill="yellow",
+                                                      tags=(
+                                                      "mobile", j, p, "perso", type(i).__name__, "persochoisi"))
 
                     # dessiner javelot de l'ouvrier
                     if p == "ouvrier":
                         for b in self.modele.joueurs[j].persos[p][k].javelots:
                             self.canevas.create_image(b.x, b.y, image=self.images[b.image],
                                                       tags=("mobile", j, b.id, "", type(b).__name__, ""))
+
+                    # dessiner fleche de l'archer
+                    if p == "archer":
+                        for b in self.modele.joueurs[j].persos[p][k].fleches:
+                            self.canevas.create_image(b.x, b.y, image=self.images[b.image],
+                                                      tags=("mobile", j, b.id, "", type(p).__name__, ""))
 
         # ajuster les choses vivantes dependantes de la partie (mais pas des joueurs)
         for j in self.modele.biotopes["daim"].keys():
@@ -804,6 +818,14 @@ class Vue():
             self.action.position = [x, y]
             self.action.deplacer()
 
+    def attaquer_ennemis(self, evt):
+        tag = self.canevas.gettags(CURRENT)
+        if self.action.persochoisi and tag[3] == "perso":
+            self.action.attaquer_ennemis(tag)
+            print("je vais attaque")
+        else:
+            print(tag[3])
+
     # Cette fonction permet se se deplacer via un click sur la minicarte
     def deplacer_carte(self, evt):
         x = evt.x
@@ -848,13 +870,10 @@ class Vue():
             pos = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
             self.action.construire_batiment(pos)
 
-    def volerrune(self,evt):
-        x = evt.x
-        y = evt.y
+    def volerrune(self,x,y):
         mestags = self.canevas.gettags(CURRENT)
+        self.modele.joueurs[self.monnom].volerrune(mestags)
 
-        if "stele" in mestags:
-            self.modele.joueurs[self.monnom].volerrune(mestags)
     def creer_guerrier(self, x, y, mestags):
         pos = (self.canevas.canvasx(x), self.canevas.canvasy(y))
         action = [self.parent.monnom, "creerperso", ["soldat", mestags[4], mestags[2], pos]]
@@ -938,6 +957,11 @@ class Action():
         if fh + 60 > ch:
             cl = int(self.parent.canevasaction.cget("width"))
             self.parent.canevasaction.config(scrollregion=(0, 0, cl, fh+60))
+
+    def attaquer_ennemis(self, tag):
+        if self.persochoisi:
+            action = [self.parent.parent.monnom, "attaquerennemis", [tag[1], tag[4], tag[2], self.persochoisi]]
+            self.parent.parent.actionsrequises.append(action)
 
 
     def envoyer_chat(self,evt):

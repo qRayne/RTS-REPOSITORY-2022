@@ -126,9 +126,11 @@ class Stele:
         if self.rune >= 1:
             self.joueur.nbPointsRune += 20
 
-    def incrementerRune(self):
+    def incrementerRune(self,steleEnnemie):
         if self.rune < 4:
-            self.rune += 1
+            if steleEnnemie.rune >= 1:
+                self.rune += 1
+                steleEnnemie.rune -= 1
 
     def decrementerRune(self):
         if self.rune > 0:
@@ -384,6 +386,46 @@ class Javelot:
                 self.parent.javelots.remove(self)
                 self.parent.actioncourante = "ciblerproie"
 
+class Fleche:
+    def __init__(self, parent, id, proie):
+        self.parent = parent
+        self.id = id
+        self.vitesse = 18
+        self.distance = 150
+        self.taille = 20
+        self.demitaille = 10
+        self.proie = proie
+        self.proiex = self.proie.x
+        self.proiey = self.proie.y
+        self.x = self.parent.x
+        self.y = self.parent.y
+        self.ang = Helper.calcAngle(self.x, self.y, self.proiex, self.proiey)
+        angquad = math.degrees(self.ang)
+        dir = "DB"
+        if 0 <= angquad <= 89:
+            dir = "DB"
+        elif -90 <= angquad <= -1:
+            dir = "DH"
+        if 90 <= angquad <= 179:
+            dir = "GB"
+        elif -180 <= angquad <= -91:
+            dir = "GH"
+        self.image = "javelot" + dir
+
+    def bouger(self):
+        self.x, self.y, = Helper.getAngledPoint(self.ang, self.vitesse, self.x, self.y)
+        dist = Helper.calcDistance(self.x, self.y, self.proie.x, self.proie.y)
+        if dist <= self.demitaille:
+            # tue daim
+            self.parent.actioncourante = "ciblerressource"
+            self.parent.fleches.remove(self)
+            self.proie.mourir()
+        else:
+            dist = Helper.calcDistance(self.x, self.y, self.proiex, self.proiey)
+            if dist < self.vitesse:
+                self.parent.fleches.remove(self)
+                self.parent.actioncourante = "ciblerproie"
+
 
 class Perso():
     def __init__(self, parent, id, batiment, couleur, x, y, montype):
@@ -528,55 +570,105 @@ class Guerrier(Perso):
 class Archer(Perso):
     def __init__(self, parent, id, maison, couleur, x, y, montype):
         Perso.__init__(self, parent, id, maison, couleur, x, y, montype)
-
         self.dir = "D"
         self.image = couleur[0] + "_" + montype + self.dir
         self.cible = None
         self.angle = None
+        self.etat = "vivant"
         self.distancefeumax = 50
+        self.typeressource = None
         self.distancefeu = 50
         self.delaifeu = 0
         self.delaifeumax = 30
+        self.valeur = 30
+        self.champchasse = 120
+        self.delailoop = 25
+        self.quota = 20
+        self.delaianim = self.delailoop / 5
+        self.ramassage = 0
+        self.force = 6
+        self.javelots = []
         self.fleches = []
         self.cibleennemi = None
+        self.etats_et_actions = {"ciblerproie": self.cibler_ennemis,
+                                 "bouger": self.bouger,
+                                 "modeAttaque": self.mode_Attaque,
+                                 "attaqueEnCours": self.attaque_En_Cours,
+                                 "retourbatimentmere": self.retour_batiment_mere,
+                                 "ciblerressource": self.cibler_ressource
+                                 }
 
-    def cibler(self, pos):
-        self.position_visee = pos
+    def chasser_ennemis(self, ennemis, actiontype):
+        self.cible = ennemis
+        self.position_visee = [self.cible.x, self.cible.y]
+        self.actioncourante = actiontype
 
-        self.angle = Helper.calcAngle(self.x, self.y, self.position_visee[0], self.position_visee[1])
-        if self.x < self.position_visee[0]:
-            self.dir = "D"
-        else:
-            self.dir = "G"
-        if self.y < self.position_visee[1]:
-            self.dir = self.dir + "B"
-        else:
-            self.dir = self.dir + "H"
+    def cibler_ennemis(self):
+        self.position_visee = [self.cible.x, self.cible.y]
+        reponse = self.bouger()
+        if reponse == "rendu":
+            self.actioncourante = "attaqueEnCours"
+        elif reponse <= self.champchasse and self.cible.etat == "vivant":
+            self.actioncourante = "modeAttaque"
+            print("mode attaque")
 
-        self.image = self.image[:-2] + self.dir
-
-    def attaquer(self, ennemi):
-        self.cibleennemi = ennemi
-        x = self.cibleennemi.x
-        y = self.cibleennemi.y
-        self.position_visee = [x, y]
-        dist = Helper.calcDistance(self.x, self.y, x, y)
-        if dist <= self.distancefeu:
-            self.actioncourante = "attaquerennemi"
-        else:
-            self.actioncourante = "ciblerennemi"
-
-    def attaquerennemi(self):
-        if self.delaifeu == 0:
-            id = get_prochain_id()
-            fleche = Fleche(self, id, self.cibleennemi)
-            self.fleches.append(fleche)
-            self.delaifeu = self.delaifeumax
+    def mode_Attaque(self):
+        self.lancer_fleches(self.cible)
         for i in self.fleches:
-            rep = i.bouger()
-        if rep:
-            rep = self.cibleennemi.recevoir_coup(self.force)
-            self.fleches.remove(rep)
+            i.bouger()
+
+    def lancer_fleches(self, proie):
+        if self.fleches == []:
+            id = get_prochain_id()
+            self.fleches.append(Fleche(self, id, proie))
+
+    def attaque_En_Cours(self):
+        if self.delailoop == 25:
+            self.cible.valeur -= self.force
+        print("valeur: ", self.cible.valeur)
+        if self.cible.valeur > 0 :
+            self.actioncourante = None
+            self.position_visee = [self.batimentmere.x, self.batimentmere.y]
+            if self.cible.valeur <= 0:
+                self.parent.avertir_ennemis_mort(self.typeressource, self.cible)
+        else:
+            if self.delaianim == 5:
+                self.y -= 5
+            elif self.delaianim == 1:
+                self.y += 5
+            if self.delaianim > 0:
+                self.delaianim -= 1
+        self.delailoop -= 1
+        if self.delailoop == 0:
+            self.delailoop = 25
+            self.delaianim = self.delailoop / 5
+
+    def cibler_ressource(self):
+        reponse = self.bouger()
+        if reponse == "rendu":
+            self.actioncourante = "attaqueEnCours"
+
+    def retour_batiment_mere(self):
+        reponse = self.bouger()
+        if reponse == "rendu":
+            if self.cible:
+                pass
+            else:
+                self.actioncourante = None
+        else:
+            pass
+
+    def mourir(self):
+        self.etat = "mort"
+        self.position_visee = None
+
+    def abandonner_ressource(self, ressource):
+        if ressource == self.cible:
+            if self.actioncourante == "ciblerressource" or self.actioncourante == "retourbatimentmere" or self.actioncourante == "ramasserresource":
+                self.actioncourante = "retourbatimentmere"
+            else:
+                self.actioncourante = "retourbatimentmere"
+                self.position_visee = [self.batimentmere.x, self.batimentmere.y]
 
 
 class Ouvrier(Perso):
@@ -585,6 +677,7 @@ class Ouvrier(Perso):
         self.activite = None  # sedeplacer, cueillir, chasser, pecher, construire, reparer, attaquer, fuir, promener,explorer,chercher
         self.typeressource = None
         self.quota = 20
+        self.etat = "vivant"
         self.ramassage = 0
         self.qteramassage = 1
         self.cibletemp = None
@@ -873,7 +966,8 @@ class Joueur():
                         "creerarmes": self.creer_armes,
                         "creerarmures": self.creer_armures,
                         "creeroutils": self.creer_outils,
-                        "volerrune": self.volerrune
+                        "volerrune": self.volerrune,
+                        "attaquerennemis": self.attaquer_ennemis
                         }
         # on va creer une maison comme centre pour le joueur
         self.creer_point_origine(x, y)
@@ -949,6 +1043,25 @@ class Joueur():
                         else:
                             self.persos[j][i].chasser_ramasser(self.parent.biotopes[typeress][idress],
                                                            typeress, "ciblerressource")
+
+    def attaquer_ennemis(self, param):
+        nomJoueurAttaque = param[0]
+        typeAttaquer = param[1]
+        idAttaquer = param[2]
+        idAttaquant = param[3]
+        print("je commance a attaque")
+        print(nomJoueurAttaque)
+        print(typeAttaquer)
+        print(idAttaquer)
+        print(idAttaquant)
+
+        ennemi = self.parent.joueurs[nomJoueurAttaque].persos[typeAttaquer][idAttaquer]
+        print(ennemi)
+
+        for i in self.persos.keys():
+            for j in idAttaquant:
+                if j in self.persos[i]:
+                    self.persos[i][j].chasser_ennemis(ennemi, "ciblerproie")
 
     def deplacer(self, param):
         pos, troupe = param
@@ -1096,19 +1209,17 @@ class Joueur():
         steleAttaquerid = None
         steleClickee = mestags[2]
 
-        if self.stele.id != steleClickee:
-            steleAttaquerid = steleClickee
-        else:
-            print("même stèle")
+        # if self.stele.id != steleClickee:
+        #     steleAttaquerid = steleClickee
+        # else:
+        #     print("même stèle")
+        #
+        # if steleAttaquerid is not None:
+        #     for i in self.parent.listeStele:
+        #         if i.id == steleAttaquerid:
+        #             steleEnnemie = i
+        #             self.stele.incrementerRune(steleEnnemie)
 
-        if steleAttaquerid is not None:
-            for i in self.parent.listeStele:
-                if i.id == steleAttaquerid:
-                    steleAttaquer = i
-                    if steleAttaquer.rune >= 1:
-                        self.stele.incrementerRune()
-                        steleAttaquer.rune -= 1
-                    print("La rune ennemi a " + str(steleAttaquer.rune))
 
 
 #######################  LE MODELE est la partie #######################
@@ -1219,12 +1330,6 @@ class Partie():
         for i in self.biotopes:
             total += len(self.biotopes[i])
         self.montrer_msg_general(str(total))
-
-        # on vérifie d'abord que la rune que l'on veut voler n'est pas la notre
-        for i in self.parent.listeStele:
-            if i == stelePerso:
-                listeSteleEnnemie.append(i)
-
 
 
     def trouver_valeurs(self):
@@ -1621,7 +1726,17 @@ class Partie():
         if ress not in self.ressourcemorte:
             self.ressourcemorte.append(ress)
 
-    #############################################################################    
+        # def eliminer_ennemis(self, type, cible):
+        # if cible.idregion:
+        # self.regions[ress.montype][ress.idregion].listecases.pop(ress.id)
+        #  cr = self.regions[cible.montype][cible.idregion].dicocases[cible.idcaseregion]
+        # if cible.id in cr.persos.keys():
+        #      cr.persos.pop(cible.id)
+
+        # if cible.id in self.classespersos[type]:
+        #   self.classespersos[type].pop(cible.id)
+
+    #############################################################################
     # ATTENTION : NE PAS TOUCHER                 
     def ajouter_actions_a_faire(self, actionsrecues):
         for i in actionsrecues:
